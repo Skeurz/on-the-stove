@@ -47,3 +47,12 @@ export const getRecipesByCategory = defineQuery(`
     publishedAt
   }
 `)
+export const getAuthor = defineQuery(`
+  *[_type == "author"][0] {
+    name,
+    photo,
+    bio,
+    instagram,
+    pinterest
+  }
+`)
