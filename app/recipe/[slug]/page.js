@@ -2,189 +2,316 @@ import { client } from '@/sanity/lib/client'
 import { getRecipeBySlug } from '@/sanity/lib/queries'
 import { urlFor } from '@/sanity/lib/image'
 import Image from 'next/image'
+import Link from 'next/link'
 import { PortableText } from 'next-sanity'
+
+const categoryLabel = {
+  lunch: 'Lunch',
+  dinner: 'Dinner',
+  breakfastnbrunch: 'Breakfast & Brunch',
+  snacksnsides: 'Snacks & Sides',
+  desserts: 'Desserts',
+  'drinks-shakes': 'Drinks & Shakes',
+}
 
 export default async function RecipePage({ params }) {
   const { slug } = await params
   const recipe = await client.fetch(getRecipeBySlug, { slug })
 
-  if (!recipe) return <div style={{ padding: '4rem', textAlign: 'center' }}>Recipe not found.</div>
+  if (!recipe) return (
+    <div style={{ padding: '6rem', textAlign: 'center' }}>
+      <p style={{ fontFamily: '"Playfair Display", serif', fontSize: '2rem', color: '#3D2010' }}>Recipe not found</p>
+      <Link href="/" style={{ color: '#E8622A', fontFamily: '"Lato", sans-serif' }}>← Back to home</Link>
+    </div>
+  )
+
+  const totalTime = (recipe.prepTime || 0) + (recipe.cookTime || 0)
 
   return (
-    <div style={{ maxWidth: '800px', margin: '0 auto', padding: '2rem' }}>
-
-      {/* Category tag */}
-      <span style={{
-        background: '#FDF6EE',
-        color: '#E8622A',
-        fontSize: '0.75rem',
-        fontWeight: '700',
-        letterSpacing: '1px',
-        textTransform: 'uppercase',
-        padding: '0.25rem 0.75rem',
-        borderRadius: '50px',
-        fontFamily: 'Lato, sans-serif',
-      }}>
-        {recipe.category}
-      </span>
-
-      {/* Title */}
-      <h1 style={{
-        fontFamily: 'Playfair Display, serif',
-        fontSize: 'clamp(2rem, 5vw, 3rem)',
-        color: '#3D2010',
-        margin: '1rem 0',
-        lineHeight: 1.2,
-      }}>
-        {recipe.title}
-      </h1>
-
-      {/* Meta */}
-      <div style={{
-        display: 'flex',
-        gap: '1.5rem',
-        fontFamily: 'Lato, sans-serif',
-        fontSize: '0.9rem',
-        color: '#7A6555',
-        marginBottom: '2rem',
-        flexWrap: 'wrap',
-      }}>
-        {recipe.prepTime && <span>⏱ Prep: {recipe.prepTime} min</span>}
-        {recipe.cookTime && <span>🔥 Cook: {recipe.cookTime} min</span>}
-        {recipe.servings && <span>🍽 Serves: {recipe.servings}</span>}
-      </div>
-
-      {/* Main Image */}
+    <div>
+      {/* Hero Image */}
       {recipe.mainImage && (
         <div style={{
-          position: 'relative',
           width: '100%',
-          height: '400px',
-          borderRadius: '16px',
+          height: '480px',
+          position: 'relative',
           overflow: 'hidden',
-          marginBottom: '2rem',
         }}>
           <Image
-            src={urlFor(recipe.mainImage).width(800).height(400).url()}
+            src={urlFor(recipe.mainImage).width(1200).height(480).url()}
             alt={recipe.title}
             fill
             style={{ objectFit: 'cover' }}
+            priority
           />
-        </div>
-      )}
-
-      {/* Description */}
-      {recipe.description && (
-        <p style={{
-          fontFamily: 'Lato, sans-serif',
-          fontSize: '1.05rem',
-          color: '#7A6555',
-          lineHeight: 1.8,
-          marginBottom: '2rem',
-          fontStyle: 'italic',
-          borderLeft: '3px solid #E8622A',
-          paddingLeft: '1rem',
-        }}>
-          {recipe.description}
-        </p>
-      )}
-
-      {/* Ingredients */}
-      {recipe.ingredients?.length > 0 && (
-        <div style={{
-          background: 'white',
-          borderRadius: '16px',
-          padding: '1.5rem',
-          marginBottom: '2rem',
-          boxShadow: '0 4px 20px rgba(61,32,16,0.08)',
-        }}>
-          <h2 style={{
-            fontFamily: 'Playfair Display, serif',
-            fontSize: '1.5rem',
-            color: '#3D2010',
-            marginBottom: '1rem',
+          {/* Gradient overlay */}
+          <div style={{
+            position: 'absolute', inset: 0,
+            background: 'linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(30,14,5,0.7) 100%)',
+          }} />
+          {/* Title over image */}
+          <div style={{
+            position: 'absolute',
+            bottom: '2.5rem',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            width: '100%',
+            maxWidth: '800px',
+            padding: '0 2rem',
+            textAlign: 'center',
           }}>
-            Ingredients
-          </h2>
-          <ul style={{ listStyle: 'none', padding: 0 }}>
-            {recipe.ingredients.map((item, i) => (
-              <li key={i} style={{
-                fontFamily: 'Lato, sans-serif',
-                fontSize: '0.95rem',
-                color: '#2C1A0E',
-                padding: '0.5rem 0',
-                borderBottom: '1px solid #F0EBE3',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem',
-              }}>
-                <span style={{ color: '#E8622A' }}>•</span> {item}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-
-      {/* Steps */}
-      {recipe.steps?.length > 0 && (
-        <div style={{ marginBottom: '2rem' }}>
-          <h2 style={{
-            fontFamily: 'Playfair Display, serif',
-            fontSize: '1.5rem',
-            color: '#3D2010',
-            marginBottom: '1rem',
-          }}>
-            Instructions
-          </h2>
-          {recipe.steps.map((step, i) => (
-            <div key={i} style={{
-              display: 'flex',
-              gap: '1rem',
-              marginBottom: '1.5rem',
-              alignItems: 'flex-start',
+            <Link href={`/category/${recipe.category}`} style={{
+              display: 'inline-block',
+              background: 'rgba(232,98,42,0.9)',
+              color: 'white',
+              fontSize: '0.72rem',
+              fontWeight: '700',
+              letterSpacing: '1.5px',
+              textTransform: 'uppercase',
+              padding: '0.3rem 0.9rem',
+              borderRadius: '50px',
+              fontFamily: '"Lato", sans-serif',
+              marginBottom: '1rem',
             }}>
-              <span style={{
-                background: '#E8622A',
-                color: 'white',
-                borderRadius: '50%',
-                width: '32px',
-                height: '32px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontFamily: 'Lato, sans-serif',
-                fontWeight: '700',
-                fontSize: '0.9rem',
-                flexShrink: 0,
-              }}>
-                {i + 1}
-              </span>
-              <p style={{
-                fontFamily: 'Lato, sans-serif',
-                fontSize: '0.95rem',
-                color: '#2C1A0E',
-                lineHeight: 1.8,
-                marginTop: '4px',
-              }}>
-                {step}
-              </p>
-            </div>
-          ))}
+              {categoryLabel[recipe.category] || recipe.category}
+            </Link>
+            <h1 style={{
+              fontFamily: '"Playfair Display", serif',
+              fontSize: 'clamp(1.8rem, 5vw, 3rem)',
+              color: 'white',
+              lineHeight: 1.2,
+              textShadow: '0 2px 12px rgba(0,0,0,0.3)',
+            }}>
+              {recipe.title}
+            </h1>
+          </div>
         </div>
       )}
 
-      {/* Full body content */}
-      {recipe.body && (
+      {/* Content */}
+      <div style={{ maxWidth: '800px', margin: '0 auto', padding: '2.5rem 2rem' }}>
+
+        {/* Title if no image */}
+        {!recipe.mainImage && (
+          <>
+            <Link href={`/category/${recipe.category}`} style={{
+              display: 'inline-block',
+              background: '#FDF6EE',
+              color: '#E8622A',
+              fontSize: '0.72rem',
+              fontWeight: '700',
+              letterSpacing: '1.5px',
+              textTransform: 'uppercase',
+              padding: '0.3rem 0.9rem',
+              borderRadius: '50px',
+              fontFamily: '"Lato", sans-serif',
+              marginBottom: '1rem',
+            }}>
+              {categoryLabel[recipe.category] || recipe.category}
+            </Link>
+            <h1 style={{
+              fontFamily: '"Playfair Display", serif',
+              fontSize: 'clamp(2rem, 5vw, 3rem)',
+              color: '#2C1A0E',
+              lineHeight: 1.2,
+              marginBottom: '1.5rem',
+            }}>
+              {recipe.title}
+            </h1>
+          </>
+        )}
+
+        {/* Meta cards */}
+        {(recipe.prepTime || recipe.cookTime || recipe.servings) && (
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
+            gap: '1rem',
+            margin: '2rem 0',
+            padding: '1.5rem',
+            background: '#FDF6EE',
+            borderRadius: '16px',
+            border: '1px solid #F0E6DC',
+          }}>
+            {recipe.prepTime && (
+              <div style={{ textAlign: 'center' }}>
+                <p style={{ fontSize: '1.5rem', marginBottom: '0.25rem' }}>⏱</p>
+                <p style={{ fontFamily: '"Lato", sans-serif', fontSize: '0.72rem', color: '#A08070', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '0.2rem' }}>Prep</p>
+                <p style={{ fontFamily: '"Playfair Display", serif', fontSize: '1.1rem', color: '#2C1A0E', fontWeight: '600' }}>{recipe.prepTime} min</p>
+              </div>
+            )}
+            {recipe.cookTime && (
+              <div style={{ textAlign: 'center' }}>
+                <p style={{ fontSize: '1.5rem', marginBottom: '0.25rem' }}>🔥</p>
+                <p style={{ fontFamily: '"Lato", sans-serif', fontSize: '0.72rem', color: '#A08070', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '0.2rem' }}>Cook</p>
+                <p style={{ fontFamily: '"Playfair Display", serif', fontSize: '1.1rem', color: '#2C1A0E', fontWeight: '600' }}>{recipe.cookTime} min</p>
+              </div>
+            )}
+            {totalTime > 0 && (
+              <div style={{ textAlign: 'center' }}>
+                <p style={{ fontSize: '1.5rem', marginBottom: '0.25rem' }}>🕐</p>
+                <p style={{ fontFamily: '"Lato", sans-serif', fontSize: '0.72rem', color: '#A08070', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '0.2rem' }}>Total</p>
+                <p style={{ fontFamily: '"Playfair Display", serif', fontSize: '1.1rem', color: '#2C1A0E', fontWeight: '600' }}>{totalTime} min</p>
+              </div>
+            )}
+            {recipe.servings && (
+              <div style={{ textAlign: 'center' }}>
+                <p style={{ fontSize: '1.5rem', marginBottom: '0.25rem' }}>🍽</p>
+                <p style={{ fontFamily: '"Lato", sans-serif', fontSize: '0.72rem', color: '#A08070', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '0.2rem' }}>Serves</p>
+                <p style={{ fontFamily: '"Playfair Display", serif', fontSize: '1.1rem', color: '#2C1A0E', fontWeight: '600' }}>{recipe.servings}</p>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Description */}
+        {recipe.description && (
+          <p style={{
+            fontFamily: '"Lato", sans-serif',
+            fontSize: '1.05rem',
+            color: '#6B5244',
+            lineHeight: 1.85,
+            margin: '1.5rem 0 2rem',
+            fontStyle: 'italic',
+            paddingLeft: '1.25rem',
+            borderLeft: '3px solid #E8622A',
+          }}>
+            {recipe.description}
+          </p>
+        )}
+
         <div style={{
-          fontFamily: 'Lato, sans-serif',
-          fontSize: '1rem',
-          lineHeight: 1.8,
-          color: '#2C1A0E',
+          display: 'grid',
+          gridTemplateColumns: recipe.ingredients?.length > 0 && recipe.steps?.length > 0 ? '1fr 2fr' : '1fr',
+          gap: '2rem',
+          alignItems: 'start',
+          margin: '2rem 0',
         }}>
-          <PortableText value={recipe.body} />
-        </div>
-      )}
+          {/* Ingredients */}
+          {recipe.ingredients?.length > 0 && (
+            <div style={{
+              background: '#FDF6EE',
+              borderRadius: '16px',
+              padding: '1.5rem',
+              border: '1px solid #F0E6DC',
+              position: 'sticky',
+              top: '88px',
+            }}>
+              <h2 style={{
+                fontFamily: '"Playfair Display", serif',
+                fontSize: '1.4rem',
+                color: '#2C1A0E',
+                marginBottom: '1.25rem',
+                paddingBottom: '0.75rem',
+                borderBottom: '2px solid #E8622A',
+              }}>
+                Ingredients
+              </h2>
+              <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+                {recipe.ingredients.map((item, i) => (
+                  <li key={i} style={{
+                    fontFamily: '"Lato", sans-serif',
+                    fontSize: '0.9rem',
+                    color: '#3D2010',
+                    padding: '0.55rem 0',
+                    borderBottom: '1px solid #F0E6DC',
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: '0.6rem',
+                    lineHeight: 1.5,
+                  }}>
+                    <span style={{ color: '#E8622A', fontWeight: '700', flexShrink: 0, marginTop: '2px' }}>•</span>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
 
+          {/* Steps */}
+          {recipe.steps?.length > 0 && (
+            <div>
+              <h2 style={{
+                fontFamily: '"Playfair Display", serif',
+                fontSize: '1.4rem',
+                color: '#2C1A0E',
+                marginBottom: '1.25rem',
+                paddingBottom: '0.75rem',
+                borderBottom: '2px solid #E8622A',
+              }}>
+                Instructions
+              </h2>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                {recipe.steps.map((step, i) => (
+                  <div key={i} style={{
+                    display: 'flex',
+                    gap: '1.1rem',
+                    alignItems: 'flex-start',
+                    padding: '1.25rem',
+                    background: 'white',
+                    borderRadius: '12px',
+                    border: '1px solid #F0E6DC',
+                  }}>
+                    <span style={{
+                      background: '#E8622A',
+                      color: 'white',
+                      borderRadius: '50%',
+                      width: '34px',
+                      height: '34px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontFamily: '"Lato", sans-serif',
+                      fontWeight: '700',
+                      fontSize: '0.88rem',
+                      flexShrink: 0,
+                    }}>
+                      {i + 1}
+                    </span>
+                    <p style={{
+                      fontFamily: '"Lato", sans-serif',
+                      fontSize: '0.95rem',
+                      color: '#2C1A0E',
+                      lineHeight: 1.8,
+                      margin: 0,
+                      paddingTop: '4px',
+                    }}>
+                      {step}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Full body content */}
+        {recipe.body && (
+          <div style={{
+            fontFamily: '"Lato", sans-serif',
+            fontSize: '1rem',
+            lineHeight: 1.9,
+            color: '#3D2010',
+            marginTop: '2rem',
+            paddingTop: '2rem',
+            borderTop: '1px solid #F0E6DC',
+          }}>
+            <PortableText value={recipe.body} />
+          </div>
+        )}
+
+        {/* Back link */}
+        <div style={{ marginTop: '3rem', paddingTop: '2rem', borderTop: '1px solid #F0E6DC' }}>
+          <Link href="/" style={{
+            fontFamily: '"Lato", sans-serif',
+            fontSize: '0.9rem',
+            color: '#E8622A',
+            fontWeight: '700',
+          }}>
+            ← Back to all recipes
+          </Link>
+        </div>
+      </div>
     </div>
   )
 }
