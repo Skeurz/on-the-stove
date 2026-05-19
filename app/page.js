@@ -25,7 +25,7 @@ export default async function Home({ searchParams }) {
         position: 'relative',
         overflow: 'hidden',
         marginTop: '-68px',
-        padding: 'calc(7rem + 72px) 2rem 6rem',
+        padding: 'calc(7rem + 72px) 2rem 5rem',
         color: 'white',
         textAlign: 'center',
       }}>
@@ -117,12 +117,22 @@ export default async function Home({ searchParams }) {
             </Link>
           </div>
         </div>
+
+       {/* Scroll-down prompt */}
+<a href="#recipes-grid" className="scroll-prompt">
+  <div className="scroll-prompt-arrow">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="6 9 12 15 18 9" />
+      <polyline points="6 14 12 20 18 14" />
+    </svg>
+  </div>
+</a>
       </section>
 
       {/* Category Pills */}
       <section className="mobile-scroll-pills" style={{
-        background: '#FDF6EE',
-        borderBottom: '1px solid #F0EBE3',
+        background: '#1E0E05',
+        borderBottom: '1px solid rgba(255,255,255,0.06)',
         padding: '1.25rem 2rem',
         overflowX: 'auto',
       }}>
@@ -143,9 +153,9 @@ export default async function Home({ searchParams }) {
             { label: '🥤 Drinks', href: '/category/drinks-shakes' },
           ].map(cat => (
             <Link key={cat.href} href={cat.href} style={{
-              background: 'white',
-              border: '1px solid #E8D5C4',
-              color: '#7A4528',
+              background: 'transparent',
+              border: '1px solid rgba(255,255,255,0.15)',
+              color: 'rgba(253,246,238,0.85)',
               fontFamily: '"Lato", sans-serif',
               fontSize: '0.85rem',
               fontWeight: '700',
@@ -161,31 +171,54 @@ export default async function Home({ searchParams }) {
       </section>
 
       {/* Recipes Grid */}
-      <section className="content-section" style={{
+      <section id="recipes-grid" className="content-section" style={{
         maxWidth: '1200px',
         margin: '4rem auto',
       }}>
         <div className="homepage-recipes-layout">
           <div>
-            <div className="section-heading-row" style={{
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: '1rem',
               marginBottom: '2rem',
+              flexWrap: 'wrap',
             }}>
-              <h2 style={{
-                fontFamily: '"Playfair Display", serif',
-                fontSize: '2rem',
-                color: '#3D2010',
+              <div style={{
+                background: '#FDF6EE',
+                border: '1px solid #F0E6DC',
+                borderRadius: '12px',
+                padding: '0.6rem 1.2rem',
+                width: 'fit-content',
               }}>
-                Recent Recipes
-              </h2>
-              <Link href="/recipes" style={{
-                fontFamily: '"Lato", sans-serif',
-                fontSize: '0.85rem',
-                color: '#E8622A',
-                fontWeight: '700',
-                letterSpacing: '0.3px',
+                <h2 style={{
+                  fontFamily: '"Playfair Display", serif',
+                  fontSize: '2rem',
+                  color: '#3D2010',
+                  margin: 0,
+                }}>
+                  Recent Recipes
+                </h2>
+              </div>
+              <div style={{
+                background: '#FDF6EE',
+                border: '1px solid #F0E6DC',
+                borderRadius: '12px',
+                padding: '0.6rem 1.2rem',
+                width: 'fit-content',
               }}>
-                View all →
-              </Link>
+                <Link href="/recipes" style={{
+                  fontFamily: '"Lato", sans-serif',
+                  fontSize: '0.88rem',
+                  color: '#E8622A',
+                  fontWeight: '700',
+                  letterSpacing: '0.3px',
+                  whiteSpace: 'nowrap',
+                }}>
+                  View all →
+                </Link>
+              </div>
             </div>
 
             <div className="recipe-grid">

@@ -4,6 +4,7 @@ import { urlFor } from '@/sanity/lib/image'
 import Image from 'next/image'
 import Link from 'next/link'
 import { PortableText } from 'next-sanity'
+import StarRating from '@/app/components/StarRating'
 
 const categoryLabel = {
   lunch: 'Lunch',
@@ -172,6 +173,9 @@ export default async function RecipePage({ params }) {
               )}
             </div>
           )}
+
+          {/* Star Rating */}
+          <StarRating slug={slug} />
 
           {/* Description */}
           {recipe.description && (

@@ -11,7 +11,9 @@ export const getAllRecipes = defineQuery(`
     prepTime,
     cookTime,
     servings,
-    publishedAt
+    publishedAt,
+    ratingTotal,
+    ratingCount
   }
 `)
 
@@ -27,7 +29,9 @@ export const getPaginatedRecipes = defineQuery(`
       prepTime,
       cookTime,
       servings,
-      publishedAt
+      publishedAt,
+      ratingTotal,
+      ratingCount
     },
     "total": count(*[_type == "recipe"])
   }
@@ -62,7 +66,9 @@ export const getRecipesByCategory = defineQuery(`
     prepTime,
     cookTime,
     servings,
-    publishedAt
+    publishedAt,
+    ratingTotal,
+    ratingCount
   }
 `)
 
@@ -78,7 +84,9 @@ export const getPaginatedRecipesByCategory = defineQuery(`
       prepTime,
       cookTime,
       servings,
-      publishedAt
+      publishedAt,
+      ratingTotal,
+      ratingCount
     },
     "total": count(*[_type == "recipe" && category == $category])
   }
@@ -102,7 +110,9 @@ export const searchRecipes = defineQuery(`
     prepTime,
     cookTime,
     servings,
-    publishedAt
+    publishedAt,
+    ratingTotal,
+    ratingCount
   }
 `)
 

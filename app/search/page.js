@@ -89,30 +89,40 @@ export default async function SearchPage({ searchParams }) {
         maxWidth: '1200px',
         margin: '4rem auto',
       }}>
-        <div className="section-heading-row" style={{ marginBottom: '2rem' }}>
-          <div>
-            <p style={{
-              fontFamily: '"Lato", sans-serif',
-              fontSize: '0.8rem',
-              letterSpacing: '2px',
-              textTransform: 'uppercase',
-              color: '#E8622A',
-              marginBottom: '0.5rem',
-            }}>
-              Results
-            </p>
-            <h2 style={{
-              fontFamily: '"Playfair Display", serif',
-              fontSize: '2rem',
-              color: '#3D2010',
-            }}>
-              {query ? `"${query}"` : 'Search the kitchen'}
-            </h2>
-          </div>
+        <div style={{
+          background: '#FDF6EE',
+          border: '1px solid #F0E6DC',
+          borderRadius: '12px',
+          padding: '0.8rem 1.4rem',
+          width: 'fit-content',
+          marginBottom: '2rem',
+        }}>
+          <p style={{
+            fontFamily: '"Lato", sans-serif',
+            fontSize: '0.8rem',
+            letterSpacing: '2px',
+            textTransform: 'uppercase',
+            color: '#E8622A',
+            margin: 0,
+            marginBottom: '0.25rem',
+          }}>
+            Results
+          </p>
+          <h2 style={{
+            fontFamily: '"Playfair Display", serif',
+            fontSize: '2rem',
+            color: '#3D2010',
+            margin: 0,
+            marginBottom: query ? '0.35rem' : 0,
+          }}>
+            {query ? `"${query}"` : 'Search the kitchen'}
+          </h2>
           {query && (
             <p style={{
               fontFamily: '"Lato", sans-serif',
               color: '#7A6555',
+              margin: 0,
+              fontSize: '0.95rem',
             }}>
               {recipes.length} recipe{recipes.length !== 1 ? 's' : ''} found
             </p>

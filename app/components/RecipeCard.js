@@ -21,6 +21,52 @@ const categoryLabel = {
   'drinks-shakes': 'Drinks & Shakes',
 }
 
+function RatingStars({ total, count }) {
+  const hasRatings = count && count > 0
+  const average = hasRatings ? Math.round((total / count) * 10) / 10 : 0
+  const fullStars = hasRatings ? Math.round(average) : 0
+  const stars = []
+
+  for (let i = 0; i < 5; i++) {
+    stars.push(
+      <span key={i} style={{
+        color: i < fullStars ? '#E8622A' : '#E0D6CC',
+        fontSize: '0.85rem',
+        lineHeight: 1,
+      }}>
+        ★
+      </span>
+    )
+  }
+
+  return (
+    <div style={{
+      display: 'flex',
+      alignItems: 'center',
+      gap: '0.25rem',
+      fontFamily: '"Lato", sans-serif',
+      fontSize: '0.78rem',
+      color: '#A08070',
+    }}>
+      {stars}
+      {hasRatings ? (
+        <>
+          <span style={{ marginLeft: '0.15rem', fontWeight: '700', color: '#6B5244' }}>
+            {average.toFixed(1)}
+          </span>
+          <span style={{ color: '#C0B0A0' }}>
+            ({count})
+          </span>
+        </>
+      ) : (
+        <span style={{ color: '#C0B0A0', fontSize: '0.72rem' }}>
+          No ratings yet
+        </span>
+      )}
+    </div>
+  )
+}
+
 export default function RecipeCard({ recipe, imageUrl }) {
   return (
     <Link href={`/recipe/${recipe.slug.current}`}>
@@ -158,6 +204,11 @@ export default function RecipeCard({ recipe, imageUrl }) {
             {!recipe.prepTime && !recipe.cookTime && !recipe.servings && (
               <span style={{ color: '#E8622A' }}>View Recipe →</span>
             )}
+          </div>
+
+          {/* Star rating */}
+          <div style={{ marginTop: '0.6rem' }}>
+            <RatingStars total={recipe.ratingTotal} count={recipe.ratingCount} />
           </div>
         </div>
       </div>

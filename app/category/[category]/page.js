@@ -32,9 +32,12 @@ export default async function CategoryPage({ params, searchParams }) {
 
       {/* Header */}
       <div style={{
-        borderBottom: '2px solid #F0EBE3',
+        background: '#FDF6EE',
+        border: '1px solid #F0E6DC',
+        borderRadius: '12px',
+        padding: '0.8rem 1.4rem',
+        width: 'fit-content',
         marginBottom: '2.5rem',
-        paddingBottom: '1.5rem',
       }}>
         <p style={{
           fontFamily: 'Lato, sans-serif',
@@ -42,7 +45,8 @@ export default async function CategoryPage({ params, searchParams }) {
           letterSpacing: '2px',
           textTransform: 'uppercase',
           color: '#E8622A',
-          marginBottom: '0.5rem',
+          margin: 0,
+          marginBottom: '0.25rem',
         }}>
           Recipes
         </p>
@@ -50,13 +54,16 @@ export default async function CategoryPage({ params, searchParams }) {
           fontFamily: 'Playfair Display, serif',
           fontSize: '2.5rem',
           color: '#3D2010',
+          margin: 0,
+          marginBottom: '0.35rem',
         }}>
           {label}
         </h1>
         <p style={{
           fontFamily: 'Lato, sans-serif',
           color: '#7A6555',
-          marginTop: '0.5rem',
+          margin: 0,
+          fontSize: '0.95rem',
         }}>
           Showing {recipes.length} of {total} recipe{total !== 1 ? 's' : ''}
         </p>

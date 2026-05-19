@@ -48,14 +48,22 @@ export default async function RecipesPage() {
 
   return (
     <div className="content-section" style={{ maxWidth: '1200px', margin: '0 auto', padding: '3rem 0 4rem' }}>
-      <div style={{ marginBottom: '2rem' }}>
+      <div style={{
+        background: '#FDF6EE',
+        border: '1px solid #F0E6DC',
+        borderRadius: '12px',
+        padding: '0.8rem 1.4rem',
+        width: 'fit-content',
+        marginBottom: '2rem',
+      }}>
         <p style={{
           fontFamily: 'Lato, sans-serif',
           fontSize: '0.8rem',
           letterSpacing: '2px',
           textTransform: 'uppercase',
           color: '#E8622A',
-          marginBottom: '0.75rem',
+          margin: 0,
+          marginBottom: '0.25rem',
         }}>
           Recipes
         </p>
@@ -64,14 +72,15 @@ export default async function RecipesPage() {
           fontSize: 'clamp(2.4rem, 4vw, 3.4rem)',
           color: '#3D2010',
           lineHeight: 1.05,
-          marginBottom: '1rem',
+          margin: 0,
+          marginBottom: '0.75rem',
         }}>
           Find the recipe category that fits your mood.
         </h1>
         <p style={{
           fontFamily: 'Lato, sans-serif',
           color: '#7A6555',
-          maxWidth: '720px',
+          margin: 0,
           lineHeight: 1.8,
           fontSize: '1rem',
         }}>
@@ -116,7 +125,7 @@ export default async function RecipesPage() {
                 color: '#E8622A',
                 marginBottom: '0.85rem',
               }}>
-                About Adelaide
+                About me
               </p>
               <h2 style={{
                 fontFamily: 'Playfair Display, serif',

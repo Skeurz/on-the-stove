@@ -81,5 +81,19 @@ export const recipe = {
       title: 'Published At',
       type: 'datetime'
     },
+    {
+      name: 'ratingTotal',
+      title: 'Rating Total',
+      type: 'number',
+      readOnly: true,
+      hidden: true,
+    },
+    {
+      name: 'ratingCount',
+      title: 'Rating Count',
+      type: 'number',
+      readOnly: true,
+      hidden: true,
+    },
   ]
 }

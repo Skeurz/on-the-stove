@@ -517,36 +517,46 @@ export async function AboutStaticPage() {
         </div>
 
         <div>
-          <h2 style={{
-            fontFamily: '"Playfair Display", serif',
-            fontSize: '2rem',
-            color: '#2C1A0E',
-            marginBottom: '1.5rem',
+          {/* Text content in a white card */}
+          <div style={{
+            background: 'white',
+            border: '1px solid #F0E6DC',
+            borderRadius: '20px',
+            padding: 'clamp(1.5rem, 4vw, 3rem)',
+            boxShadow: '0 20px 60px rgba(61,32,16,0.08)',
+            marginBottom: '2rem',
           }}>
-            From My Kitchen To Yours...
-          </h2>
+            <h2 style={{
+              fontFamily: '"Playfair Display", serif',
+              fontSize: '2rem',
+              color: '#2C1A0E',
+              marginBottom: '1.5rem',
+            }}>
+              From My Kitchen To Yours...
+            </h2>
 
-          <Paragraph style={{ fontSize: '1.05rem' }}>
-            {'For me, cooking has always been more than "what\'s for dinner." It\'s comfort, creativity, and care, served on a plate. After years of testing, tweaking, and sharing, this little kitchen hobby grew into a full-time recipe blog for busy home cooks who still want food that feels special.'}
-          </Paragraph>
-          <Paragraph style={{ fontSize: '1.05rem', fontWeight: '700', color: '#3D2010', marginBottom: '2.5rem' }}>
-            Follow along: new recipes, daily meal ideas, and simple tips to make everyday cooking easier.
-          </Paragraph>
+            <Paragraph style={{ fontSize: '1.05rem' }}>
+              {'For me, cooking has always been more than "what\'s for dinner." It\'s comfort, creativity, and care, served on a plate. After years of testing, tweaking, and sharing, this little kitchen hobby grew into a full-time recipe blog for busy home cooks who still want food that feels special.'}
+            </Paragraph>
+            <Paragraph style={{ fontSize: '1.05rem', fontWeight: '700', color: '#3D2010', marginBottom: '2.5rem' }}>
+              Follow along: new recipes, daily meal ideas, and simple tips to make everyday cooking easier.
+            </Paragraph>
 
-          <div style={{ borderTop: '2px solid #E8622A', margin: '2rem 0', width: '60px' }} />
+            <div style={{ borderTop: '2px solid #E8622A', margin: '2rem 0', width: '60px' }} />
 
-          <h3 style={{
-            fontFamily: '"Playfair Display", serif',
-            fontSize: '1.5rem',
-            color: '#2C1A0E',
-            marginBottom: '1.25rem',
-          }}>
-            I have been cooking and writing blogs for almost 12 years.
-          </h3>
+            <h3 style={{
+              fontFamily: '"Playfair Display", serif',
+              fontSize: '1.5rem',
+              color: '#2C1A0E',
+              marginBottom: '1.25rem',
+            }}>
+              I have been cooking and writing blogs for almost 12 years.
+            </h3>
 
-          <Paragraph>{'It started with handwritten notes, messy counters, and family favorites I didn\'t want to lose. Then I began sharing recipes online, one after another, learning what real life needs: dependable meals, clear steps, and ingredients you can actually find.'}</Paragraph>
-          <Paragraph>{'Today, I create approachable recipes for women juggling work, family, and everything in between. Think: cozy dinners, smarter shortcuts, and meal prep that doesn\'t feel like a second job. Every recipe is tested, re-tested, and written the way I\'d explain it to a friend in my kitchen.'}</Paragraph>
-          <Paragraph style={{ marginBottom: '2.5rem' }}>{"If you're here for simple, satisfying food, welcome. Grab a cup of tea, pick a recipe, and let's make something you'll be proud to serve, even on a busy weeknight."}</Paragraph>
+            <Paragraph>{'It started with handwritten notes, messy counters, and family favorites I didn\'t want to lose. Then I began sharing recipes online, one after another, learning what real life needs: dependable meals, clear steps, and ingredients you can actually find.'}</Paragraph>
+            <Paragraph>{'Today, I create approachable recipes for women juggling work, family, and everything in between. Think: cozy dinners, smarter shortcuts, and meal prep that doesn\'t feel like a second job. Every recipe is tested, re-tested, and written the way I\'d explain it to a friend in my kitchen.'}</Paragraph>
+            <Paragraph style={{ marginBottom: 0 }}>{"If you're here for simple, satisfying food, welcome. Grab a cup of tea, pick a recipe, and let's make something you'll be proud to serve, even on a busy weeknight."}</Paragraph>
+          </div>
 
           <div style={{
             background: '#FDF6EE',
