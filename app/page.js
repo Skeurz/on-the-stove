@@ -1,29 +1,39 @@
 import { client } from '@/sanity/lib/client'
-import { getPaginatedRecipes } from '@/sanity/lib/queries'
+import { getPaginatedRecipes, getAuthor } from '@/sanity/lib/queries'
 import { urlFor } from '@/sanity/lib/image'
+import Image from 'next/image'
 import Link from 'next/link'
 import RecipeCard from './components/RecipeCard'
 
-const RECIPES_PER_PAGE = 9
+const RECIPES_PER_PAGE = 8
 
 export default async function Home({ searchParams }) {
   const params = await searchParams
   const currentPage = Math.max(Number(params?.page) || 1, 1)
   const start = (currentPage - 1) * RECIPES_PER_PAGE
   const end = start + RECIPES_PER_PAGE
-  const { recipes, total } = await client.fetch(getPaginatedRecipes, { start, end })
+  const [{ recipes, total }, author] = await Promise.all([
+    client.fetch(getPaginatedRecipes, { start, end }),
+    client.fetch(getAuthor),
+  ])
   const totalPages = Math.max(Math.ceil(total / RECIPES_PER_PAGE), 1)
 
   return (
     <div>
       {/* Hero */}
-      <section className="hero-section" style={{
-        background: 'linear-gradient(160deg, #1E0E05 0%, #5C2810 60%, #E8622A 100%)',
-        color: 'white',
-        textAlign: 'center',
+      <section className="hero-section with-video" style={{
         position: 'relative',
         overflow: 'hidden',
+        marginTop: '-68px',
+        padding: 'calc(7rem + 72px) 2rem 6rem',
+        color: 'white',
+        textAlign: 'center',
       }}>
+        <video className="hero-bg-video" autoPlay muted loop playsInline>
+          <source src="/hero-background.mp4" type="video/mp4" />
+          Your browser does not support HTML5 video.
+        </video>
+        <div className="hero-overlay" />
         {/* Decorative circles */}
         <div style={{
           position: 'absolute', top: '-80px', right: '-80px',
@@ -155,79 +165,128 @@ export default async function Home({ searchParams }) {
         maxWidth: '1200px',
         margin: '4rem auto',
       }}>
-        <div className="section-heading-row" style={{
-          marginBottom: '2rem',
-        }}>
-          <h2 style={{
-            fontFamily: '"Playfair Display", serif',
-            fontSize: '2rem',
-            color: '#3D2010',
-          }}>
-            Recent Recipes
-          </h2>
-          <Link href="/recipes" style={{
-            fontFamily: '"Lato", sans-serif',
-            fontSize: '0.85rem',
-            color: '#E8622A',
-            fontWeight: '700',
-            letterSpacing: '0.3px',
-          }}>
-            View all →
-          </Link>
+        <div className="homepage-recipes-layout">
+          <div>
+            <div className="section-heading-row" style={{
+              marginBottom: '2rem',
+            }}>
+              <h2 style={{
+                fontFamily: '"Playfair Display", serif',
+                fontSize: '2rem',
+                color: '#3D2010',
+              }}>
+                Recent Recipes
+              </h2>
+              <Link href="/recipes" style={{
+                fontFamily: '"Lato", sans-serif',
+                fontSize: '0.85rem',
+                color: '#E8622A',
+                fontWeight: '700',
+                letterSpacing: '0.3px',
+              }}>
+                View all →
+              </Link>
+            </div>
+
+            <div className="recipe-grid">
+              {recipes.slice(0, RECIPES_PER_PAGE).map((recipe) => (
+                <RecipeCard
+                  key={recipe._id}
+                  recipe={recipe}
+                  imageUrl={recipe.mainImage ? urlFor(recipe.mainImage).width(400).height(200).url() : null}
+                />
+              ))}
+            </div>
+
+            {totalPages > 1 && (
+              <Pagination currentPage={currentPage} totalPages={totalPages} />
+            )}
+          </div>
+
+          {author && (
+            <aside className="home-author-sidebar">
+              <div className="sticky-panel">
+                <div className="author-bio-card">
+                  {author.photo && (
+                    <div style={{
+                      width: '100px',
+                      height: '100px',
+                      borderRadius: '50%',
+                      overflow: 'hidden',
+                      margin: '0 auto 1rem',
+                      border: '3px solid #E8622A',
+                    }}>
+                      <Image
+                        src={urlFor(author.photo).width(100).height(100).url()}
+                        alt={author.name}
+                        width={100}
+                        height={100}
+                        style={{ objectFit: 'cover' }}
+                      />
+                    </div>
+                  )}
+
+                  <p style={{
+                    fontFamily: '"Lato", sans-serif',
+                    fontSize: '0.72rem',
+                    letterSpacing: '1.5px',
+                    textTransform: 'uppercase',
+                    color: '#E8622A',
+                    marginBottom: '0.25rem',
+                    fontWeight: '700',
+                  }}>
+                    About Adelaide
+                  </p>
+                  <h3 style={{
+                    fontFamily: '"Playfair Display", serif',
+                    fontSize: '1.3rem',
+                    color: '#2C1A0E',
+                    marginBottom: '1rem',
+                  }}>
+                    {author.name}
+                  </h3>
+                  <p style={{
+                    fontFamily: '"Lato", sans-serif',
+                    fontSize: '0.875rem',
+                    color: '#6B5244',
+                    lineHeight: 1.7,
+                    marginBottom: '1.25rem',
+                    textAlign: 'left',
+                  }}>
+                    {author.bio}
+                  </p>
+
+                  <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', marginBottom: '1rem' }}>
+                    {author.instagram && (
+                      <a href={author.instagram} target="_blank" rel="noopener noreferrer" className="social-link">
+                        <img src="/instagram.png" alt="Instagram" className="social-icon" />
+                      </a>
+                    )}
+                    {author.pinterest && (
+                      <a href={author.pinterest} target="_blank" rel="noopener noreferrer" className="social-link">
+                        <img src="/pinterest.png" alt="Pinterest" className="social-icon" />
+                      </a>
+                    )}
+                  </div>
+
+                  <Link href="/about" className="button button-link" style={{
+                    display: 'inline-block',
+                    marginTop: '0.5rem',
+                    background: '#E8622A',
+                    color: 'white',
+                    padding: '0.85rem 1.25rem',
+                    borderRadius: '999px',
+                    fontFamily: '"Lato", sans-serif',
+                    fontWeight: '700',
+                    textDecoration: 'none',
+                  }}>
+                    Learn more
+                  </Link>
+                </div>
+              </div>
+            </aside>
+          )}
         </div>
-
-        <div className="recipe-grid">
-          {recipes.slice(0, RECIPES_PER_PAGE).map((recipe) => (
-            <RecipeCard
-              key={recipe._id}
-              recipe={recipe}
-              imageUrl={recipe.mainImage ? urlFor(recipe.mainImage).width(400).height(200).url() : null}
-            />
-          ))}
-        </div>
-
-        {totalPages > 1 && (
-          <Pagination currentPage={currentPage} totalPages={totalPages} />
-        )}
-      </section>
-
-      {/* About Banner */}
-      <section style={{
-        background: 'linear-gradient(135deg, #3D2010, #7A4528)',
-        color: 'white',
-        padding: '4rem 2rem',
-        textAlign: 'center',
-        margin: '2rem 0 0',
-      }}>
-        <h2 style={{
-          fontFamily: '"Playfair Display", serif',
-          fontSize: '2rem',
-          marginBottom: '1rem',
-        }}>
-          Meet Adelaide
-        </h2>
-        <p style={{
-          fontFamily: '"Lato", sans-serif',
-          fontSize: '1rem',
-          color: 'rgba(255,255,255,0.75)',
-          maxWidth: '500px',
-          margin: '0 auto 1.5rem',
-          lineHeight: 1.8,
-        }}>
-          {"Home cook and big believer that good food doesn't have to be complicated."}
-        </p>
-        <Link href="/about" style={{
-          background: 'transparent',
-          border: '1px solid rgba(255,255,255,0.4)',
-          color: 'white',
-          padding: '0.75rem 2rem',
-          borderRadius: '50px',
-          fontFamily: '"Lato", sans-serif',
-          fontSize: '0.9rem',
-          display: 'inline-block',
-        }}>
-          Read My Story
-        </Link>
       </section>
     </div>
   )

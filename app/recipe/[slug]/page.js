@@ -319,6 +319,22 @@ export default async function RecipePage({ params }) {
         {/* RIGHT: Author Sidebar */}
         {author && (
           <div className="sticky-panel">
+            {recipe.mainImage && (
+              <div className="recipe-sidebar-image">
+                <Image
+                  src={urlFor(recipe.mainImage).width(640).height(360).url()}
+                  alt={recipe.title}
+                  width={640}
+                  height={360}
+                  style={{ objectFit: 'cover', width: '100%', height: '100%' }}
+                  priority
+                />
+                <div className="recipe-sidebar-title">
+                  <h2>{recipe.title}</h2>
+                </div>
+              </div>
+            )}
+
             <div style={{
               background: '#FDF6EE',
               border: '1px solid #F0E6DC',

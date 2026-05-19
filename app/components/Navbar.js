@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
+import { usePathname } from 'next/navigation'
 
 const navLinks = [
   { label: 'Lunch', href: '/category/lunch' },
@@ -28,11 +29,42 @@ export default function Navbar() {
   const [searchQuery, setSearchQuery] = useState('')
   const [suggestions, setSuggestions] = useState([])
   const [suggestionsOpen, setSuggestionsOpen] = useState(false)
+  const [heroVisible, setHeroVisible] = useState(true)
   const searchInputRef = useRef(null)
+  const pathname = usePathname()
+  const isHome = pathname === '/' || pathname === ''
 
   useEffect(() => {
     if (searchOpen) searchInputRef.current?.focus()
   }, [searchOpen])
+
+  useEffect(() => {
+    if (!isHome) {
+      setHeroVisible(false)
+      return
+    }
+
+    const heroSection = document.querySelector('.hero-section.with-video')
+    if (!heroSection) {
+      setHeroVisible(false)
+      return
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setHeroVisible(entry.isIntersecting)
+      },
+      {
+        rootMargin: '0px 0px -100px 0px',
+      }
+    )
+
+    observer.observe(heroSection)
+
+    return () => {
+      observer.disconnect()
+    }
+  }, [isHome])
 
   useEffect(() => {
     const query = searchQuery.trim()
@@ -110,8 +142,8 @@ export default function Navbar() {
 
   return (
     <header className="site-header" style={{
-      background: '#1E0E05',
-      borderBottom: '1px solid rgba(255,255,255,0.06)',
+      background: isHome && heroVisible ? 'transparent' : '#1E0E05',
+      borderBottom: isHome && heroVisible ? 'none' : '1px solid rgba(255,255,255,0.06)',
       position: 'sticky',
       top: 0,
       zIndex: 100,
