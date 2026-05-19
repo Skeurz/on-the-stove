@@ -78,7 +78,7 @@ export default async function Home({ searchParams }) {
           </p>
 
           <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-            <Link href="/category/dinner" style={{
+            <Link href="/recipes" style={{
               background: '#E8622A',
               color: 'white',
               padding: '0.85rem 2.2rem',
@@ -165,7 +165,7 @@ export default async function Home({ searchParams }) {
           }}>
             Recent Recipes
           </h2>
-          <Link href="/category/dinner" style={{
+          <Link href="/recipes" style={{
             fontFamily: '"Lato", sans-serif',
             fontSize: '0.85rem',
             color: '#E8622A',
@@ -177,7 +177,7 @@ export default async function Home({ searchParams }) {
         </div>
 
         <div className="recipe-grid">
-          {recipes.map((recipe) => (
+          {recipes.slice(0, RECIPES_PER_PAGE).map((recipe) => (
             <RecipeCard
               key={recipe._id}
               recipe={recipe}

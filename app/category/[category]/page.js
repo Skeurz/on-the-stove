@@ -1,8 +1,11 @@
 import { client } from '@/sanity/lib/client'
-import { getRecipesByCategory } from '@/sanity/lib/queries'
+import { getAuthor, getPaginatedRecipesByCategory } from '@/sanity/lib/queries'
 import { urlFor } from '@/sanity/lib/image'
+import Image from 'next/image'
+import Link from 'next/link'
 import RecipeCard from '@/app/components/RecipeCard'
 
+const RECIPES_PER_PAGE = 8
 const categoryLabels = {
   lunch: 'Lunch',
   dinner: 'Dinner',
@@ -12,9 +15,16 @@ const categoryLabels = {
   'drinks-shakes': 'Drinks & Shakes',
 }
 
-export default async function CategoryPage({ params }) {
+export default async function CategoryPage({ params, searchParams }) {
   const { category } = await params
-  const recipes = await client.fetch(getRecipesByCategory, { category })
+  const currentPage = Math.max(Number(searchParams?.page) || 1, 1)
+  const start = (currentPage - 1) * RECIPES_PER_PAGE
+  const end = start + RECIPES_PER_PAGE
+  const [{ recipes, total }, author] = await Promise.all([
+    client.fetch(getPaginatedRecipesByCategory, { category, start, end }),
+    client.fetch(getAuthor),
+  ])
+  const totalPages = Math.max(Math.ceil(total / RECIPES_PER_PAGE), 1)
   const label = categoryLabels[category] || category
 
   return (
@@ -48,7 +58,7 @@ export default async function CategoryPage({ params }) {
           color: '#7A6555',
           marginTop: '0.5rem',
         }}>
-          {recipes.length} recipe{recipes.length !== 1 ? 's' : ''}
+          Showing {recipes.length} of {total} recipe{total !== 1 ? 's' : ''}
         </p>
       </div>
 
@@ -64,16 +74,153 @@ export default async function CategoryPage({ params }) {
           <p>No recipes in this category yet. Check back soon!</p>
         </div>
       ) : (
-        <div className="recipe-grid">
-          {recipes.map((recipe) => (
-            <RecipeCard
-              key={recipe._id}
-              recipe={recipe}
-              imageUrl={recipe.mainImage ? urlFor(recipe.mainImage).width(400).height(200).url() : null}
-            />
-          ))}
-        </div>
+        <>
+          <div className="category-layout">
+            <div>
+              <div className="recipe-grid">
+                {recipes.map((recipe) => (
+                  <RecipeCard
+                    key={recipe._id}
+                    recipe={recipe}
+                    imageUrl={recipe.mainImage ? urlFor(recipe.mainImage).width(400).height(200).url() : null}
+                  />
+                ))}
+              </div>
+
+              {totalPages > 1 && (
+                <Pagination currentPage={currentPage} totalPages={totalPages} category={category} />
+              )}
+            </div>
+
+            {author && (
+              <div className="sticky-panel category-author-panel">
+                <div className="author-bio-card">
+                  {author.photo && (
+                    <div style={{
+                      width: '100px',
+                      height: '100px',
+                      borderRadius: '50%',
+                      overflow: 'hidden',
+                      margin: '0 auto 1rem',
+                      border: '3px solid #E8622A',
+                    }}>
+                      <Image
+                        src={urlFor(author.photo).width(100).height(100).url()}
+                        alt={author.name}
+                        width={100}
+                        height={100}
+                        style={{ objectFit: 'cover' }}
+                      />
+                    </div>
+                  )}
+
+                  <p style={{
+                    fontFamily: 'Lato, sans-serif',
+                    fontSize: '0.72rem',
+                    letterSpacing: '1.5px',
+                    textTransform: 'uppercase',
+                    color: '#E8622A',
+                    marginBottom: '0.25rem',
+                    fontWeight: '700',
+                  }}>
+                    Recipe by
+                  </p>
+                  <h3 style={{
+                    fontFamily: 'Playfair Display, serif',
+                    fontSize: '1.3rem',
+                    color: '#2C1A0E',
+                    marginBottom: '0.75rem',
+                  }}>
+                    {author.name}
+                  </h3>
+                  <p style={{
+                    fontFamily: 'Lato, sans-serif',
+                    fontSize: '0.875rem',
+                    color: '#6B5244',
+                    lineHeight: 1.7,
+                    marginBottom: '1.25rem',
+                    textAlign: 'left',
+                  }}>
+                    {author.bio}
+                  </p>
+
+                  <div className="author-socials">
+                    {author.instagram && (
+                      <a href={author.instagram} target="_blank" rel="noopener noreferrer" className="social-link">
+                        <img src="/instagram.png" alt="Instagram" className="social-icon" />
+                      </a>
+                    )}
+                    {author.pinterest && (
+                      <a href={author.pinterest} target="_blank" rel="noopener noreferrer" className="social-link">
+                        <img src="/pinterest.png" alt="Pinterest" className="social-icon" />
+                      </a>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </>
       )}
     </div>
+  )
+}
+
+function Pagination({ currentPage, totalPages, category }) {
+  const pages = Array.from({ length: totalPages }, (_, index) => index + 1)
+
+  return (
+    <nav aria-label="Recipe pagination" style={{
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      flexWrap: 'wrap',
+      gap: '0.6rem',
+      marginTop: '2.5rem',
+      fontFamily: 'Lato, sans-serif',
+    }}>
+      {currentPage > 1 && (
+        <PageLink href={currentPage === 2 ? `/category/${category}` : `/category/${category}?page=${currentPage - 1}`}>
+          Previous
+        </PageLink>
+      )}
+
+      {pages.map((page) => (
+        <PageLink
+          key={page}
+          href={page === 1 ? `/category/${category}` : `/category/${category}?page=${page}`}
+          active={page === currentPage}
+        >
+          {page}
+        </PageLink>
+      ))}
+
+      {currentPage < totalPages && (
+        <PageLink href={`/category/${category}?page=${currentPage + 1}`}>
+          Next
+        </PageLink>
+      )}
+    </nav>
+  )
+}
+
+function PageLink({ href, active = false, children }) {
+  return (
+    <Link href={href} style={{
+      minWidth: '40px',
+      height: '40px',
+      padding: '0 0.85rem',
+      display: 'inline-flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: '50px',
+      border: active ? '1px solid #E8622A' : '1px solid #E8D5C4',
+      background: active ? '#E8622A' : 'white',
+      color: active ? 'white' : '#7A4528',
+      fontSize: '0.88rem',
+      fontWeight: '700',
+    }}>
+      {children}
+    </Link>
   )
 }

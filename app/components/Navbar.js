@@ -109,14 +109,14 @@ export default function Navbar() {
   }
 
   return (
-    <header style={{
+    <header className="site-header" style={{
       background: '#1E0E05',
       borderBottom: '1px solid rgba(255,255,255,0.06)',
       position: 'sticky',
       top: 0,
       zIndex: 100,
     }}>
-      <div style={{
+      <div className="header-inner" style={{
         maxWidth: '1200px',
         margin: '0 auto',
         padding: '0 1.5rem',
@@ -125,18 +125,13 @@ export default function Navbar() {
         alignItems: 'center',
         justifyContent: 'space-between',
       }}>
-        {/* Logo */}
+        {/* Logo (image) */}
         <Link href="/" onClick={() => setMobileOpen(false)} style={{
-          fontFamily: '"Playfair Display", serif',
-          color: '#FDF6EE',
-          fontSize: '1.3rem',
-          fontWeight: '700',
           display: 'flex',
           alignItems: 'center',
-          gap: '0.4rem',
+          gap: '0.6rem',
         }}>
-          <span style={{ color: '#E8622A', fontSize: '1.5rem' }}>🔥</span>
-          On The Stove
+          <img src="/logo.png" alt="On The Stove" style={{ height: 38, width: 'auto', display: 'block' }} />
         </Link>
 
         {/* Desktop Nav */}
@@ -163,7 +158,7 @@ export default function Navbar() {
             onMouseEnter={() => setDropdownOpen(true)}
             onMouseLeave={() => setDropdownOpen(false)}
           >
-            <button style={{
+            <Link href="/recipes" style={{
               background: 'none',
               border: 'none',
               color: 'rgba(253,246,238,0.7)',
@@ -172,9 +167,10 @@ export default function Navbar() {
               padding: '0.4rem 0.75rem',
               borderRadius: '6px',
               cursor: 'pointer',
-              display: 'flex',
+              display: 'inline-flex',
               alignItems: 'center',
               gap: '0.35rem',
+              textDecoration: 'none',
             }}>
               Recipes
               <span style={{
@@ -183,7 +179,7 @@ export default function Navbar() {
                 transform: dropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)',
                 display: 'inline-block',
               }}>▼</span>
-            </button>
+            </Link>
 
             {dropdownOpen && (
               <div style={{
@@ -278,6 +274,7 @@ export default function Navbar() {
               }}
             />
             <button
+              className="button"
               type="submit"
               onClick={handleDesktopSearchButton}
               aria-label={searchOpen ? 'Submit search' : 'Open search'}
@@ -302,7 +299,7 @@ export default function Navbar() {
               </svg>
             </button>
             {searchOpen && suggestionsOpen && searchQuery.trim().length >= 2 && (
-              <div style={{
+              <div className="search-suggestions desktop-search-suggestions" style={{
                 position: 'absolute',
                 top: 'calc(100% + 0.6rem)',
                 left: '50%',
@@ -386,7 +383,7 @@ export default function Navbar() {
             )}
           </form>
 
-          <Link href="/contact" style={{
+          <Link href="/contact" className="button button-link" style={{
             background: '#E8622A',
             color: 'white',
             fontFamily: '"Lato", sans-serif',
@@ -402,7 +399,7 @@ export default function Navbar() {
 
         {/* Hamburger button - mobile only */}
         <button
-          className="hamburger"
+          className="hamburger button"
           onClick={() => setMobileOpen(!mobileOpen)}
           style={{
             background: 'none',
@@ -439,6 +436,18 @@ export default function Navbar() {
             Home
           </Link>
 
+          <Link href="/recipes" onClick={() => setMobileOpen(false)} style={{
+            display: 'block',
+            color: 'rgba(253,246,238,0.8)',
+            fontFamily: '"Lato", sans-serif',
+            fontSize: '1rem',
+            padding: '0.75rem 0',
+            borderBottom: '1px solid rgba(255,255,255,0.06)',
+            textDecoration: 'none',
+          }}>
+            Recipes
+          </Link>
+
           <p style={{
             fontFamily: '"Lato", sans-serif',
             fontSize: '0.72rem',
@@ -447,7 +456,7 @@ export default function Navbar() {
             color: '#E8622A',
             margin: '1rem 0 0.5rem',
           }}>
-            Recipes
+            Categories
           </p>
 
           {navLinks.map(link => (
@@ -543,7 +552,7 @@ export default function Navbar() {
               </svg>
             </button>
             {suggestionsOpen && searchQuery.trim().length >= 2 && (
-              <div style={{
+              <div className="search-suggestions mobile-search-suggestions" style={{
                 position: 'absolute',
                 top: 'calc(100% + 0.6rem)',
                 left: 0,

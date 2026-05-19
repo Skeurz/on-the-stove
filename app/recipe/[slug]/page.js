@@ -378,30 +378,13 @@ export default async function RecipePage({ params }) {
 
               <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center' }}>
                 {author.instagram && (
-                  <a href={author.instagram} target="_blank" rel="noopener noreferrer" style={{
-                    background: '#E8622A',
-                    color: 'white',
-                    fontFamily: '"Lato", sans-serif',
-                    fontSize: '0.8rem',
-                    fontWeight: '700',
-                    padding: '0.4rem 1rem',
-                    borderRadius: '50px',
-                  }}>
-                    Instagram
+                  <a href={author.instagram} target="_blank" rel="noopener noreferrer" className="social-link">
+                    <img src="/instagram.png" alt="Instagram" className="social-icon" />
                   </a>
                 )}
                 {author.pinterest && (
-                  <a href={author.pinterest} target="_blank" rel="noopener noreferrer" style={{
-                    background: 'white',
-                    color: '#E8622A',
-                    border: '1px solid #E8622A',
-                    fontFamily: '"Lato", sans-serif',
-                    fontSize: '0.8rem',
-                    fontWeight: '700',
-                    padding: '0.4rem 1rem',
-                    borderRadius: '50px',
-                  }}>
-                    Pinterest
+                  <a href={author.pinterest} target="_blank" rel="noopener noreferrer" className="social-link">
+                    <img src="/pinterest.png" alt="Pinterest" className="social-icon" />
                   </a>
                 )}
               </div>

@@ -68,7 +68,7 @@ export default async function SearchPage({ searchParams }) {
               outlineColor: '#F4946A',
             }}
           />
-          <button type="submit" style={{
+          <button type="submit" className="button" style={{
             background: '#E8622A',
             color: 'white',
             border: 'none',

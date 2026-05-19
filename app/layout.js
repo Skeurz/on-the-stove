@@ -2,6 +2,7 @@ import './globals.css'
 import Link from 'next/link'
 import Navbar from './components/Navbar'
 import BackToTop from './components/BackToTop'
+import EnhanceButtons from './components/EnhanceButtons'
 
 const navLinks = [
   { label: 'Lunch', href: '/category/lunch' },
@@ -23,21 +24,12 @@ export default function RootLayout({ children }) {
       <body>
         <Navbar />
 
+        <EnhanceButtons />
+
         <main>{children}</main>
 
-        <footer style={{
-          background: '#1E0E05',
-          color: 'rgba(253,246,238,0.5)',
-          marginTop: '6rem',
-          borderTop: '1px solid rgba(255,255,255,0.06)',
-        }}>
-          <div style={{
-            borderTop: '1px solid rgba(255,255,255,0.06)',
-            textAlign: 'center',
-            padding: '1.5rem 2rem',
-            fontFamily: '"Lato", sans-serif',
-            fontSize: '0.8rem',
-          }}>
+        <footer className="site-footer">
+          <div className="footer-content">
             <div style={{
               display: 'flex',
               justifyContent: 'center',
@@ -52,27 +44,40 @@ export default function RootLayout({ children }) {
                 { label: 'Disclaimer', href: '/disclaimer' },
                 { label: 'Terms of Service', href: '/terms-of-service' },
               ].map(link => (
-                <Link key={link.href} href={link.href} style={{
+                <Link key={link.href} href={link.href} className="footer-nav-link" style={{
                   color: 'rgba(253,246,238,0.5)',
                   fontFamily: '"Lato", sans-serif',
                   fontSize: '0.8rem',
-                  transition: 'color 0.15s',
                 }}>
                   {link.label}
                 </Link>
               ))}
-              <Link href="/contact" style={{
+              <Link href="/contact" className="footer-contact-button button button-link" style={{
+                marginTop: '-0.25rem',
                 background: '#E8622A',
                 color: 'white',
                 fontFamily: '"Lato", sans-serif',
-                fontSize: '0.8rem',
+                fontSize: '0.75rem',
                 fontWeight: '700',
-                padding: '0.35rem 0.9rem',
-                borderRadius: '50px',
-                marginTop: '-0.35rem',
+                padding: '0.25rem 0.75rem',
+                borderRadius: '999px',
+                minWidth: 'fit-content',
               }}>
                 Contact
               </Link>
+            </div>
+            <div className="footer-socials" style={{
+              display: 'flex',
+              justifyContent: 'center',
+              gap: '1rem',
+              marginBottom: '0.5rem',
+            }}>
+              <a href="https://instagram.com/" target="_blank" rel="noopener noreferrer" className="social-link" aria-label="Instagram">
+                <img src="/instagram.png" alt="Instagram" className="social-icon" />
+              </a>
+              <a href="https://pinterest.com/" target="_blank" rel="noopener noreferrer" className="social-link" aria-label="Pinterest">
+                <img src="/pinterest.png" alt="Pinterest" className="social-icon" />
+              </a>
             </div>
             © {new Date().getFullYear()} On The Stove · Made with ❤️ by Adelaide
           </div>

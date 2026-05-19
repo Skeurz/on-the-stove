@@ -1,0 +1,167 @@
+import { client } from '@/sanity/lib/client'
+import { getAuthor } from '@/sanity/lib/queries'
+import { urlFor } from '@/sanity/lib/image'
+import Image from 'next/image'
+import Link from 'next/link'
+
+const categories = [
+  {
+    emoji: '🍱',
+    label: 'Lunch',
+    description: 'Fresh, satisfying midday meals that are easy to assemble and full of flavor.',
+    href: '/category/lunch',
+  },
+  {
+    emoji: '🍝',
+    label: 'Dinner',
+    description: 'Comforting evening plates designed for busy weeknights and simple entertaining.',
+    href: '/category/dinner',
+  },
+  {
+    emoji: '🥞',
+    label: 'Breakfast & Brunch',
+    description: 'Bright starts and cozy brunch classics to make mornings feel more special.',
+    href: '/category/breakfastnbrunch',
+  },
+  {
+    emoji: '🥨',
+    label: 'Snacks & Sides',
+    description: 'Crisp bites, easy sides, and shareable morsels to round out any meal.',
+    href: '/category/snacksnsides',
+  },
+  {
+    emoji: '🍰',
+    label: 'Desserts',
+    description: 'Sweet finishes with bold flavor and simple ingredients you already have.',
+    href: '/category/desserts',
+  },
+  {
+    emoji: '🥤',
+    label: 'Drinks & Shakes',
+    description: 'Refreshing sips and creamy treats to keep the kitchen feeling fun and easy.',
+    href: '/category/drinks-shakes',
+  },
+]
+
+export default async function RecipesPage() {
+  const author = await client.fetch(getAuthor)
+
+  return (
+    <div className="content-section" style={{ maxWidth: '1200px', margin: '0 auto', padding: '3rem 0 4rem' }}>
+      <div style={{ marginBottom: '2rem' }}>
+        <p style={{
+          fontFamily: 'Lato, sans-serif',
+          fontSize: '0.8rem',
+          letterSpacing: '2px',
+          textTransform: 'uppercase',
+          color: '#E8622A',
+          marginBottom: '0.75rem',
+        }}>
+          Recipes
+        </p>
+        <h1 style={{
+          fontFamily: 'Playfair Display, serif',
+          fontSize: 'clamp(2.4rem, 4vw, 3.4rem)',
+          color: '#3D2010',
+          lineHeight: 1.05,
+          marginBottom: '1rem',
+        }}>
+          Find the recipe category that fits your mood.
+        </h1>
+        <p style={{
+          fontFamily: 'Lato, sans-serif',
+          color: '#7A6555',
+          maxWidth: '720px',
+          lineHeight: 1.8,
+          fontSize: '1rem',
+        }}>
+          Explore every recipe collection in one place, then head to the right to learn more about Adelaide and her approach to everyday cooking.
+        </p>
+      </div>
+
+      <div className="recipes-page-layout">
+        <div className="category-card-grid">
+          {categories.map((category) => (
+            <Link key={category.href} href={category.href} className="category-card">
+              <div className="category-card-emoji">{category.emoji}</div>
+              <div>
+                <h2 className="category-card-title">{category.label}</h2>
+                <p className="category-card-copy">{category.description}</p>
+              </div>
+              <span className="category-card-action">View all</span>
+            </Link>
+          ))}
+        </div>
+
+        {author && (
+          <aside className="author-scroll-panel">
+            <div className="author-panel">
+              {author.photo && (
+                <div className="author-photo-wrapper">
+                  <Image
+                    src={urlFor(author.photo).width(120).height(120).url()}
+                    alt={author.name}
+                    width={120}
+                    height={120}
+                    style={{ objectFit: 'cover', borderRadius: '50%' }}
+                  />
+                </div>
+              )}
+
+              <p style={{
+                fontFamily: 'Lato, sans-serif',
+                fontSize: '0.8rem',
+                letterSpacing: '2px',
+                textTransform: 'uppercase',
+                color: '#E8622A',
+                marginBottom: '0.85rem',
+              }}>
+                About Adelaide
+              </p>
+              <h2 style={{
+                fontFamily: 'Playfair Display, serif',
+                fontSize: '1.9rem',
+                color: '#3D2010',
+                marginBottom: '1rem',
+              }}>
+                Home cooking made simple.
+              </h2>
+              <p style={{
+                fontFamily: 'Lato, sans-serif',
+                color: '#7A6555',
+                lineHeight: 1.8,
+                marginBottom: '1.5rem',
+              }}>
+                {author.bio || 'Classic, cozy, and approachable recipes with real ingredients — the kind of food you want to eat every day.'}
+              </p>
+
+              <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', marginBottom: '1rem' }}>
+                {author.instagram && (
+                  <Link href={author.instagram} target="_blank" rel="noopener noreferrer" className="button button-link" style={{ padding: '0.65rem 1rem' }}>
+                    Instagram
+                  </Link>
+                )}
+                {author.pinterest && (
+                  <Link href={author.pinterest} target="_blank" rel="noopener noreferrer" className="button button-link" style={{ padding: '0.65rem 1rem' }}>
+                    Pinterest
+                  </Link>
+                )}
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap' }}>
+                <div>
+                  <p style={{ fontFamily: 'Lato, sans-serif', color: '#7A6555', fontSize: '0.78rem', marginBottom: '0.3rem' }}>Stay inspired</p>
+                  <p style={{ fontFamily: 'Lato, sans-serif', color: '#3D2010', fontSize: '1.4rem', fontWeight: '700' }}>Every day</p>
+                </div>
+                <div>
+                  <p style={{ fontFamily: 'Lato, sans-serif', color: '#7A6555', fontSize: '0.78rem', marginBottom: '0.3rem' }}>Kitchen confidence</p>
+                  <p style={{ fontFamily: 'Lato, sans-serif', color: '#3D2010', fontSize: '1.4rem', fontWeight: '700' }}>Made easy</p>
+                </div>
+              </div>
+            </div>
+          </aside>
+        )}
+      </div>
+    </div>
+  )
+}

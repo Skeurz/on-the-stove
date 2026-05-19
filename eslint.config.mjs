@@ -9,6 +9,11 @@ const eslintConfig = defineConfig([
     ".next/**",
     "out/**",
     "build/**",
+    // Project-specific ignores to avoid linting large built assets
+    "dist/**",
+    ".sanity/**",
+    "public/**",
+    "node_modules/**",
     "next-env.d.ts",
   ]),
 ]);

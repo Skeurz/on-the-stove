@@ -66,6 +66,24 @@ export const getRecipesByCategory = defineQuery(`
   }
 `)
 
+export const getPaginatedRecipesByCategory = defineQuery(`
+  {
+    "recipes": *[_type == "recipe" && category == $category] | order(publishedAt desc) [$start...$end] {
+      _id,
+      title,
+      slug,
+      category,
+      description,
+      mainImage,
+      prepTime,
+      cookTime,
+      servings,
+      publishedAt
+    },
+    "total": count(*[_type == "recipe" && category == $category])
+  }
+`)
+
 export const searchRecipes = defineQuery(`
   *[
     _type == "recipe" &&

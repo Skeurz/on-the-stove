@@ -421,7 +421,7 @@ export function LegalStaticPage({ page }) {
 
 function PrimaryButton({ href, children }) {
   return (
-    <Link href={href} className="full-width-mobile" style={{
+    <Link href={href} className="full-width-mobile button button-link" style={{
       background: '#E8622A',
       color: 'white',
       fontFamily: '"Lato", sans-serif',
@@ -440,7 +440,7 @@ function PrimaryButton({ href, children }) {
 
 function SecondaryButton({ href, children }) {
   return (
-    <Link href={href} className="full-width-mobile" style={{
+    <Link href={href} className="full-width-mobile button button-link" style={{
       background: 'white',
       color: '#E8622A',
       border: '1px solid #E8622A',
@@ -504,29 +504,13 @@ export async function AboutStaticPage() {
 
           <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1.5rem', justifyContent: 'center' }}>
             {author?.pinterest && (
-              <a href={author.pinterest} target="_blank" rel="noopener noreferrer" style={{
-                background: '#E60023',
-                color: 'white',
-                fontFamily: '"Lato", sans-serif',
-                fontSize: '0.85rem',
-                fontWeight: '700',
-                padding: '0.6rem 1.5rem',
-                borderRadius: '50px',
-              }}>
-                Pinterest
+              <a href={author.pinterest} target="_blank" rel="noopener noreferrer" className="social-link">
+                <img src="/pinterest.png" alt="Pinterest" className="social-icon" />
               </a>
             )}
             {author?.instagram && (
-              <a href={author.instagram} target="_blank" rel="noopener noreferrer" style={{
-                background: 'linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366)',
-                color: 'white',
-                fontFamily: '"Lato", sans-serif',
-                fontSize: '0.85rem',
-                fontWeight: '700',
-                padding: '0.6rem 1.5rem',
-                borderRadius: '50px',
-              }}>
-                Instagram
+              <a href={author.instagram} target="_blank" rel="noopener noreferrer" className="social-link">
+                <img src="/instagram.png" alt="Instagram" className="social-icon" />
               </a>
             )}
           </div>

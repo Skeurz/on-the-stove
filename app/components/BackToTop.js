@@ -15,6 +15,7 @@ export default function BackToTop() {
 
   return (
     <button
+      className="button"
       onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
       style={{
         position: 'fixed',
@@ -34,14 +35,6 @@ export default function BackToTop() {
         alignItems: 'center',
         justifyContent: 'center',
         transition: 'transform 0.2s, box-shadow 0.2s',
-      }}
-      onMouseEnter={e => {
-        e.currentTarget.style.transform = 'translateY(-3px)'
-        e.currentTarget.style.boxShadow = '0 8px 25px rgba(232,98,42,0.5)'
-      }}
-      onMouseLeave={e => {
-        e.currentTarget.style.transform = 'translateY(0)'
-        e.currentTarget.style.boxShadow = '0 4px 20px rgba(232,98,42,0.4)'
       }}
       aria-label="Back to top"
     >
