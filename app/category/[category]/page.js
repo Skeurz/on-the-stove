@@ -18,7 +18,7 @@ export default async function CategoryPage({ params }) {
   const label = categoryLabels[category] || category
 
   return (
-    <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '2rem' }}>
+    <div className="content-section" style={{ maxWidth: '1200px', margin: '0 auto', paddingTop: '2rem', paddingBottom: '2rem' }}>
 
       {/* Header */}
       <div style={{
@@ -64,11 +64,7 @@ export default async function CategoryPage({ params }) {
           <p>No recipes in this category yet. Check back soon!</p>
         </div>
       ) : (
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-          gap: '2rem',
-        }}>
+        <div className="recipe-grid">
           {recipes.map((recipe) => (
             <RecipeCard
               key={recipe._id}

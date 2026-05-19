@@ -129,6 +129,7 @@ export default function RecipeCard({ recipe, imageUrl }) {
           {/* Meta row */}
           <div style={{
             display: 'flex',
+            flexWrap: 'wrap',
             gap: '1rem',
             marginTop: '1rem',
             paddingTop: '1rem',

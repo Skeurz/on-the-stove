@@ -10,10 +10,9 @@ export default async function Home() {
   return (
     <div>
       {/* Hero */}
-      <section style={{
+      <section className="hero-section" style={{
         background: 'linear-gradient(160deg, #1E0E05 0%, #5C2810 60%, #E8622A 100%)',
         color: 'white',
-        padding: '7rem 2rem 6rem',
         textAlign: 'center',
         position: 'relative',
         overflow: 'hidden',
@@ -68,7 +67,7 @@ export default async function Home() {
             lineHeight: 1.8,
             fontWeight: '300',
           }}>
-            Good food doesn't have to be complicated. Join Adelaide on a tasteful journey through comforting, approachable cooking.
+            {"Good food doesn't have to be complicated. Join Adelaide on a tasteful journey through comforting, approachable cooking."}
           </p>
 
           <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
@@ -104,7 +103,7 @@ export default async function Home() {
       </section>
 
       {/* Category Pills */}
-      <section style={{
+      <section className="mobile-scroll-pills" style={{
         background: '#FDF6EE',
         borderBottom: '1px solid #F0EBE3',
         padding: '1.25rem 2rem',
@@ -145,15 +144,11 @@ export default async function Home() {
       </section>
 
       {/* Recipes Grid */}
-      <section style={{
+      <section className="content-section" style={{
         maxWidth: '1200px',
         margin: '4rem auto',
-        padding: '0 2rem',
       }}>
-        <div style={{
-          display: 'flex',
-          alignItems: 'baseline',
-          justifyContent: 'space-between',
+        <div className="section-heading-row" style={{
           marginBottom: '2rem',
         }}>
           <h2 style={{
@@ -174,11 +169,7 @@ export default async function Home() {
           </Link>
         </div>
 
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-          gap: '2rem',
-        }}>
+        <div className="recipe-grid">
           {recipes.map((recipe) => (
             <RecipeCard
               key={recipe._id}
@@ -212,7 +203,7 @@ export default async function Home() {
           margin: '0 auto 1.5rem',
           lineHeight: 1.8,
         }}>
-          Home cook and big believer that good food doesn't have to be complicated.
+          {"Home cook and big believer that good food doesn't have to be complicated."}
         </p>
         <Link href="/about" style={{
           background: 'transparent',

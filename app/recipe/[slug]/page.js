@@ -34,7 +34,7 @@ export default async function RecipePage({ params }) {
     <div>
       {/* Hero Image */}
       {recipe.mainImage && (
-        <div style={{
+        <div className="recipe-hero-image" style={{
           width: '100%',
           height: '480px',
           position: 'relative',
@@ -90,13 +90,11 @@ export default async function RecipePage({ params }) {
       )}
 
       {/* Main layout: content + sidebar */}
-      <div style={{
+      <div className="recipe-page-layout content-section" style={{
         maxWidth: '1200px',
         margin: '0 auto',
-        padding: '2.5rem 2rem',
-        display: 'grid',
-        gridTemplateColumns: '1fr 320px',
-        gap: '3rem',
+        paddingTop: '2.5rem',
+        paddingBottom: '2.5rem',
         alignItems: 'start',
       }}>
 
@@ -192,21 +190,16 @@ export default async function RecipePage({ params }) {
           )}
 
           {/* Ingredients + Steps */}
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: recipe.ingredients?.length > 0 && recipe.steps?.length > 0 ? '1fr 2fr' : '1fr',
-            gap: '2rem',
+          <div className={`recipe-body-grid ${recipe.ingredients?.length > 0 && recipe.steps?.length > 0 ? 'has-ingredients' : ''}`} style={{
             alignItems: 'start',
             margin: '2rem 0',
           }}>
             {recipe.ingredients?.length > 0 && (
-              <div style={{
+              <div className="sticky-panel" style={{
                 background: '#FDF6EE',
                 borderRadius: '16px',
                 padding: '1.5rem',
                 border: '1px solid #F0E6DC',
-                position: 'sticky',
-                top: '88px',
               }}>
                 <h2 style={{
                   fontFamily: '"Playfair Display", serif',
@@ -253,7 +246,7 @@ export default async function RecipePage({ params }) {
                 </h2>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
                   {recipe.steps.map((step, i) => (
-                    <div key={i} style={{
+                    <div key={i} className="recipe-step" style={{
                       display: 'flex',
                       gap: '1.1rem',
                       alignItems: 'flex-start',
@@ -325,10 +318,7 @@ export default async function RecipePage({ params }) {
 
         {/* RIGHT: Author Sidebar */}
         {author && (
-          <div style={{
-            position: 'sticky',
-            top: '88px',
-          }}>
+          <div className="sticky-panel">
             <div style={{
               background: '#FDF6EE',
               border: '1px solid #F0E6DC',

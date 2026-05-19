@@ -61,6 +61,18 @@ export default function RootLayout({ children }) {
                   {link.label}
                 </Link>
               ))}
+              <Link href="/contact" style={{
+                background: '#E8622A',
+                color: 'white',
+                fontFamily: '"Lato", sans-serif',
+                fontSize: '0.8rem',
+                fontWeight: '700',
+                padding: '0.35rem 0.9rem',
+                borderRadius: '50px',
+                marginTop: '-0.35rem',
+              }}>
+                Contact
+              </Link>
             </div>
             © {new Date().getFullYear()} On The Stove · Made with ❤️ by Adelaide
           </div>
