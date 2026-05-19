@@ -6,14 +6,15 @@ import { useState } from 'react'
 const navLinks = [
   { label: 'Lunch', href: '/category/lunch' },
   { label: 'Dinner', href: '/category/dinner' },
-  { label: 'Breakfast', href: '/category/breakfastnbrunch' },
+  { label: 'Breakfast & Brunch', href: '/category/breakfastnbrunch' },
   { label: 'Snacks & Sides', href: '/category/snacksnsides' },
   { label: 'Desserts', href: '/category/desserts' },
   { label: 'Drinks & Shakes', href: '/category/drinks-shakes' },
 ]
 
 export default function Navbar() {
-  const [open, setOpen] = useState(false)
+  const [dropdownOpen, setDropdownOpen] = useState(false)
+  const [mobileOpen, setMobileOpen] = useState(false)
 
   return (
     <header style={{
@@ -26,30 +27,34 @@ export default function Navbar() {
       <div style={{
         maxWidth: '1200px',
         margin: '0 auto',
-        padding: '0 2rem',
+        padding: '0 1.5rem',
         height: '68px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
       }}>
         {/* Logo */}
-        <Link href="/" style={{
+        <Link href="/" onClick={() => setMobileOpen(false)} style={{
           fontFamily: '"Playfair Display", serif',
           color: '#FDF6EE',
-          fontSize: '1.4rem',
+          fontSize: '1.3rem',
           fontWeight: '700',
-          letterSpacing: '0.5px',
           display: 'flex',
           alignItems: 'center',
-          gap: '0.5rem',
+          gap: '0.4rem',
         }}>
-          <span style={{ color: '#E8622A', fontSize: '1.6rem' }}>🔥</span>
+          <span style={{ color: '#E8622A', fontSize: '1.5rem' }}>🔥</span>
           On The Stove
         </Link>
 
-        {/* Nav */}
-        <nav style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-
+        {/* Desktop Nav */}
+        <nav style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.25rem',
+        }}
+          className="desktop-nav"
+        >
           <Link href="/" style={{
             color: 'rgba(253,246,238,0.7)',
             fontFamily: '"Lato", sans-serif',
@@ -60,11 +65,11 @@ export default function Navbar() {
             Home
           </Link>
 
-          {/* Recipes Dropdown */}
+          {/* Dropdown */}
           <div
             style={{ position: 'relative' }}
-            onMouseEnter={() => setOpen(true)}
-            onMouseLeave={() => setOpen(false)}
+            onMouseEnter={() => setDropdownOpen(true)}
+            onMouseLeave={() => setDropdownOpen(false)}
           >
             <button style={{
               background: 'none',
@@ -83,13 +88,12 @@ export default function Navbar() {
               <span style={{
                 fontSize: '0.65rem',
                 transition: 'transform 0.2s',
-                transform: open ? 'rotate(180deg)' : 'rotate(0deg)',
+                transform: dropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)',
                 display: 'inline-block',
               }}>▼</span>
             </button>
 
-            {/* Dropdown menu */}
-            {open && (
+            {dropdownOpen && (
               <div style={{
                 position: 'absolute',
                 top: '100%',
@@ -105,7 +109,7 @@ export default function Navbar() {
                   <Link
                     key={link.href}
                     href={link.href}
-                    onClick={() => setOpen(false)}
+                    onClick={() => setDropdownOpen(false)}
                     style={{
                       display: 'block',
                       padding: '0.6rem 0.9rem',
@@ -113,7 +117,6 @@ export default function Navbar() {
                       fontSize: '0.88rem',
                       color: 'rgba(253,246,238,0.75)',
                       borderRadius: '6px',
-                      transition: 'background 0.15s, color 0.15s',
                     }}
                     onMouseEnter={e => {
                       e.currentTarget.style.background = 'rgba(232,98,42,0.15)'
@@ -150,12 +153,115 @@ export default function Navbar() {
             padding: '0.45rem 1.1rem',
             borderRadius: '50px',
             marginLeft: '0.25rem',
-            letterSpacing: '0.3px',
           }}>
             Contact
           </Link>
         </nav>
+
+        {/* Hamburger button - mobile only */}
+        <button
+          className="hamburger"
+          onClick={() => setMobileOpen(!mobileOpen)}
+          style={{
+            background: 'none',
+            border: 'none',
+            color: 'white',
+            fontSize: '1.5rem',
+            cursor: 'pointer',
+            padding: '0.25rem',
+            display: 'none',
+          }}
+          aria-label="Toggle menu"
+        >
+          {mobileOpen ? '✕' : '☰'}
+        </button>
       </div>
+
+      {/* Mobile Menu */}
+      {mobileOpen && (
+        <div style={{
+          background: '#2A1208',
+          borderTop: '1px solid rgba(255,255,255,0.06)',
+          padding: '1rem 1.5rem 1.5rem',
+        }}
+          className="mobile-menu"
+        >
+          <Link href="/" onClick={() => setMobileOpen(false)} style={{
+            display: 'block',
+            color: 'rgba(253,246,238,0.8)',
+            fontFamily: '"Lato", sans-serif',
+            fontSize: '1rem',
+            padding: '0.75rem 0',
+            borderBottom: '1px solid rgba(255,255,255,0.06)',
+          }}>
+            Home
+          </Link>
+
+          <p style={{
+            fontFamily: '"Lato", sans-serif',
+            fontSize: '0.72rem',
+            letterSpacing: '1.5px',
+            textTransform: 'uppercase',
+            color: '#E8622A',
+            margin: '1rem 0 0.5rem',
+          }}>
+            Recipes
+          </p>
+
+          {navLinks.map(link => (
+            <Link
+              key={link.href}
+              href={link.href}
+              onClick={() => setMobileOpen(false)}
+              style={{
+                display: 'block',
+                color: 'rgba(253,246,238,0.7)',
+                fontFamily: '"Lato", sans-serif',
+                fontSize: '0.95rem',
+                padding: '0.6rem 0.75rem',
+                borderRadius: '6px',
+              }}
+            >
+              {link.label}
+            </Link>
+          ))}
+
+          <Link href="/about" onClick={() => setMobileOpen(false)} style={{
+            display: 'block',
+            color: 'rgba(253,246,238,0.8)',
+            fontFamily: '"Lato", sans-serif',
+            fontSize: '1rem',
+            padding: '0.75rem 0',
+            borderTop: '1px solid rgba(255,255,255,0.06)',
+            marginTop: '0.5rem',
+          }}>
+            About
+          </Link>
+
+          <Link href="/contact" onClick={() => setMobileOpen(false)} style={{
+            display: 'block',
+            background: '#E8622A',
+            color: 'white',
+            fontFamily: '"Lato", sans-serif',
+            fontSize: '0.95rem',
+            fontWeight: '700',
+            padding: '0.75rem 1.5rem',
+            borderRadius: '50px',
+            textAlign: 'center',
+            marginTop: '1rem',
+          }}>
+            Contact
+          </Link>
+        </div>
+      )}
+
+      {/* Responsive styles */}
+      <style>{`
+        @media (max-width: 768px) {
+          .desktop-nav { display: none !important; }
+          .hamburger { display: block !important; }
+        }
+      `}</style>
     </header>
   )
 }
