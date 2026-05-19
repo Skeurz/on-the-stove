@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 const navLinks = [
   { label: 'Lunch', href: '/category/lunch' },
@@ -12,9 +12,101 @@ const navLinks = [
   { label: 'Drinks & Shakes', href: '/category/drinks-shakes' },
 ]
 
+const categoryLabel = {
+  lunch: 'Lunch',
+  dinner: 'Dinner',
+  breakfastnbrunch: 'Breakfast & Brunch',
+  snacksnsides: 'Snacks & Sides',
+  desserts: 'Desserts',
+  'drinks-shakes': 'Drinks & Shakes',
+}
+
 export default function Navbar() {
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [searchOpen, setSearchOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [suggestions, setSuggestions] = useState([])
+  const [suggestionsOpen, setSuggestionsOpen] = useState(false)
+  const searchInputRef = useRef(null)
+
+  useEffect(() => {
+    if (searchOpen) searchInputRef.current?.focus()
+  }, [searchOpen])
+
+  useEffect(() => {
+    const query = searchQuery.trim()
+
+    if (query.length < 2) {
+      return
+    }
+
+    const controller = new AbortController()
+    const timeout = setTimeout(async () => {
+      try {
+        const response = await fetch(`/api/search-suggestions?q=${encodeURIComponent(query)}`, {
+          signal: controller.signal,
+        })
+        const data = await response.json()
+        setSuggestions(data.suggestions || [])
+        setSuggestionsOpen(true)
+      } catch (error) {
+        if (error.name !== 'AbortError') {
+          setSuggestions([])
+          setSuggestionsOpen(false)
+        }
+      }
+    }, 180)
+
+    return () => {
+      controller.abort()
+      clearTimeout(timeout)
+    }
+  }, [searchQuery])
+
+  const handleSearchSubmit = (event) => {
+    const formData = new FormData(event.currentTarget)
+    const query = formData.get('q')?.toString().trim()
+
+    if (!query) {
+      event.preventDefault()
+      setSearchOpen(true)
+    }
+  }
+
+  const handleDesktopSearchButton = (event) => {
+    const query = searchQuery.trim()
+
+    if (!searchOpen) {
+      event.preventDefault()
+      setSearchOpen(true)
+      return
+    }
+
+    if (!query) {
+      event.preventDefault()
+      setSearchOpen(false)
+      setSuggestions([])
+      setSuggestionsOpen(false)
+    }
+  }
+
+  const closeSearch = () => {
+    setSearchOpen(false)
+    setSuggestionsOpen(false)
+    setSuggestions([])
+    setSearchQuery('')
+  }
+
+  const handleSearchChange = (event) => {
+    const value = event.target.value
+    setSearchQuery(value)
+
+    if (value.trim().length < 2) {
+      setSuggestions([])
+      setSuggestionsOpen(false)
+    }
+  }
 
   return (
     <header style={{
@@ -144,6 +236,156 @@ export default function Navbar() {
             About
           </Link>
 
+          <form
+            action="/search"
+            onSubmit={handleSearchSubmit}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: searchOpen ? '0.4rem' : 0,
+              margin: '0 0.45rem',
+              position: 'relative',
+              height: '40px',
+            }}
+          >
+            <input
+              ref={searchInputRef}
+              name="q"
+              type="search"
+              value={searchQuery}
+              onChange={handleSearchChange}
+              onFocus={() => {
+                if (suggestions.length > 0) setSuggestionsOpen(true)
+              }}
+              onKeyDown={(event) => {
+                if (event.key === 'Escape') closeSearch()
+              }}
+              aria-label="Search recipes"
+              placeholder="Search recipes"
+              style={{
+                width: searchOpen ? '180px' : '0',
+                opacity: searchOpen ? 1 : 0,
+                pointerEvents: searchOpen ? 'auto' : 'none',
+                border: searchOpen ? '1px solid rgba(255,255,255,0.16)' : 'none',
+                borderRadius: '50px',
+                background: '#2A1208',
+                color: '#FDF6EE',
+                fontFamily: '"Lato", sans-serif',
+                fontSize: '0.85rem',
+                padding: searchOpen ? '0.45rem 0.85rem' : '0.45rem 0',
+                outlineColor: '#E8622A',
+                transition: 'width 0.2s ease, opacity 0.2s ease, padding 0.2s ease',
+              }}
+            />
+            <button
+              type="submit"
+              onClick={handleDesktopSearchButton}
+              aria-label={searchOpen ? 'Submit search' : 'Open search'}
+              style={{
+                width: '36px',
+                height: '36px',
+                flexShrink: 0,
+                borderRadius: '50%',
+                border: '1px solid rgba(255,255,255,0.12)',
+                background: searchOpen ? '#E8622A' : 'rgba(255,255,255,0.06)',
+                color: 'white',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                transition: 'background 0.15s, border-color 0.15s',
+              }}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" fill="none">
+                <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="2" />
+                <path d="M16.5 16.5 21 21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              </svg>
+            </button>
+            {searchOpen && suggestionsOpen && searchQuery.trim().length >= 2 && (
+              <div style={{
+                position: 'absolute',
+                top: 'calc(100% + 0.6rem)',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                width: '320px',
+                background: '#2A1208',
+                border: '1px solid rgba(255,255,255,0.1)',
+                borderRadius: '14px',
+                padding: '0.5rem',
+                boxShadow: '0 12px 36px rgba(0,0,0,0.4)',
+              }}>
+                {suggestions.length > 0 ? (
+                  suggestions.map((item) => (
+                    <Link
+                      key={item._id}
+                      href={`/recipe/${item.slug.current}`}
+                      onClick={closeSearch}
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns: '44px minmax(0, 1fr)',
+                        gap: '0.75rem',
+                        alignItems: 'center',
+                        padding: '0.55rem 0.6rem',
+                        borderRadius: '10px',
+                        color: 'rgba(253,246,238,0.82)',
+                        fontFamily: '"Lato", sans-serif',
+                        fontSize: '0.88rem',
+                        lineHeight: 1.35,
+                      }}
+                    >
+                      <SuggestionThumb item={item} />
+                      <span style={{ minWidth: 0 }}>
+                        <span style={{
+                          display: 'block',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                        }}>
+                          {item.title}
+                        </span>
+                        <span style={{
+                          display: 'block',
+                          color: 'rgba(244,148,106,0.85)',
+                          fontSize: '0.72rem',
+                          marginTop: '0.15rem',
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.6px',
+                        }}>
+                          {categoryLabel[item.category] || item.category}
+                        </span>
+                      </span>
+                    </Link>
+                  ))
+                ) : (
+                  <p style={{
+                    color: 'rgba(253,246,238,0.55)',
+                    fontFamily: '"Lato", sans-serif',
+                    fontSize: '0.85rem',
+                    padding: '0.65rem 0.75rem',
+                  }}>
+                    No quick matches
+                  </p>
+                )}
+                <Link
+                  href={`/search?q=${encodeURIComponent(searchQuery.trim())}`}
+                  onClick={closeSearch}
+                  style={{
+                    display: 'block',
+                    borderTop: '1px solid rgba(255,255,255,0.08)',
+                    marginTop: '0.35rem',
+                    padding: '0.7rem 0.75rem 0.45rem',
+                    color: '#F4946A',
+                    fontFamily: '"Lato", sans-serif',
+                    fontSize: '0.82rem',
+                    fontWeight: '700',
+                  }}
+                >
+                  See all results
+                </Link>
+              </div>
+            )}
+          </form>
+
           <Link href="/contact" style={{
             background: '#E8622A',
             color: 'white',
@@ -252,6 +494,125 @@ export default function Navbar() {
           }}>
             Contact
           </Link>
+
+          <form action="/search" onSubmit={handleSearchSubmit} style={{
+            display: 'flex',
+            gap: '0.5rem',
+            marginTop: '1rem',
+            position: 'relative',
+          }}>
+            <input
+              name="q"
+              type="search"
+              value={searchQuery}
+              onChange={handleSearchChange}
+              onFocus={() => {
+                if (suggestions.length > 0) setSuggestionsOpen(true)
+              }}
+              aria-label="Search recipes"
+              placeholder="Search recipes"
+              style={{
+                flex: 1,
+                minWidth: 0,
+                border: '1px solid rgba(255,255,255,0.12)',
+                borderRadius: '50px',
+                background: '#1E0E05',
+                color: '#FDF6EE',
+                fontFamily: '"Lato", sans-serif',
+                fontSize: '0.95rem',
+                padding: '0.75rem 1rem',
+                outlineColor: '#E8622A',
+              }}
+            />
+            <button type="submit" aria-label="Search recipes" style={{
+              width: '46px',
+              height: '46px',
+              borderRadius: '50%',
+              border: 'none',
+              background: '#E8622A',
+              color: 'white',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              flexShrink: 0,
+            }}>
+              <svg width="17" height="17" viewBox="0 0 24 24" aria-hidden="true" fill="none">
+                <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="2" />
+                <path d="M16.5 16.5 21 21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              </svg>
+            </button>
+            {suggestionsOpen && searchQuery.trim().length >= 2 && (
+              <div style={{
+                position: 'absolute',
+                top: 'calc(100% + 0.6rem)',
+                left: 0,
+                right: 0,
+                background: '#1E0E05',
+                border: '1px solid rgba(255,255,255,0.1)',
+                borderRadius: '14px',
+                padding: '0.5rem',
+                boxShadow: '0 12px 36px rgba(0,0,0,0.4)',
+                zIndex: 2,
+              }}>
+                {suggestions.length > 0 ? (
+                  suggestions.map((item) => (
+                    <Link
+                      key={item._id}
+                      href={`/recipe/${item.slug.current}`}
+                      onClick={() => {
+                        setMobileOpen(false)
+                        closeSearch()
+                      }}
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns: '46px minmax(0, 1fr)',
+                        gap: '0.75rem',
+                        alignItems: 'center',
+                        padding: '0.6rem 0.7rem',
+                        borderRadius: '10px',
+                        color: 'rgba(253,246,238,0.82)',
+                        fontFamily: '"Lato", sans-serif',
+                        fontSize: '0.92rem',
+                        lineHeight: 1.35,
+                      }}
+                    >
+                      <SuggestionThumb item={item} />
+                      <span style={{ minWidth: 0 }}>
+                        <span style={{
+                          display: 'block',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                        }}>
+                          {item.title}
+                        </span>
+                        <span style={{
+                          display: 'block',
+                          color: 'rgba(244,148,106,0.85)',
+                          fontSize: '0.72rem',
+                          marginTop: '0.15rem',
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.6px',
+                        }}>
+                          {categoryLabel[item.category] || item.category}
+                        </span>
+                      </span>
+                    </Link>
+                  ))
+                ) : (
+                  <p style={{
+                    color: 'rgba(253,246,238,0.55)',
+                    fontFamily: '"Lato", sans-serif',
+                    fontSize: '0.9rem',
+                    padding: '0.7rem 0.75rem',
+                  }}>
+                    No quick matches
+                  </p>
+                )}
+              </div>
+            )}
+          </form>
         </div>
       )}
 
@@ -263,5 +624,42 @@ export default function Navbar() {
         }
       `}</style>
     </header>
+  )
+}
+
+function SuggestionThumb({ item }) {
+  return (
+    <span style={{
+      width: '44px',
+      height: '44px',
+      borderRadius: '10px',
+      overflow: 'hidden',
+      background: '#3D2010',
+      border: '1px solid rgba(255,255,255,0.08)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      color: '#F4946A',
+      fontSize: '0.75rem',
+      fontFamily: '"Lato", sans-serif',
+      fontWeight: '700',
+      flexShrink: 0,
+    }}>
+      {item.imageUrl ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={item.imageUrl}
+          alt=""
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            display: 'block',
+          }}
+        />
+      ) : (
+        'OTS'
+      )}
+    </span>
   )
 }

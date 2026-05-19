@@ -15,6 +15,24 @@ export const getAllRecipes = defineQuery(`
   }
 `)
 
+export const getPaginatedRecipes = defineQuery(`
+  {
+    "recipes": *[_type == "recipe"] | order(publishedAt desc) [$start...$end] {
+      _id,
+      title,
+      slug,
+      category,
+      description,
+      mainImage,
+      prepTime,
+      cookTime,
+      servings,
+      publishedAt
+    },
+    "total": count(*[_type == "recipe"])
+  }
+`)
+
 export const getRecipeBySlug = defineQuery(`
   *[_type == "recipe" && slug.current == $slug][0] {
     _id,
@@ -45,6 +63,45 @@ export const getRecipesByCategory = defineQuery(`
     cookTime,
     servings,
     publishedAt
+  }
+`)
+
+export const searchRecipes = defineQuery(`
+  *[
+    _type == "recipe" &&
+    (
+      title match $term ||
+      description match $term ||
+      category match $term
+    )
+  ] | order(publishedAt desc) {
+    _id,
+    title,
+    slug,
+    category,
+    description,
+    mainImage,
+    prepTime,
+    cookTime,
+    servings,
+    publishedAt
+  }
+`)
+
+export const searchRecipeSuggestions = defineQuery(`
+  *[
+    _type == "recipe" &&
+    (
+      title match $term ||
+      description match $term ||
+      category match $term
+    )
+  ] | order(publishedAt desc)[0...5] {
+    _id,
+    title,
+    slug,
+    category,
+    mainImage
   }
 `)
 export const getAuthor = defineQuery(`

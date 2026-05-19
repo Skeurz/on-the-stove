@@ -1,11 +1,18 @@
 import { client } from '@/sanity/lib/client'
-import { getAllRecipes } from '@/sanity/lib/queries'
+import { getPaginatedRecipes } from '@/sanity/lib/queries'
 import { urlFor } from '@/sanity/lib/image'
 import Link from 'next/link'
 import RecipeCard from './components/RecipeCard'
 
-export default async function Home() {
-  const recipes = await client.fetch(getAllRecipes)
+const RECIPES_PER_PAGE = 9
+
+export default async function Home({ searchParams }) {
+  const params = await searchParams
+  const currentPage = Math.max(Number(params?.page) || 1, 1)
+  const start = (currentPage - 1) * RECIPES_PER_PAGE
+  const end = start + RECIPES_PER_PAGE
+  const { recipes, total } = await client.fetch(getPaginatedRecipes, { start, end })
+  const totalPages = Math.max(Math.ceil(total / RECIPES_PER_PAGE), 1)
 
   return (
     <div>
@@ -178,6 +185,10 @@ export default async function Home() {
             />
           ))}
         </div>
+
+        {totalPages > 1 && (
+          <Pagination currentPage={currentPage} totalPages={totalPages} />
+        )}
       </section>
 
       {/* About Banner */}
@@ -219,5 +230,64 @@ export default async function Home() {
         </Link>
       </section>
     </div>
+  )
+}
+
+function Pagination({ currentPage, totalPages }) {
+  const pages = Array.from({ length: totalPages }, (_, index) => index + 1)
+
+  return (
+    <nav aria-label="Recipe pagination" style={{
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      flexWrap: 'wrap',
+      gap: '0.6rem',
+      marginTop: '2.5rem',
+      fontFamily: '"Lato", sans-serif',
+    }}>
+      {currentPage > 1 && (
+        <PageLink href={currentPage === 2 ? '/' : `/?page=${currentPage - 1}`}>
+          Previous
+        </PageLink>
+      )}
+
+      {pages.map((page) => (
+        <PageLink
+          key={page}
+          href={page === 1 ? '/' : `/?page=${page}`}
+          active={page === currentPage}
+        >
+          {page}
+        </PageLink>
+      ))}
+
+      {currentPage < totalPages && (
+        <PageLink href={`/?page=${currentPage + 1}`}>
+          Next
+        </PageLink>
+      )}
+    </nav>
+  )
+}
+
+function PageLink({ href, active = false, children }) {
+  return (
+    <Link href={href} style={{
+      minWidth: '40px',
+      height: '40px',
+      padding: '0 0.85rem',
+      display: 'inline-flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: '50px',
+      border: active ? '1px solid #E8622A' : '1px solid #E8D5C4',
+      background: active ? '#E8622A' : 'white',
+      color: active ? 'white' : '#7A4528',
+      fontSize: '0.88rem',
+      fontWeight: '700',
+    }}>
+      {children}
+    </Link>
   )
 }
