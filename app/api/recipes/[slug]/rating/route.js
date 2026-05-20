@@ -9,6 +9,11 @@ function hashIP(ip) {
   return createHash('sha256').update(ip + RATING_SALT).digest('hex')
 }
 
+function hashBrowserId(browserId) {
+  if (!browserId || typeof browserId !== 'string') return null
+  return createHash('sha256').update(browserId + RATING_SALT).digest('hex')
+}
+
 function getClientIP(request) {
   const forwarded = request.headers.get('x-forwarded-for')
   if (forwarded) return forwarded.split(',')[0].trim()
@@ -17,13 +22,17 @@ function getClientIP(request) {
   return '127.0.0.1'
 }
 
-async function getExistingVote(recipeId, ipHash) {
+async function getExistingVote(recipeId, ipHash, browserHash) {
   const result = await client.fetch(
-    defineQuery(`*[_type == "rating" && recipe._ref == $recipeId && ipHash == $ipHash][0]{
+    defineQuery(`*[
+      _type == "rating" &&
+      recipe._ref == $recipeId &&
+      (ipHash == $ipHash || ($browserHash != null && browserHash == $browserHash))
+    ][0]{
       _id,
       value
     }`),
-    { recipeId, ipHash }
+    { recipeId, ipHash, browserHash }
   )
   return result
 }
@@ -43,6 +52,7 @@ export async function GET(request, { params }) {
   try {
     const { slug } = await params
     const ipHash = hashIP(getClientIP(request))
+    const browserHash = hashBrowserId(request.headers.get('x-rating-browser-id'))
 
     const recipe = await getRecipeBySlug(slug)
     if (!recipe) {
@@ -50,7 +60,7 @@ export async function GET(request, { params }) {
     }
 
     const ratings = await getRecipeRatings(slug)
-    const existingVote = await getExistingVote(recipe._id, ipHash)
+    const existingVote = await getExistingVote(recipe._id, ipHash, browserHash)
 
     const average = ratings.ratingCount > 0
       ? Math.round((ratings.ratingTotal / ratings.ratingCount) * 10) / 10
@@ -78,7 +88,7 @@ export async function POST(request, { params }) {
   try {
     const { slug } = await params
     const body = await request.json()
-    const { value } = body
+    const { value, browserId } = body
 
     // Validate rating value
     if (!value || !Number.isInteger(value) || value < 1 || value > 5) {
@@ -89,6 +99,7 @@ export async function POST(request, { params }) {
     }
 
     const ipHash = hashIP(getClientIP(request))
+    const browserHash = hashBrowserId(browserId)
     const recipe = await getRecipeBySlug(slug)
 
     if (!recipe) {
@@ -96,7 +107,7 @@ export async function POST(request, { params }) {
     }
 
     // Check if this IP has already voted
-    const existingVote = await getExistingVote(recipe._id, ipHash)
+    const existingVote = await getExistingVote(recipe._id, ipHash, browserHash)
     if (existingVote) {
       return Response.json(
         { error: 'You have already rated this recipe' },
@@ -110,6 +121,7 @@ export async function POST(request, { params }) {
       recipe: { _ref: recipe._id, _type: 'reference' },
       value,
       ipHash,
+      browserHash,
       createdAt: new Date().toISOString(),
     })
 

@@ -416,7 +416,6 @@ export default function Navbar() {
               </div>
             )}
           </form>
-            <ThemeToggle />
             <Link href="/contact" className="button button-link" style={{
               background: '#E8622A',
               color: 'white',
@@ -448,6 +447,16 @@ export default function Navbar() {
         >
           {mobileOpen ? '✕' : '☰'}
         </button>
+      </div>
+
+      <div className="desktop-theme-toggle-wrap" style={{
+        position: 'absolute',
+        top: '50%',
+        right: '1.5rem',
+        transform: 'translateY(-50%)',
+        zIndex: 2,
+      }}>
+        <ThemeToggle />
       </div>
 
       {/* Mobile Menu */}
@@ -668,6 +677,7 @@ export default function Navbar() {
       <style>{`
         @media (max-width: 768px) {
           .desktop-nav { display: none !important; }
+          .desktop-theme-toggle-wrap { display: none !important; }
           .hamburger { display: block !important; }
         }
       `}</style>

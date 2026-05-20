@@ -5,9 +5,16 @@ export const recipe = {
   fields: [
     {
       name: 'title',
-      title: 'Title',
+      title: 'Recipe Title',
       type: 'string',
       validation: Rule => Rule.required()
+    },
+    {
+      name: 'description',
+      title: 'Short Hook / Description',
+      type: 'text',
+      rows: 3,
+      validation: Rule => Rule.required().max(220)
     },
     {
       name: 'slug',
@@ -34,9 +41,10 @@ export const recipe = {
     },
     {
       name: 'mainImage',
-      title: 'Main Image',
+      title: 'Hero Image',
       type: 'image',
-      options: { hotspot: true }
+      options: { hotspot: true },
+      validation: Rule => Rule.required()
     },
     {
       name: 'prepTime',
@@ -54,9 +62,10 @@ export const recipe = {
       type: 'number'
     },
     {
-      name: 'description',
-      title: 'Short Description',
-      type: 'text'
+      name: 'calories',
+      title: 'Calories',
+      description: 'Approximate calories per serving.',
+      type: 'number'
     },
     {
       name: 'ingredients',

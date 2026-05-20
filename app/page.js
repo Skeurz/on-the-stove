@@ -47,22 +47,6 @@ export default async function Home({ searchParams }) {
         }} />
 
         <div style={{ position: 'relative', zIndex: 1 }}>
-          <span style={{
-            display: 'inline-block',
-            background: 'rgba(232,98,42,0.2)',
-            border: '1px solid rgba(232,98,42,0.4)',
-            color: '#F4946A',
-            fontFamily: '"Lato", sans-serif',
-            fontSize: '0.78rem',
-            letterSpacing: '2.5px',
-            textTransform: 'uppercase',
-            padding: '0.35rem 1rem',
-            borderRadius: '50px',
-            marginBottom: '1.5rem',
-          }}>
-            From My Kitchen, To Yours
-          </span>
-
           <h1 style={{
             fontFamily: '"Playfair Display", serif',
             fontSize: 'clamp(2.8rem, 7vw, 5rem)',

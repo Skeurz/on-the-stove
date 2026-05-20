@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { PortableText } from 'next-sanity'
 import StarRating from '@/app/components/StarRating'
 import SuggestedRecipes from '@/app/components/SuggestedRecipes'
+import RecipeActions from '@/app/components/RecipeActions'
 
 const categoryLabel = {
   lunch: 'Lunch',
@@ -25,72 +26,28 @@ export default async function RecipePage({ params }) {
 
   if (!recipe) return (
     <div style={{ padding: '6rem', textAlign: 'center' }}>
-      <p style={{ fontFamily: '"Playfair Display", serif', fontSize: '2rem', color: '#3D2010' }}>Recipe not found</p>
+      <p style={{ fontFamily: '"Playfair Display", serif', fontSize: '2rem', color: 'var(--text)' }}>Recipe not found</p>
       <Link href="/" style={{ color: '#E8622A', fontFamily: '"Lato", sans-serif' }}>← Back to home</Link>
     </div>
   )
 
   const totalTime = (recipe.prepTime || 0) + (recipe.cookTime || 0)
+  const tableOfContents = [
+    recipe.description ? { href: '#recipe-overview', label: 'Overview' } : null,
+    recipe.ingredients?.length > 0 ? { href: '#recipe-ingredients', label: 'Ingredients' } : null,
+    recipe.steps?.length > 0 ? { href: '#recipe-instructions', label: 'Instructions' } : null,
+    recipe.body ? { href: '#recipe-notes', label: 'Notes' } : null,
+  ].filter(Boolean)
+  const recipeFacts = [
+    recipe.prepTime ? { label: 'Prep time', value: `${recipe.prepTime} min` } : null,
+    recipe.cookTime ? { label: 'Cook time', value: `${recipe.cookTime} min` } : null,
+    totalTime > 0 ? { label: 'Total time', value: `${totalTime} min` } : null,
+    recipe.servings ? { label: 'Servings', value: recipe.servings } : null,
+    recipe.calories ? { label: 'Calories', value: recipe.calories } : null,
+  ].filter(Boolean)
 
   return (
     <div>
-      {/* Hero Image */}
-      {recipe.mainImage && (
-        <div className="recipe-hero-image" style={{
-          width: '100%',
-          height: '480px',
-          position: 'relative',
-          overflow: 'hidden',
-        }}>
-          <Image
-            src={urlFor(recipe.mainImage).width(1200).height(480).url()}
-            alt={recipe.title}
-            fill
-            style={{ objectFit: 'cover' }}
-            priority
-          />
-          <div style={{
-            position: 'absolute', inset: 0,
-            background: 'linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(30,14,5,0.7) 100%)',
-          }} />
-          <div style={{
-            position: 'absolute',
-            bottom: '2.5rem',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            width: '100%',
-            maxWidth: '1100px',
-            padding: '0 2rem',
-            textAlign: 'center',
-          }}>
-            <Link href={`/category/${recipe.category}`} style={{
-              display: 'inline-block',
-              background: 'rgba(232,98,42,0.9)',
-              color: 'white',
-              fontSize: '0.72rem',
-              fontWeight: '700',
-              letterSpacing: '1.5px',
-              textTransform: 'uppercase',
-              padding: '0.3rem 0.9rem',
-              borderRadius: '50px',
-              fontFamily: '"Lato", sans-serif',
-              marginBottom: '1rem',
-            }}>
-              {categoryLabel[recipe.category] || recipe.category}
-            </Link>
-            <h1 style={{
-              fontFamily: '"Playfair Display", serif',
-              fontSize: 'clamp(1.8rem, 5vw, 3rem)',
-              color: 'white',
-              lineHeight: 1.2,
-              textShadow: '0 2px 12px rgba(0,0,0,0.3)',
-            }}>
-              {recipe.title}
-            </h1>
-          </div>
-        </div>
-      )}
-
       {/* Main layout: content + sidebar */}
       <div className="recipe-page-layout content-section" style={{
         maxWidth: '1200px',
@@ -100,147 +57,94 @@ export default async function RecipePage({ params }) {
         alignItems: 'start',
       }}>
 
-        {/* LEFT: Recipe content */}
+        {/* LEFT: Rating card */}
+        <aside className="recipe-rating-rail">
+          <div className="recipe-rating-card">
+            <p className="recipe-rating-eyebrow">Tried it?</p>
+            <h3>Rate this recipe</h3>
+            <StarRating slug={slug} />
+          </div>
+
+          <div className="recipe-toc-card">
+            <p className="recipe-toc-eyebrow">On this recipe</p>
+            <nav aria-label="Recipe table of contents">
+              {tableOfContents.length > 0 ? (
+                tableOfContents.map(item => (
+                  <a key={item.href} href={item.href}>{item.label}</a>
+                ))
+              ) : (
+                <a href="#recipe-details">Recipe details</a>
+              )}
+            </nav>
+          </div>
+        </aside>
+
+        {/* MAIN: Recipe content */}
         <div>
-          {/* Title if no image */}
-          {!recipe.mainImage && (
-            <>
-              <Link href={`/category/${recipe.category}`} style={{
-                display: 'inline-block',
-                background: '#FDF6EE',
-                color: '#E8622A',
-                fontSize: '0.72rem',
-                fontWeight: '700',
-                letterSpacing: '1.5px',
-                textTransform: 'uppercase',
-                padding: '0.3rem 0.9rem',
-                borderRadius: '50px',
-                fontFamily: '"Lato", sans-serif',
-                marginBottom: '1rem',
-              }}>
-                {categoryLabel[recipe.category] || recipe.category}
-              </Link>
-              <h1 style={{
-                fontFamily: '"Playfair Display", serif',
-                fontSize: 'clamp(2rem, 5vw, 3rem)',
-                color: '#2C1A0E',
-                lineHeight: 1.2,
-                marginBottom: '1.5rem',
-              }}>
-                {recipe.title}
-              </h1>
-            </>
-          )}
+          <section className="recipe-entry-header">
+            <Link href={`/category/${recipe.category}`} className="recipe-category-pill">
+              {categoryLabel[recipe.category] || recipe.category}
+            </Link>
 
-          {/* Meta cards */}
-          {(recipe.prepTime || recipe.cookTime || recipe.servings) && (
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(100px, 1fr))',
-              gap: '1rem',
-              margin: '2rem 0',
-              padding: '1.5rem',
-              background: '#FDF6EE',
-              borderRadius: '16px',
-              border: '1px solid #F0E6DC',
-            }}>
-              {recipe.prepTime && (
-                <div style={{ textAlign: 'center' }}>
-                  <p style={{ fontSize: '1.5rem', marginBottom: '0.25rem' }}>⏱</p>
-                  <p style={{ fontFamily: '"Lato", sans-serif', fontSize: '0.72rem', color: '#A08070', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '0.2rem' }}>Prep</p>
-                  <p style={{ fontFamily: '"Playfair Display", serif', fontSize: '1.1rem', color: '#2C1A0E', fontWeight: '600' }}>{recipe.prepTime} min</p>
-                </div>
-              )}
-              {recipe.cookTime && (
-                <div style={{ textAlign: 'center' }}>
-                  <p style={{ fontSize: '1.5rem', marginBottom: '0.25rem' }}>🔥</p>
-                  <p style={{ fontFamily: '"Lato", sans-serif', fontSize: '0.72rem', color: '#A08070', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '0.2rem' }}>Cook</p>
-                  <p style={{ fontFamily: '"Playfair Display", serif', fontSize: '1.1rem', color: '#2C1A0E', fontWeight: '600' }}>{recipe.cookTime} min</p>
-                </div>
-              )}
-              {totalTime > 0 && (
-                <div style={{ textAlign: 'center' }}>
-                  <p style={{ fontSize: '1.5rem', marginBottom: '0.25rem' }}>🕐</p>
-                  <p style={{ fontFamily: '"Lato", sans-serif', fontSize: '0.72rem', color: '#A08070', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '0.2rem' }}>Total</p>
-                  <p style={{ fontFamily: '"Playfair Display", serif', fontSize: '1.1rem', color: '#2C1A0E', fontWeight: '600' }}>{totalTime} min</p>
-                </div>
-              )}
-              {recipe.servings && (
-                <div style={{ textAlign: 'center' }}>
-                  <p style={{ fontSize: '1.5rem', marginBottom: '0.25rem' }}>🍽</p>
-                  <p style={{ fontFamily: '"Lato", sans-serif', fontSize: '0.72rem', color: '#A08070', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '0.2rem' }}>Serves</p>
-                  <p style={{ fontFamily: '"Playfair Display", serif', fontSize: '1.1rem', color: '#2C1A0E', fontWeight: '600' }}>{recipe.servings}</p>
-                </div>
-              )}
-            </div>
-          )}
+            <h1>{recipe.title}</h1>
 
-          {/* Star Rating */}
-          <div style={{
-            margin: '2.5rem 0',
-            padding: 'clamp(1.5rem, 5vw, 2.25rem)',
-            background: '#FDF6EE',
-            border: '1px solid #F0E6DC',
-            borderRadius: '20px',
-            textAlign: 'center',
-            boxShadow: '0 10px 30px rgba(61,32,16,0.04)',
-          }}>
-            <h3 style={{
-              fontFamily: '"Playfair Display", serif',
-              fontSize: 'clamp(1.8rem, 6vw, 3rem)',
-              color: '#2C1A0E',
-              marginBottom: '0.5rem',
-            }}>
-              Did you try this recipe?
-            </h3>
-            <p style={{
-              fontFamily: '"Lato", sans-serif',
-              fontSize: 'clamp(0.9rem, 3vw, 1.44rem)',
-              color: '#E8622A',
-              fontWeight: '700',
-              letterSpacing: '1.5px',
-              textTransform: 'uppercase',
-              marginBottom: 'clamp(1.5rem, 5vw, 3rem)',
-            }}>
-              Rate it below!
-            </p>
-            <div className="star-rating-scale">
+            {recipe.description && (
+              <p id="recipe-overview" className="recipe-entry-hook">
+                {recipe.description}
+              </p>
+            )}
+
+            {recipe.mainImage && (
+              <div className="recipe-entry-image">
+                <Image
+                  src={urlFor(recipe.mainImage).width(1100).height(640).url()}
+                  alt={recipe.title}
+                  fill
+                  style={{ objectFit: 'cover' }}
+                  priority
+                />
+              </div>
+            )}
+
+            <RecipeActions />
+
+            {recipeFacts.length > 0 && (
+              <div className="recipe-facts-grid">
+                {recipeFacts.map(fact => (
+                  <div key={fact.label} className="recipe-fact-card">
+                    <p>{fact.label}</p>
+                    <strong>{fact.value}</strong>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+
+          <div className="recipe-print-rating">
+            <div className="recipe-rating-card">
+              <p className="recipe-rating-eyebrow">Tried it?</p>
+              <h3>Rate this recipe</h3>
               <StarRating slug={slug} />
             </div>
           </div>
 
-          {/* Description */}
-          {recipe.description && (
-            <p style={{
-              fontFamily: '"Lato", sans-serif',
-              fontSize: '1.05rem',
-              color: '#6B5244',
-              lineHeight: 1.85,
-              margin: '1.5rem 0 2rem',
-              fontStyle: 'italic',
-              paddingLeft: '1.25rem',
-              borderLeft: '3px solid #E8622A',
-            }}>
-              {recipe.description}
-            </p>
-          )}
 
           {/* Ingredients + Steps */}
-          <div className={`recipe-body-grid ${recipe.ingredients?.length > 0 && recipe.steps?.length > 0 ? 'has-ingredients' : ''}`} style={{
+          <div id="recipe-details" className={`recipe-body-grid ${recipe.ingredients?.length > 0 && recipe.steps?.length > 0 ? 'has-ingredients' : ''}`} style={{
             alignItems: 'start',
             margin: '2rem 0',
           }}>
             {recipe.ingredients?.length > 0 && (
-              <div className="sticky-panel" style={{
-                background: '#FDF6EE',
+              <div id="recipe-ingredients" className="sticky-panel" style={{
+                background: 'var(--cream)',
                 borderRadius: '16px',
                 padding: '1.5rem',
-                border: '1px solid #F0E6DC',
+                border: '1px solid var(--gray)',
               }}>
                 <h2 style={{
                   fontFamily: '"Playfair Display", serif',
                   fontSize: '1.4rem',
-                  color: '#2C1A0E',
+                  color: 'var(--text)',
                   marginBottom: '1.25rem',
                   paddingBottom: '0.75rem',
                   borderBottom: '2px solid #E8622A',
@@ -252,9 +156,9 @@ export default async function RecipePage({ params }) {
                     <li key={i} style={{
                       fontFamily: '"Lato", sans-serif',
                       fontSize: '0.9rem',
-                      color: '#3D2010',
+                      color: 'var(--text)',
                       padding: '0.55rem 0',
-                      borderBottom: '1px solid #F0E6DC',
+                      borderBottom: '1px solid var(--gray)',
                       display: 'flex',
                       alignItems: 'flex-start',
                       gap: '0.6rem',
@@ -269,11 +173,11 @@ export default async function RecipePage({ params }) {
             )}
 
             {recipe.steps?.length > 0 && (
-              <div>
+              <div id="recipe-instructions">
                 <h2 style={{
                   fontFamily: '"Playfair Display", serif',
                   fontSize: '1.4rem',
-                  color: '#2C1A0E',
+                  color: 'var(--text)',
                   marginBottom: '1.25rem',
                   paddingBottom: '0.75rem',
                   borderBottom: '2px solid #E8622A',
@@ -287,9 +191,9 @@ export default async function RecipePage({ params }) {
                       gap: '1.1rem',
                       alignItems: 'flex-start',
                       padding: '1.25rem',
-                      background: 'white',
+                      background: 'var(--cream)',
                       borderRadius: '12px',
-                      border: '1px solid #F0E6DC',
+                      border: '1px solid var(--gray)',
                     }}>
                       <span style={{
                         background: '#E8622A',
@@ -310,7 +214,7 @@ export default async function RecipePage({ params }) {
                       <p style={{
                         fontFamily: '"Lato", sans-serif',
                         fontSize: '0.95rem',
-                        color: '#2C1A0E',
+                        color: 'var(--text)',
                         lineHeight: 1.8,
                         margin: 0,
                         paddingTop: '4px',
@@ -326,14 +230,14 @@ export default async function RecipePage({ params }) {
 
           {/* Full body content */}
           {recipe.body && (
-            <div style={{
+            <div id="recipe-notes" style={{
               fontFamily: '"Lato", sans-serif',
               fontSize: '1rem',
               lineHeight: 1.9,
-              color: '#3D2010',
+              color: 'var(--text)',
               marginTop: '2rem',
               paddingTop: '2rem',
-              borderTop: '1px solid #F0E6DC',
+              borderTop: '1px solid var(--gray)',
             }}>
               <PortableText value={recipe.body} />
             </div>
@@ -361,8 +265,8 @@ export default async function RecipePage({ params }) {
             )}
 
             <div style={{
-              background: '#FDF6EE',
-              border: '1px solid #F0E6DC',
+              background: 'var(--cream)',
+              border: '1px solid var(--gray)',
               borderRadius: '20px',
               padding: '1.75rem',
               textAlign: 'center',
@@ -401,7 +305,7 @@ export default async function RecipePage({ params }) {
               <h3 style={{
                 fontFamily: '"Playfair Display", serif',
                 fontSize: '1.3rem',
-                color: '#2C1A0E',
+                color: 'var(--text)',
                 marginBottom: '0.75rem',
               }}>
                 {author.name}
@@ -409,7 +313,7 @@ export default async function RecipePage({ params }) {
               <p style={{
                 fontFamily: '"Lato", sans-serif',
                 fontSize: '0.875rem',
-                color: '#6B5244',
+                color: 'var(--text-light)',
                 lineHeight: 1.7,
                 marginBottom: '1.25rem',
                 textAlign: 'left',

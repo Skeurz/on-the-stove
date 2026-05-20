@@ -11,6 +11,7 @@ export const getAllRecipes = defineQuery(`
     prepTime,
     cookTime,
     servings,
+    calories,
     publishedAt,
     ratingTotal,
     ratingCount
@@ -29,6 +30,7 @@ export const getPaginatedRecipes = defineQuery(`
       prepTime,
       cookTime,
       servings,
+      calories,
       publishedAt,
       ratingTotal,
       ratingCount
@@ -48,6 +50,7 @@ export const getRecipeBySlug = defineQuery(`
     prepTime,
     cookTime,
     servings,
+    calories,
     ingredients,
     steps,
     body,
@@ -66,6 +69,7 @@ export const getRecipesByCategory = defineQuery(`
     prepTime,
     cookTime,
     servings,
+    calories,
     publishedAt,
     ratingTotal,
     ratingCount
@@ -84,6 +88,7 @@ export const getPaginatedRecipesByCategory = defineQuery(`
       prepTime,
       cookTime,
       servings,
+      calories,
       publishedAt,
       ratingTotal,
       ratingCount
@@ -110,6 +115,7 @@ export const searchRecipes = defineQuery(`
     prepTime,
     cookTime,
     servings,
+    calories,
     publishedAt,
     ratingTotal,
     ratingCount
