@@ -5,6 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { PortableText } from 'next-sanity'
 import StarRating from '@/app/components/StarRating'
+import SuggestedRecipes from '@/app/components/SuggestedRecipes'
 
 const categoryLabel = {
   lunch: 'Lunch',
@@ -175,7 +176,38 @@ export default async function RecipePage({ params }) {
           )}
 
           {/* Star Rating */}
-          <StarRating slug={slug} />
+          <div style={{
+            margin: '2.5rem 0',
+            padding: 'clamp(1.5rem, 5vw, 2.25rem)',
+            background: '#FDF6EE',
+            border: '1px solid #F0E6DC',
+            borderRadius: '20px',
+            textAlign: 'center',
+            boxShadow: '0 10px 30px rgba(61,32,16,0.04)',
+          }}>
+            <h3 style={{
+              fontFamily: '"Playfair Display", serif',
+              fontSize: 'clamp(1.8rem, 6vw, 3rem)',
+              color: '#2C1A0E',
+              marginBottom: '0.5rem',
+            }}>
+              Did you try this recipe?
+            </h3>
+            <p style={{
+              fontFamily: '"Lato", sans-serif',
+              fontSize: 'clamp(0.9rem, 3vw, 1.44rem)',
+              color: '#E8622A',
+              fontWeight: '700',
+              letterSpacing: '1.5px',
+              textTransform: 'uppercase',
+              marginBottom: 'clamp(1.5rem, 5vw, 3rem)',
+            }}>
+              Rate it below!
+            </p>
+            <div className="star-rating-scale">
+              <StarRating slug={slug} />
+            </div>
+          </div>
 
           {/* Description */}
           {recipe.description && (
@@ -307,17 +339,6 @@ export default async function RecipePage({ params }) {
             </div>
           )}
 
-          {/* Back link */}
-          <div style={{ marginTop: '3rem', paddingTop: '2rem', borderTop: '1px solid #F0E6DC' }}>
-            <Link href="/" style={{
-              fontFamily: '"Lato", sans-serif',
-              fontSize: '0.9rem',
-              color: '#E8622A',
-              fontWeight: '700',
-            }}>
-              ← Back to all recipes
-            </Link>
-          </div>
         </div>
 
         {/* RIGHT: Author Sidebar */}
@@ -409,8 +430,35 @@ export default async function RecipePage({ params }) {
                 )}
               </div>
             </div>
+
+            {/* Back to all recipes button */}
+            <div style={{ textAlign: 'center', marginTop: '2rem' }}>
+              <Link href="/recipes" className="back-to-recipes-button" style={{
+                display: 'inline-block',
+                position: 'relative',
+                background: '#E8622A',
+                color: 'white',
+                padding: '0.9rem 2.2rem',
+                borderRadius: '50px',
+                fontFamily: '"Lato", sans-serif',
+                fontWeight: '700',
+                fontSize: '0.95rem',
+                letterSpacing: '0.5px',
+                boxShadow: '0 4px 20px rgba(232,98,42,0.25)',
+                textDecoration: 'none', // Ensure no default underline
+              }}>
+                <span className="back-button-text">← Back to all recipes</span>
+              </Link>
+              {/* For a full hover effect, you would typically add external CSS like:
+              .back-to-recipes-button:hover { background: #C75020; box-shadow: 0 6px 25px rgba(232,98,42,0.4); } */}
+            </div>
           </div>
         )}
+      </div>
+
+      {/* Suggested Recipes Section */}
+      <div className="content-section" style={{ maxWidth: '1200px', margin: '0 auto' }}>
+        <SuggestedRecipes currentRecipeId={recipe._id} />
       </div>
     </div>
   )

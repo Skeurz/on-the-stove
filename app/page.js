@@ -72,7 +72,7 @@ export default async function Home({ searchParams }) {
             letterSpacing: '-0.5px',
           }}>
             Simple Recipes for<br />
-            <em style={{ color: '#F4946A' }}>Real Life</em>
+            <em style={{ color: '#E8622A' }}>Real Life</em>
           </h1>
 
           <p style={{

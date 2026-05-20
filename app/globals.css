@@ -741,3 +741,54 @@ body {
     transform: translateX(-50%) !important;
   }
 }
+
+.back-button-text {
+  position: relative;
+  display: inline-block;
+}
+
+.back-button-text::after {
+  content: "";
+  position: absolute;
+  bottom: -4px; /* Positioned exactly under the text */
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: white;
+  transform: scaleX(0);
+  transform-origin: right; /* Grows from right to left */
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 2px;
+}
+
+.back-to-recipes-button:hover .back-button-text::after {
+  transform: scaleX(1);
+}
+
+.back-to-recipes-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(232, 98, 42, 0.35) !important;
+  background-color: #d15221 !important;
+}
+
+.star-rating-scale {
+  display: flex;
+  justify-content: center;
+  transform: scale(1);
+  transform-origin: center;
+  margin: 1.5rem 0 1rem;
+}
+
+@media (max-width: 640px) {
+  .star-rating-scale {
+    transform: scale(1);
+    margin: 1rem 0 0.5rem;
+  }
+  
+  .back-to-recipes-button {
+    width: 100%;
+    max-width: 320px;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+}

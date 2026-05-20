@@ -141,3 +141,17 @@ export const getAuthor = defineQuery(`
     pinterest
   }
 `)
+
+export const getSuggestedRecipes = defineQuery(`
+  *[_type == "recipe" && _id != $currentId] | order(publishedAt desc) [0...12] {
+    _id,
+    title,
+    slug,
+    category,
+    mainImage,
+    prepTime,
+    cookTime,
+    ratingTotal,
+    ratingCount
+  }
+`)
