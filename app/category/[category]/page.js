@@ -32,8 +32,8 @@ export default async function CategoryPage({ params, searchParams }) {
 
       {/* Header */}
       <div style={{
-        background: '#FDF6EE',
-        border: '1px solid #F0E6DC',
+        background: 'var(--cream)',
+        border: '1px solid var(--gray)',
         borderRadius: '12px',
         padding: '0.8rem 1.4rem',
         width: 'fit-content',
@@ -44,7 +44,7 @@ export default async function CategoryPage({ params, searchParams }) {
           fontSize: '0.8rem',
           letterSpacing: '2px',
           textTransform: 'uppercase',
-          color: '#E8622A',
+          color: 'var(--orange)',
           margin: 0,
           marginBottom: '0.25rem',
         }}>
@@ -53,7 +53,7 @@ export default async function CategoryPage({ params, searchParams }) {
         <h1 style={{
           fontFamily: 'Playfair Display, serif',
           fontSize: '2.5rem',
-          color: '#3D2010',
+          color: 'var(--brown)',
           margin: 0,
           marginBottom: '0.35rem',
         }}>
@@ -61,7 +61,7 @@ export default async function CategoryPage({ params, searchParams }) {
         </h1>
         <p style={{
           fontFamily: 'Lato, sans-serif',
-          color: '#7A6555',
+          color: 'var(--text-light)',
           margin: 0,
           fontSize: '0.95rem',
         }}>
@@ -75,7 +75,7 @@ export default async function CategoryPage({ params, searchParams }) {
           textAlign: 'center',
           padding: '4rem',
           fontFamily: 'Lato, sans-serif',
-          color: '#7A6555',
+          color: 'var(--text-light)',
         }}>
           <p style={{ fontSize: '3rem', marginBottom: '1rem' }}>🍽️</p>
           <p>No recipes in this category yet. Check back soon!</p>
@@ -121,35 +121,35 @@ export default async function CategoryPage({ params, searchParams }) {
                     </div>
                   )}
 
-                  <p style={{
-                    fontFamily: 'Lato, sans-serif',
-                    fontSize: '0.72rem',
-                    letterSpacing: '1.5px',
-                    textTransform: 'uppercase',
-                    color: '#E8622A',
-                    marginBottom: '0.25rem',
-                    fontWeight: '700',
-                  }}>
-                    Recipe by
-                  </p>
-                  <h3 style={{
-                    fontFamily: 'Playfair Display, serif',
-                    fontSize: '1.3rem',
-                    color: '#2C1A0E',
-                    marginBottom: '0.75rem',
-                  }}>
-                    {author.name}
-                  </h3>
-                  <p style={{
-                    fontFamily: 'Lato, sans-serif',
-                    fontSize: '0.875rem',
-                    color: '#6B5244',
-                    lineHeight: 1.7,
-                    marginBottom: '1.25rem',
-                    textAlign: 'left',
-                  }}>
-                    {author.bio}
-                  </p>
+<p style={{
+            fontFamily: 'Lato, sans-serif',
+            fontSize: '0.72rem',
+            letterSpacing: '1.5px',
+            textTransform: 'uppercase',
+            color: 'var(--orange)',
+            marginBottom: '0.25rem',
+            fontWeight: '700',
+          }}>
+            Recipes by
+          </p>
+          <h3 style={{
+            fontFamily: 'Playfair Display, serif',
+            fontSize: '1.3rem',
+            color: 'var(--brown)',
+            marginBottom: '0.75rem',
+          }}>
+            {author.name}
+          </h3>
+          <p style={{
+            fontFamily: 'Lato, sans-serif',
+            fontSize: '0.875rem',
+            color: 'var(--text-light)',
+            lineHeight: 1.7,
+            marginBottom: '1.25rem',
+            textAlign: 'left',
+          }}>
+            {author.bio}
+          </p>
 
                   <div className="author-socials">
                     {author.instagram && (
@@ -221,9 +221,9 @@ function PageLink({ href, active = false, children }) {
       alignItems: 'center',
       justifyContent: 'center',
       borderRadius: '50px',
-      border: active ? '1px solid #E8622A' : '1px solid #E8D5C4',
-      background: active ? '#E8622A' : 'white',
-      color: active ? 'white' : '#7A4528',
+      border: active ? '1px solid var(--orange)' : '1px solid var(--gray)',
+      background: active ? 'var(--orange)' : 'var(--cream-light)',
+      color: active ? 'var(--cream)' : 'var(--brown-light)',
       fontSize: '0.88rem',
       fontWeight: '700',
     }}>

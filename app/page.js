@@ -113,7 +113,7 @@ export default async function Home({ searchParams }) {
               border: '1px solid rgba(255,255,255,0.2)',
               display: 'inline-block',
             }}>
-              About Adelaide
+              About me
             </Link>
           </div>
         </div>
@@ -176,50 +176,50 @@ export default async function Home({ searchParams }) {
         margin: '4rem auto',
       }}>
         <div className="homepage-recipes-layout">
-          <div>
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              gap: '1rem',
-              marginBottom: '2rem',
-              flexWrap: 'wrap',
-            }}>
-              <div style={{
-                background: '#FDF6EE',
-                border: '1px solid #F0E6DC',
-                borderRadius: '12px',
-                padding: '0.6rem 1.2rem',
-                width: 'fit-content',
-              }}>
-                <h2 style={{
-                  fontFamily: '"Playfair Display", serif',
-                  fontSize: '2rem',
-                  color: '#3D2010',
-                  margin: 0,
-                }}>
-                  Recent Recipes
-                </h2>
-              </div>
-              <div style={{
-                background: '#FDF6EE',
-                border: '1px solid #F0E6DC',
-                borderRadius: '12px',
-                padding: '0.6rem 1.2rem',
-                width: 'fit-content',
-              }}>
-                <Link href="/recipes" style={{
-                  fontFamily: '"Lato", sans-serif',
-                  fontSize: '0.88rem',
-                  color: '#E8622A',
-                  fontWeight: '700',
-                  letterSpacing: '0.3px',
-                  whiteSpace: 'nowrap',
-                }}>
-                  View all →
-                </Link>
-              </div>
-            </div>
+<div>
+                 <div style={{
+                   display: 'flex',
+                   alignItems: 'center',
+                   justifyContent: 'space-between',
+                   gap: '1rem',
+                   marginBottom: '2rem',
+                   flexWrap: 'wrap',
+                 }}>
+                   <div style={{
+                     background: 'var(--cream)',
+                     border: '1px solid var(--gray)',
+                     borderRadius: '12px',
+                     padding: '0.6rem 1.2rem',
+                     width: 'fit-content',
+                   }}>
+                     <h2 style={{
+                       fontFamily: '"Playfair Display", serif',
+                       fontSize: '2rem',
+                       color: 'var(--brown)',
+                       margin: 0,
+                     }}>
+                       Recent Recipes
+                     </h2>
+                   </div>
+                   <div style={{
+                     background: 'var(--cream)',
+                     border: '1px solid var(--gray)',
+                     borderRadius: '12px',
+                     padding: '0.6rem 1.2rem',
+                     width: 'fit-content',
+                   }}>
+                     <Link href="/recipes" style={{
+                       fontFamily: '"Lato", sans-serif',
+                       fontSize: '0.88rem',
+                       color: 'var(--orange)',
+                       fontWeight: '700',
+                       letterSpacing: '0.3px',
+                       whiteSpace: 'nowrap',
+                     }}>
+                       View all →
+                     </Link>
+                   </div>
+                 </div>
 
             <div className="recipe-grid">
               {recipes.slice(0, RECIPES_PER_PAGE).map((recipe) => (
@@ -231,98 +231,98 @@ export default async function Home({ searchParams }) {
               ))}
             </div>
 
-            {totalPages > 1 && (
-              <Pagination currentPage={currentPage} totalPages={totalPages} />
-            )}
-          </div>
+{totalPages > 1 && (
+               <Pagination currentPage={currentPage} totalPages={totalPages} />
+             )}
+           </div>
 
-          {author && (
-            <aside className="home-author-sidebar">
-              <div className="sticky-panel">
-                <div className="author-bio-card">
-                  {author.photo && (
-                    <div style={{
-                      width: '100px',
-                      height: '100px',
-                      borderRadius: '50%',
-                      overflow: 'hidden',
-                      margin: '0 auto 1rem',
-                      border: '3px solid #E8622A',
-                    }}>
-                      <Image
-                        src={urlFor(author.photo).width(100).height(100).url()}
-                        alt={author.name}
-                        width={100}
-                        height={100}
-                        style={{ objectFit: 'cover' }}
-                      />
-                    </div>
-                  )}
+           {author && (
+             <aside className="home-author-sidebar">
+               <div className="sticky-panel">
+                 <div className="author-bio-card">
+                   {author.photo && (
+                     <div style={{
+                       width: '100px',
+                       height: '100px',
+                       borderRadius: '50%',
+                       overflow: 'hidden',
+                       margin: '0 auto 1rem',
+                       border: '3px solid var(--orange)',
+                     }}>
+                       <Image
+                         src={urlFor(author.photo).width(100).height(100).url()}
+                         alt={author.name}
+                         width={100}
+                         height={100}
+                         style={{ objectFit: 'cover' }}
+                       />
+                     </div>
+                   )}
 
-                  <p style={{
-                    fontFamily: '"Lato", sans-serif',
-                    fontSize: '0.72rem',
-                    letterSpacing: '1.5px',
-                    textTransform: 'uppercase',
-                    color: '#E8622A',
-                    marginBottom: '0.25rem',
-                    fontWeight: '700',
-                  }}>
-                    About Adelaide
-                  </p>
-                  <h3 style={{
-                    fontFamily: '"Playfair Display", serif',
-                    fontSize: '1.3rem',
-                    color: '#2C1A0E',
-                    marginBottom: '1rem',
-                  }}>
-                    {author.name}
-                  </h3>
-                  <p style={{
-                    fontFamily: '"Lato", sans-serif',
-                    fontSize: '0.875rem',
-                    color: '#6B5244',
-                    lineHeight: 1.7,
-                    marginBottom: '1.25rem',
-                    textAlign: 'left',
-                  }}>
-                    {author.bio}
-                  </p>
+                   <p style={{
+                     fontFamily: '"Lato", sans-serif',
+                     fontSize: '0.72rem',
+                     letterSpacing: '1.5px',
+                     textTransform: 'uppercase',
+                     color: 'var(--orange)',
+                     marginBottom: '0.25rem',
+                     fontWeight: '700',
+                   }}>
+                     About me
+                   </p>
+                   <h3 style={{
+                     fontFamily: '"Playfair Display", serif',
+                     fontSize: '1.3rem',
+                     color: 'var(--brown)',
+                     marginBottom: '1rem',
+                   }}>
+                     {author.name}
+                   </h3>
+                   <p style={{
+                     fontFamily: '"Lato", sans-serif',
+                     fontSize: '0.875rem',
+                     color: 'var(--text-light)',
+                     lineHeight: 1.7,
+                     marginBottom: '1.25rem',
+                     textAlign: 'left',
+                   }}>
+                     {author.bio}
+                   </p>
 
-                  <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', marginBottom: '1rem' }}>
-                    {author.instagram && (
-                      <a href={author.instagram} target="_blank" rel="noopener noreferrer" className="social-link">
-                        <img src="/instagram.png" alt="Instagram" className="social-icon" />
-                      </a>
-                    )}
-                    {author.pinterest && (
-                      <a href={author.pinterest} target="_blank" rel="noopener noreferrer" className="social-link">
-                        <img src="/pinterest.png" alt="Pinterest" className="social-icon" />
-                      </a>
-                    )}
-                  </div>
+                   <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', marginBottom: '1rem' }}>
+                     {author.instagram && (
+                       <a href={author.instagram} target="_blank" rel="noopener noreferrer" className="social-link">
+                         <img src="/instagram.png" alt="Instagram" className="social-icon" />
+                       </a>
+                     )}
+                     {author.pinterest && (
+                       <a href={author.pinterest} target="_blank" rel="noopener noreferrer" className="social-link">
+                         <img src="/pinterest.png" alt="Pinterest" className="social-icon" />
+                       </a>
+                     )}
+                   </div>
 
-                  <Link href="/about" className="button button-link" style={{
-                    display: 'inline-block',
-                    marginTop: '0.5rem',
-                    background: '#E8622A',
-                    color: 'white',
-                    padding: '0.85rem 1.25rem',
-                    borderRadius: '999px',
-                    fontFamily: '"Lato", sans-serif',
-                    fontWeight: '700',
-                    textDecoration: 'none',
-                  }}>
-                    Learn more
-                  </Link>
-                </div>
-              </div>
-            </aside>
-          )}
-        </div>
-      </section>
-    </div>
-  )
+                   <Link href="/about" className="button button-link" style={{
+                     display: 'inline-block',
+                     marginTop: '0.5rem',
+                     background: 'var(--orange)',
+                     color: 'var(--cream)',
+                     padding: '0.85rem 1.25rem',
+                     borderRadius: '999px',
+                     fontFamily: '"Lato", sans-serif',
+                     fontWeight: '700',
+                     textDecoration: 'none',
+                   }}>
+                     Learn more
+                   </Link>
+                 </div>
+               </div>
+             </aside>
+           )}
+         </div>
+       </section>
+     </div>
+   )
 }
 
 function Pagination({ currentPage, totalPages }) {
@@ -373,9 +373,9 @@ function PageLink({ href, active = false, children }) {
       alignItems: 'center',
       justifyContent: 'center',
       borderRadius: '50px',
-      border: active ? '1px solid #E8622A' : '1px solid #E8D5C4',
-      background: active ? '#E8622A' : 'white',
-      color: active ? 'white' : '#7A4528',
+      border: active ? '1px solid var(--orange)' : '1px solid var(--gray)',
+      background: active ? 'var(--orange)' : 'var(--cream-light)',
+      color: active ? 'var(--cream)' : 'var(--brown-light)',
       fontSize: '0.88rem',
       fontWeight: '700',
     }}>

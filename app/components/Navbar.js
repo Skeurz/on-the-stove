@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
 import { usePathname } from 'next/navigation'
+import ThemeToggle from './ThemeToggle'
 
 const navLinks = [
   { label: 'Lunch', href: '/category/lunch' },
@@ -170,7 +171,7 @@ export default function Navbar() {
         <nav style={{
           display: 'flex',
           alignItems: 'center',
-          gap: '0.25rem',
+          gap: '0.5rem',
         }}
           className="desktop-nav"
         >
@@ -264,7 +265,8 @@ export default function Navbar() {
             About
           </Link>
 
-          <form
+          <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <form
             action="/search"
             onSubmit={handleSearchSubmit}
             style={{
@@ -414,19 +416,19 @@ export default function Navbar() {
               </div>
             )}
           </form>
-
-          <Link href="/contact" className="button button-link" style={{
-            background: '#E8622A',
-            color: 'white',
-            fontFamily: '"Lato", sans-serif',
-            fontSize: '0.85rem',
-            fontWeight: '700',
-            padding: '0.45rem 1.1rem',
-            borderRadius: '50px',
-            marginLeft: '0.25rem',
-          }}>
-            Contact
-          </Link>
+            <ThemeToggle />
+            <Link href="/contact" className="button button-link" style={{
+              background: '#E8622A',
+              color: 'white',
+              fontFamily: '"Lato", sans-serif',
+              fontSize: '0.85rem',
+              fontWeight: '700',
+              padding: '0.45rem 1.1rem',
+              borderRadius: '50px',
+            }}>
+              Contact
+            </Link>
+          </div>
         </nav>
 
         {/* Hamburger button - mobile only */}
@@ -457,6 +459,11 @@ export default function Navbar() {
         }}
           className="mobile-menu"
         >
+          {/* Theme Toggle for mobile */}
+          <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1rem' }}>
+            <ThemeToggle />
+          </div>
+
           <Link href="/" onClick={() => setMobileOpen(false)} style={{
             display: 'block',
             color: 'rgba(253,246,238,0.8)',

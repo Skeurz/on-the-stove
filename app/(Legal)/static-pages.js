@@ -260,11 +260,11 @@ const heroStyle = {
 }
 
 const cardStyle = {
-  background: 'white',
-  border: '1px solid #F0E6DC',
+  background: 'var(--cream-light)',
+  border: '1px solid var(--gray)',
   borderRadius: '20px',
   padding: 'clamp(1.5rem, 4vw, 3rem)',
-  boxShadow: '0 20px 60px rgba(61,32,16,0.08)',
+  boxShadow: '0 20px 60px rgba(0, 0, 0, 0.08)',
 }
 
 function Hero({ eyebrow, title, intro, children }) {
@@ -310,7 +310,7 @@ function Paragraph({ children, style }) {
     <p style={{
       fontFamily: '"Lato", sans-serif',
       fontSize: '1rem',
-      color: '#6B5244',
+      color: 'var(--brown)',
       lineHeight: 1.85,
       marginBottom: '0.9rem',
       ...style,
@@ -325,7 +325,7 @@ function SectionTitle({ children }) {
     <h2 style={{
       fontFamily: '"Playfair Display", serif',
       fontSize: '1.55rem',
-      color: '#2C1A0E',
+      color: 'var(--brown)',
       marginBottom: '1rem',
     }}>
       {children}
@@ -342,11 +342,11 @@ export function LegalStaticPage({ page }) {
 
       <section className="content-section" style={{ maxWidth: '980px', margin: '4rem auto' }}>
         <div className="policy-card" style={cardStyle}>
-          <div style={{ borderBottom: '1px solid #F0E6DC', paddingBottom: '1.5rem', marginBottom: '2rem' }}>
+          <div style={{ borderBottom: '1px solid var(--gray)', paddingBottom: '1.5rem', marginBottom: '2rem' }}>
             <p style={{
               fontFamily: '"Lato", sans-serif',
               fontSize: '0.82rem',
-              color: '#A08070',
+              color: 'var(--text-light)',
               marginBottom: '0.75rem',
             }}>
               Last updated: {content.updated}
@@ -375,14 +375,14 @@ export function LegalStaticPage({ page }) {
                     alignItems: 'flex-start',
                     fontFamily: '"Lato", sans-serif',
                     fontSize: '0.98rem',
-                    color: '#3D2010',
+                    color: 'var(--brown)',
                     lineHeight: 1.65,
-                    background: '#FDF6EE',
-                    border: '1px solid #F0E6DC',
+                    background: 'var(--cream)',
+                    border: '1px solid var(--gray)',
                     borderRadius: '12px',
                     padding: '0.85rem 1rem',
                   }}>
-                    <span style={{ color: '#E8622A', fontWeight: '700', flexShrink: 0 }}>*</span>
+                    <span style={{ color: 'var(--orange)', fontWeight: '700', flexShrink: 0 }}>*</span>
                     <span>{item}</span>
                   </li>
                 ))}
@@ -391,16 +391,16 @@ export function LegalStaticPage({ page }) {
           )}
 
           <article style={{
-            background: '#FDF6EE',
-            border: '1px solid #F0E6DC',
-            borderLeft: '4px solid #E8622A',
+            background: 'var(--cream)',
+            border: '1px solid var(--gray)',
+            borderLeft: '4px solid var(--orange)',
             borderRadius: '16px',
             padding: '1.5rem',
           }}>
             <h2 style={{
               fontFamily: '"Playfair Display", serif',
               fontSize: '1.45rem',
-              color: '#2C1A0E',
+              color: 'var(--brown)',
               marginBottom: '0.75rem',
             }}>
               {content.ctaTitle}
@@ -422,8 +422,8 @@ export function LegalStaticPage({ page }) {
 function PrimaryButton({ href, children }) {
   return (
     <Link href={href} className="full-width-mobile button button-link" style={{
-      background: '#E8622A',
-      color: 'white',
+      background: 'var(--orange)',
+      color: 'var(--cream)',
       fontFamily: '"Lato", sans-serif',
       fontWeight: '700',
       fontSize: '0.95rem',
@@ -441,9 +441,9 @@ function PrimaryButton({ href, children }) {
 function SecondaryButton({ href, children }) {
   return (
     <Link href={href} className="full-width-mobile button button-link" style={{
-      background: 'white',
-      color: '#E8622A',
-      border: '1px solid #E8622A',
+      background: 'var(--cream-light)',
+      color: 'var(--orange)',
+      border: '1px solid var(--orange)',
       fontFamily: '"Lato", sans-serif',
       fontWeight: '700',
       fontSize: '0.95rem',
@@ -518,39 +518,39 @@ export async function AboutStaticPage() {
 
         <div>
           {/* Text content in a white card */}
-          <div style={{
-            background: 'white',
-            border: '1px solid #F0E6DC',
-            borderRadius: '20px',
-            padding: 'clamp(1.5rem, 4vw, 3rem)',
-            boxShadow: '0 20px 60px rgba(61,32,16,0.08)',
-            marginBottom: '2rem',
-          }}>
-            <h2 style={{
-              fontFamily: '"Playfair Display", serif',
-              fontSize: '2rem',
-              color: '#2C1A0E',
-              marginBottom: '1.5rem',
+<div style={{
+              background: 'var(--cream-light)',
+              border: '1px solid var(--gray)',
+              borderRadius: '20px',
+              padding: 'clamp(1.5rem, 4vw, 3rem)',
+              boxShadow: '0 20px 60px rgba(0, 0, 0, 0.08)',
+              marginBottom: '2rem',
             }}>
-              From My Kitchen To Yours...
-            </h2>
+              <h2 style={{
+                fontFamily: '"Playfair Display", serif',
+                fontSize: '2rem',
+                color: 'var(--brown)',
+                marginBottom: '1.5rem',
+              }}>
+                From My Kitchen To Yours...
+              </h2>
 
             <Paragraph style={{ fontSize: '1.05rem' }}>
               {'For me, cooking has always been more than "what\'s for dinner." It\'s comfort, creativity, and care, served on a plate. After years of testing, tweaking, and sharing, this little kitchen hobby grew into a full-time recipe blog for busy home cooks who still want food that feels special.'}
             </Paragraph>
-            <Paragraph style={{ fontSize: '1.05rem', fontWeight: '700', color: '#3D2010', marginBottom: '2.5rem' }}>
-              Follow along: new recipes, daily meal ideas, and simple tips to make everyday cooking easier.
-            </Paragraph>
+<Paragraph style={{ fontSize: '1.05rem', fontWeight: '700', color: 'var(--brown)', marginBottom: '2.5rem' }}>
+               Follow along: new recipes, daily meal ideas, and simple tips to make everyday cooking easier.
+             </Paragraph>
 
-            <div style={{ borderTop: '2px solid #E8622A', margin: '2rem 0', width: '60px' }} />
+             <div style={{ borderTop: '2px solid var(--orange)', margin: '2rem 0', width: '60px' }} />
 
-            <h3 style={{
-              fontFamily: '"Playfair Display", serif',
-              fontSize: '1.5rem',
-              color: '#2C1A0E',
-              marginBottom: '1.25rem',
-            }}>
-              I have been cooking and writing blogs for almost 12 years.
+             <h3 style={{
+               fontFamily: '"Playfair Display", serif',
+               fontSize: '1.5rem',
+               color: 'var(--brown)',
+               marginBottom: '1.25rem',
+             }}>
+               I have been cooking and writing blogs for almost 12 years.
             </h3>
 
             <Paragraph>{'It started with handwritten notes, messy counters, and family favorites I didn\'t want to lose. Then I began sharing recipes online, one after another, learning what real life needs: dependable meals, clear steps, and ingredients you can actually find.'}</Paragraph>
@@ -558,40 +558,40 @@ export async function AboutStaticPage() {
             <Paragraph style={{ marginBottom: 0 }}>{"If you're here for simple, satisfying food, welcome. Grab a cup of tea, pick a recipe, and let's make something you'll be proud to serve, even on a busy weeknight."}</Paragraph>
           </div>
 
-          <div style={{
-            background: '#FDF6EE',
-            border: '1px solid #F0E6DC',
-            borderLeft: '4px solid #E8622A',
-            borderRadius: '16px',
-            padding: '1.75rem',
-            marginBottom: '2.5rem',
-          }}>
-            <h4 style={{
-              fontFamily: '"Playfair Display", serif',
-              fontSize: '1.2rem',
-              color: '#2C1A0E',
-              marginBottom: '1rem',
+<div style={{
+              background: 'var(--cream)',
+              border: '1px solid var(--gray)',
+              borderLeft: '4px solid var(--orange)',
+              borderRadius: '16px',
+              padding: '1.75rem',
+              marginBottom: '2.5rem',
             }}>
-              Quick promise from my kitchen to yours
-            </h4>
-            <Paragraph style={{ fontSize: '0.9rem', marginBottom: '0.75rem' }}>{"You'll always find:"}</Paragraph>
-            {[
-              'Clear instructions with no guesswork',
-              'Practical swaps and time-savers',
-              'Balanced comfort food you will actually crave',
-              'Recipes that work the first time',
-            ].map((item) => (
-              <p key={item} style={{
-                fontFamily: '"Lato", sans-serif',
-                fontSize: '0.95rem',
-                color: '#3D2010',
-                lineHeight: 1.7,
-                marginBottom: '0.4rem',
+              <h4 style={{
+                fontFamily: '"Playfair Display", serif',
+                fontSize: '1.2rem',
+                color: 'var(--brown)',
+                marginBottom: '1rem',
               }}>
-                * {item}
-              </p>
-            ))}
-          </div>
+                Quick promise from my kitchen to yours
+              </h4>
+              <Paragraph style={{ fontSize: '0.9rem', marginBottom: '0.75rem' }}>{"You'll always find:"}</Paragraph>
+              {[
+                'Clear instructions with no guesswork',
+                'Practical swaps and time-savers',
+                'Balanced comfort food you will actually crave',
+                'Recipes that work the first time',
+              ].map((item) => (
+                <p key={item} style={{
+                  fontFamily: '"Lato", sans-serif',
+                  fontSize: '0.95rem',
+                  color: 'var(--brown)',
+                  lineHeight: 1.7,
+                  marginBottom: '0.4rem',
+                }}>
+                  * {item}
+                </p>
+              ))}
+            </div>
 
           <PrimaryButton href="/">Browse My Recipes</PrimaryButton>
         </div>
@@ -618,7 +618,7 @@ export function ContactStaticPage() {
           <h2 style={{
             fontFamily: '"Playfair Display", serif',
             fontSize: '1.8rem',
-            color: '#2C1A0E',
+            color: 'var(--brown)',
             marginBottom: '0.75rem',
           }}>
             Send a Message
@@ -639,10 +639,10 @@ export function ContactStaticPage() {
                   alignItems: 'flex-start',
                   fontFamily: '"Lato", sans-serif',
                   fontSize: '0.95rem',
-                  color: '#3D2010',
+                  color: 'var(--brown)',
                   lineHeight: 1.6,
                 }}>
-                  <span style={{ color: '#E8622A', fontWeight: '700', flexShrink: 0 }}>*</span>
+                  <span style={{ color: 'var(--orange)', fontWeight: '700', flexShrink: 0 }}>*</span>
                   <span>{reason}</span>
                 </li>
               ))}
@@ -654,7 +654,7 @@ export function ContactStaticPage() {
               If your question is about a specific recipe, include the recipe name and what happened so the reply can be more helpful.
             </Paragraph>
             <Link href="/" style={{
-              color: '#E8622A',
+              color: 'var(--orange)',
               fontFamily: '"Lato", sans-serif',
               fontSize: '0.9rem',
               fontWeight: '700',
@@ -687,15 +687,15 @@ export function ContactStaticPage() {
 function SidebarCard({ title, children, cream = false }) {
   return (
     <div style={{
-      background: cream ? '#FDF6EE' : 'white',
-      border: '1px solid #F0E6DC',
+      background: cream ? 'var(--cream)' : 'var(--cream-light)',
+      border: '1px solid var(--gray)',
       borderRadius: '20px',
       padding: '1.5rem',
     }}>
       <h2 style={{
         fontFamily: '"Playfair Display", serif',
         fontSize: '1.4rem',
-        color: '#2C1A0E',
+        color: 'var(--brown)',
         marginBottom: '0.9rem',
       }}>
         {title}
@@ -707,13 +707,13 @@ function SidebarCard({ title, children, cream = false }) {
 
 function ContactForm() {
   const inputStyle = {
-    border: '1px solid #E8D5C4',
+    border: '1px solid var(--gray)',
     borderRadius: '10px',
     padding: '0.85rem 1rem',
     font: 'inherit',
-    color: '#2C1A0E',
-    background: '#FDF6EE',
-    outlineColor: '#E8622A',
+    color: 'var(--brown)',
+    background: 'var(--cream)',
+    outlineColor: 'var(--orange)',
   }
   const labelStyle = {
     display: 'grid',
@@ -721,7 +721,7 @@ function ContactForm() {
     fontFamily: '"Lato", sans-serif',
     fontSize: '0.85rem',
     fontWeight: '700',
-    color: '#3D2010',
+    color: 'var(--brown)',
   }
 
   return (
@@ -758,8 +758,8 @@ function ContactForm() {
       </label>
 
       <button type="submit" className="full-width-mobile" style={{
-        background: '#E8622A',
-        color: 'white',
+        background: 'var(--orange)',
+        color: 'var(--cream)',
         border: 'none',
         fontFamily: '"Lato", sans-serif',
         fontWeight: '700',

@@ -49,8 +49,8 @@ export default async function RecipesPage() {
   return (
     <div className="content-section" style={{ maxWidth: '1200px', margin: '0 auto', padding: '3rem 0 4rem' }}>
       <div style={{
-        background: '#FDF6EE',
-        border: '1px solid #F0E6DC',
+        background: 'var(--cream)',
+        border: '1px solid var(--gray)',
         borderRadius: '12px',
         padding: '0.8rem 1.4rem',
         width: 'fit-content',
@@ -61,7 +61,7 @@ export default async function RecipesPage() {
           fontSize: '0.8rem',
           letterSpacing: '2px',
           textTransform: 'uppercase',
-          color: '#E8622A',
+          color: 'var(--orange)',
           margin: 0,
           marginBottom: '0.25rem',
         }}>
@@ -70,7 +70,7 @@ export default async function RecipesPage() {
         <h1 style={{
           fontFamily: 'Playfair Display, serif',
           fontSize: 'clamp(2.4rem, 4vw, 3.4rem)',
-          color: '#3D2010',
+          color: 'var(--brown)',
           lineHeight: 1.05,
           margin: 0,
           marginBottom: '0.75rem',
@@ -79,7 +79,7 @@ export default async function RecipesPage() {
         </h1>
         <p style={{
           fontFamily: 'Lato, sans-serif',
-          color: '#7A6555',
+          color: 'var(--text-light)',
           margin: 0,
           lineHeight: 1.8,
           fontSize: '1rem',
@@ -122,7 +122,7 @@ export default async function RecipesPage() {
                 fontSize: '0.8rem',
                 letterSpacing: '2px',
                 textTransform: 'uppercase',
-                color: '#E8622A',
+                color: 'var(--orange)',
                 marginBottom: '0.85rem',
               }}>
                 About me
@@ -130,14 +130,14 @@ export default async function RecipesPage() {
               <h2 style={{
                 fontFamily: 'Playfair Display, serif',
                 fontSize: '1.9rem',
-                color: '#3D2010',
+                color: 'var(--brown)',
                 marginBottom: '1rem',
               }}>
                 Home cooking made simple.
               </h2>
               <p style={{
                 fontFamily: 'Lato, sans-serif',
-                color: '#7A6555',
+                color: 'var(--text-light)',
                 lineHeight: 1.8,
                 marginBottom: '1.5rem',
               }}>
@@ -159,12 +159,12 @@ export default async function RecipesPage() {
 
               <div style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap' }}>
                 <div>
-                  <p style={{ fontFamily: 'Lato, sans-serif', color: '#7A6555', fontSize: '0.78rem', marginBottom: '0.3rem' }}>Stay inspired</p>
-                  <p style={{ fontFamily: 'Lato, sans-serif', color: '#3D2010', fontSize: '1.4rem', fontWeight: '700' }}>Every day</p>
+                  <p style={{ fontFamily: 'Lato, sans-serif', color: 'var(--text-light)', fontSize: '0.78rem', marginBottom: '0.3rem' }}>Stay inspired</p>
+                  <p style={{ fontFamily: 'Lato, sans-serif', color: 'var(--brown)', fontSize: '1.4rem', fontWeight: '700' }}>Every day</p>
                 </div>
                 <div>
-                  <p style={{ fontFamily: 'Lato, sans-serif', color: '#7A6555', fontSize: '0.78rem', marginBottom: '0.3rem' }}>Kitchen confidence</p>
-                  <p style={{ fontFamily: 'Lato, sans-serif', color: '#3D2010', fontSize: '1.4rem', fontWeight: '700' }}>Made easy</p>
+                  <p style={{ fontFamily: 'Lato, sans-serif', color: 'var(--text-light)', fontSize: '0.78rem', marginBottom: '0.3rem' }}>Kitchen confidence</p>
+                  <p style={{ fontFamily: 'Lato, sans-serif', color: 'var(--brown)', fontSize: '1.4rem', fontWeight: '700' }}>Made easy</p>
                 </div>
               </div>
             </div>

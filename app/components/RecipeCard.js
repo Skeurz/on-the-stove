@@ -30,7 +30,7 @@ function RatingStars({ total, count }) {
   for (let i = 0; i < 5; i++) {
     stars.push(
       <span key={i} style={{
-        color: i < fullStars ? '#E8622A' : '#E0D6CC',
+        color: i < fullStars ? 'var(--orange)' : 'var(--gray)',
         fontSize: '0.85rem',
         lineHeight: 1,
       }}>
@@ -46,20 +46,20 @@ function RatingStars({ total, count }) {
       gap: '0.25rem',
       fontFamily: '"Lato", sans-serif',
       fontSize: '0.78rem',
-      color: '#A08070',
+      color: 'var(--text-light)',
     }}>
       {stars}
       {hasRatings ? (
         <>
-          <span style={{ marginLeft: '0.15rem', fontWeight: '700', color: '#6B5244' }}>
+          <span style={{ marginLeft: '0.15rem', fontWeight: '700', color: 'var(--brown-light)' }}>
             {average.toFixed(1)}
           </span>
-          <span style={{ color: '#C0B0A0' }}>
+          <span style={{ color: 'var(--gray)' }}>
             ({count})
           </span>
         </>
       ) : (
-        <span style={{ color: '#C0B0A0', fontSize: '0.72rem' }}>
+        <span style={{ color: 'var(--gray)', fontSize: '0.72rem' }}>
           No ratings yet
         </span>
       )}
@@ -72,10 +72,10 @@ export default function RecipeCard({ recipe, imageUrl }) {
     <Link href={`/recipe/${recipe.slug.current}`}>
       <div
         style={{
-          background: 'white',
+          background: 'var(--cream-light)',
           borderRadius: '20px',
           overflow: 'hidden',
-          border: '1px solid #F0E6DC',
+          border: '1px solid var(--gray)',
           transition: 'transform 0.25s ease, box-shadow 0.25s ease',
           cursor: 'pointer',
           height: '100%',
@@ -84,7 +84,7 @@ export default function RecipeCard({ recipe, imageUrl }) {
         }}
         onMouseEnter={e => {
           e.currentTarget.style.transform = 'translateY(-6px)'
-          e.currentTarget.style.boxShadow = '0 16px 40px rgba(61,32,16,0.14)'
+          e.currentTarget.style.boxShadow = '0 16px 40px rgba(0, 0, 0, 0.12)'
         }}
         onMouseLeave={e => {
           e.currentTarget.style.transform = 'translateY(0)'
@@ -94,7 +94,7 @@ export default function RecipeCard({ recipe, imageUrl }) {
         {/* Image */}
         <div style={{
           height: '210px',
-          background: '#F5EDE4',
+          background: 'var(--gray)',
           position: 'relative',
           overflow: 'hidden',
           flexShrink: 0,
@@ -123,9 +123,9 @@ export default function RecipeCard({ recipe, imageUrl }) {
             position: 'absolute',
             top: '12px',
             left: '12px',
-            background: 'rgba(30,14,5,0.75)',
+            background: 'rgba(0, 0, 0, 0.75)',
             backdropFilter: 'blur(6px)',
-            color: '#F4946A',
+            color: 'var(--orange-light)',
             fontSize: '0.7rem',
             fontWeight: '700',
             letterSpacing: '1px',
@@ -149,7 +149,7 @@ export default function RecipeCard({ recipe, imageUrl }) {
             fontFamily: '"Playfair Display", serif',
             fontSize: '1.15rem',
             fontWeight: '700',
-            color: '#2C1A0E',
+            color: 'var(--brown)',
             lineHeight: 1.35,
             marginBottom: '0.6rem',
           }}>
@@ -160,7 +160,7 @@ export default function RecipeCard({ recipe, imageUrl }) {
             <p style={{
               fontFamily: '"Lato", sans-serif',
               fontSize: '0.875rem',
-              color: '#8A6E5E',
+              color: 'var(--text-light)',
               lineHeight: 1.65,
               display: '-webkit-box',
               WebkitLineClamp: 2,
@@ -179,10 +179,10 @@ export default function RecipeCard({ recipe, imageUrl }) {
             gap: '1rem',
             marginTop: '1rem',
             paddingTop: '1rem',
-            borderTop: '1px solid #F5EDE4',
+            borderTop: '1px solid var(--gray-light)',
             fontFamily: '"Lato", sans-serif',
             fontSize: '0.78rem',
-            color: '#A08070',
+            color: 'var(--text-light)',
             fontWeight: '700',
             letterSpacing: '0.3px',
           }}>
