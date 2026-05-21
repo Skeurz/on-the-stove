@@ -11,7 +11,7 @@ const navLinks = [
   { label: 'Snacks & Sides', href: '/category/snacksnsides' },
   { label: 'Desserts', href: '/category/desserts' },
   { label: 'Drinks & Shakes', href: '/category/drinks-shakes' },
-  { label: 'My collections', href: '/collections' },
+  { label: '✨ My collections', href: '/collections' },
 ]
 
 export const metadata = {
@@ -23,6 +23,62 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
+        <style dangerouslySetInnerHTML={{ __html: `
+          @keyframes sparkle-sweep {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+          }
+          @keyframes star-pop {
+            0%, 100% { transform: scale(0) rotate(0deg); opacity: 0; }
+            50% { transform: scale(1.2) rotate(180deg); opacity: 1; }
+          }
+          /* Targeting explicitly classed buttons and navigation links by href */
+          .sparkle-button, 
+          nav a[href="/collections"], 
+          .site-footer a[href="/collections"] {
+            position: relative !important;
+            transition: all 0.3s ease !important;
+          }
+          .sparkle-button:hover, 
+          nav a[href="/collections"]:hover,
+          .site-footer a[href="/collections"]:hover {
+            background: linear-gradient(90deg, #F4946A, #fff, #F4946A) !important;
+            background-size: 200% 100% !important;
+            animation: sparkle-sweep 1.5s infinite linear !important;
+            color: #1E0E05 !important;
+            border-color: transparent !important;
+            box-shadow: 0 0 20px rgba(244,148,106,0.6) !important;
+            transform: translateY(-2px);
+            border-radius: 50px;
+          }
+          .sparkle-button:hover::after, 
+          nav a[href="/collections"]:hover::after,
+          .site-footer a[href="/collections"]:hover::after {
+            content: '✨';
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            font-size: 1.2rem;
+            animation: star-pop 1s infinite;
+            pointer-events: none;
+          }
+          @keyframes star-burst {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.6); filter: drop-shadow(0 0 15px #E8622A); }
+            100% { transform: scale(1); }
+          }
+          @keyframes success-pop {
+            0% { transform: scale(0.9); opacity: 0; }
+            70% { transform: scale(1.05); }
+            100% { transform: scale(1); opacity: 1; }
+          }
+          .animate-burst {
+            animation: star-burst 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards !important;
+          }
+          .animate-success {
+            animation: success-pop 0.4s ease-out forwards !important;
+          }
+        `}} />
         <Navbar />
 
         <EnhanceButtons />

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import { useRouter } from 'next/navigation'
 
 const STORAGE_KEY = 'on-the-stove-rated-recipes'
 const BROWSER_ID_KEY = 'on-the-stove-rating-browser-id'
@@ -59,6 +60,8 @@ export default function StarRating({ slug }) {
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
   const [message, setMessage] = useState('')
+  const [justVoted, setJustVoted] = useState(false)
+  const router = useRouter()
 
   useEffect(() => {
     const storedVote = getStoredVote(slug)
@@ -113,6 +116,7 @@ export default function StarRating({ slug }) {
       const data = await res.json()
 
       if (res.ok) {
+        setJustVoted(true)
         setStoredVote(slug, data.userVote)
         setRating({
           average: data.average,
@@ -120,6 +124,7 @@ export default function StarRating({ slug }) {
           userVote: data.userVote,
         })
         setMessage('Thanks for rating! 😊')
+        router.refresh()
       } else if (res.status === 409) {
         setStoredVote(slug, value)
         setRating(prev => ({ ...prev, userVote: value }))
@@ -167,6 +172,7 @@ export default function StarRating({ slug }) {
           return (
             <button
               key={star}
+              className={justVoted && rating.userVote === star ? 'animate-burst' : ''}
               onClick={() => handleClick(star)}
               onMouseEnter={() => !rating.userVote && setHoveredStar(star)}
               onMouseLeave={() => setHoveredStar(0)}
@@ -234,7 +240,7 @@ export default function StarRating({ slug }) {
       </span>
 
       {message && (
-        <p style={{
+        <p className="animate-success" style={{
           margin: 0,
           fontFamily: '"Lato", sans-serif',
           fontSize: '0.72rem',

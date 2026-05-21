@@ -125,29 +125,22 @@ export async function POST(request, { params }) {
       createdAt: new Date().toISOString(),
     })
 
-    // Update recipe aggregate fields
-    const recipeDoc = await client.fetch(
-      defineQuery(`*[_type == "recipe" && _id == $id][0]{ ratingTotal, ratingCount }`),
-      { id: recipe._id }
-    )
-
-    await writeClient
+   const updatedRecipe = await writeClient
       .patch(recipe._id)
-      .set({
-        ratingTotal: (recipeDoc.ratingTotal || 0) + value,
-        ratingCount: (recipeDoc.ratingCount || 0) + 1,
+      .setIfMissing({ ratingBreakdown: { "1": 0, "2": 0, "3": 0, "4": 0, "5": 0 } })
+       .inc({
+        ratingTotal: value,
+        ratingCount: 1,
+        [`ratingBreakdown.${value}`]: 1
       })
-      .commit()
+      .commit({ visibility: 'async' })
 
-    // Calculate new average
-    const newTotal = (recipeDoc.ratingTotal || 0) + value
-    const newCount = (recipeDoc.ratingCount || 0) + 1
-    const newAverage = Math.round((newTotal / newCount) * 10) / 10
+    const newAverage = Math.round(((updatedRecipe.ratingTotal || 0) / (updatedRecipe.ratingCount || 1)) * 10) / 10
 
     return Response.json({
       success: true,
-      average: newAverage,
-      count: newCount,
+      average: newAverage || 0,
+      count: updatedRecipe.ratingCount || 0,
       userVote: value,
     })
   } catch (error) {

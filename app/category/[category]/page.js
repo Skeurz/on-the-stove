@@ -16,8 +16,10 @@ const categoryLabels = {
 }
 
 export default async function CategoryPage({ params, searchParams }) {
-  const { category } = await params
-  const currentPage = Math.max(Number(searchParams?.page) || 1, 1)
+  const resolvedParams = await params
+  const resolvedSearchParams = await searchParams
+  const category = resolvedParams.category
+  const currentPage = Math.max(Number(resolvedSearchParams?.page) || 1, 1)
   const start = (currentPage - 1) * RECIPES_PER_PAGE
   const end = start + RECIPES_PER_PAGE
   const [{ recipes, total }, author] = await Promise.all([

@@ -86,18 +86,20 @@ export default async function Home({ searchParams }) {
             }}>
               Browse Recipes
             </Link>
-            <Link href="/collections" style={{
-              background: 'rgba(255,255,255,0.1)',
+            <Link href="/collections" className="sparkle-button" style={{
+              background: 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(244,148,106,0.15) 100%)',
               color: 'white',
               padding: '0.85rem 2.2rem',
               borderRadius: '50px',
               fontFamily: '"Lato", sans-serif',
-              fontWeight: '400',
+              fontWeight: '700',
               fontSize: '0.95rem',
-              border: '1px solid rgba(255,255,255,0.2)',
+              border: '1px solid #F4946A',
               display: 'inline-block',
+              backdropFilter: 'blur(4px)',
+              boxShadow: '0 0 15px rgba(244,148,106,0.2)',
             }}>
-              My collections
+              ✨ My collections
             </Link>
             <Link href="/about" style={{
               background: 'rgba(255,255,255,0.1)',
@@ -149,22 +151,25 @@ export default async function Home({ searchParams }) {
             { label: '🍰 Desserts', href: '/category/desserts' },
             { label: '🥤 Drinks', href: '/category/drinks-shakes' },
             { label: '✨ My collections', href: '/collections' },
-          ].map(cat => (
-            <Link key={cat.href} href={cat.href} style={{
-              background: 'transparent',
-              border: '1px solid rgba(255,255,255,0.15)',
-              color: 'rgba(253,246,238,0.85)',
-              fontFamily: '"Lato", sans-serif',
-              fontSize: '0.85rem',
-              fontWeight: '700',
-              padding: '0.45rem 1.1rem',
-              borderRadius: '50px',
-              whiteSpace: 'nowrap',
-              transition: 'all 0.15s',
-            }}>
+          ].map(cat => {
+            const isCollections = cat.href === '/collections';
+            return (
+              <Link key={cat.href} href={cat.href} className={isCollections ? 'sparkle-button' : ''} style={{
+                background: isCollections ? 'rgba(232, 98, 42, 0.15)' : 'transparent',
+                border: isCollections ? '1px dashed #F4946A' : '1px solid rgba(255,255,255,0.15)',
+                color: isCollections ? '#F4946A' : 'rgba(253,246,238,0.85)',
+                fontFamily: '"Lato", sans-serif',
+                fontSize: '0.85rem',
+                fontWeight: '700',
+                padding: '0.45rem 1.1rem',
+                borderRadius: '50px',
+                whiteSpace: 'nowrap',
+                transition: 'all 0.15s',
+              }}>
               {cat.label}
             </Link>
-          ))}
+            );
+          })}
         </div>
       </section>
 
