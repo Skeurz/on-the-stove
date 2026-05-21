@@ -22,7 +22,13 @@ export default async function RecipePage({ params }) {
   const [recipe, author] = await Promise.all([
     client.fetch(`*[_type == "recipe" && slug.current == $slug][0]{
       ...,
-      "ratingBreakdown": coalesce(ratingBreakdown, { "1": 0, "2": 0, "3": 0, "4": 0, "5": 0 })
+      "ratingBreakdown": {
+  "star1": coalesce(ratingBreakdown.star1, 0),
+  "star2": coalesce(ratingBreakdown.star2, 0),
+  "star3": coalesce(ratingBreakdown.star3, 0),
+  "star4": coalesce(ratingBreakdown.star4, 0),
+  "star5": coalesce(ratingBreakdown.star5, 0)
+}
     }`, { slug }, { useCdn: false, next: { revalidate: 0 } }),
     client.fetch(getAuthor),
   ])
@@ -35,19 +41,21 @@ export default async function RecipePage({ params }) {
   )
 
   const totalTime = (recipe.prepTime || 0) + (recipe.cookTime || 0)
-  const tableOfContents = [
-    recipe.description ? { href: '#recipe-overview', label: 'Overview' } : null,
-    recipe.ingredients?.length > 0 ? { href: '#recipe-ingredients', label: 'Ingredients' } : null,
-    recipe.steps?.length > 0 ? { href: '#recipe-instructions', label: 'Instructions' } : null,
-    recipe.body ? { href: '#recipe-notes', label: 'Notes' } : null,
-  ].filter(Boolean)
   const recipeFacts = [
-    recipe.prepTime ? { label: 'Prep time', value: `${recipe.prepTime} min` } : null,
-    recipe.cookTime ? { label: 'Cook time', value: `${recipe.cookTime} min` } : null,
-    totalTime > 0 ? { label: 'Total time', value: `${totalTime} min` } : null,
-    recipe.servings ? { label: 'Servings', value: recipe.servings } : null,
-    recipe.calories ? { label: 'Calories', value: recipe.calories } : null,
-  ].filter(Boolean)
+  recipe.prepTime ? { label: 'Prep time', value: `${recipe.prepTime} min` } : null,
+  recipe.cookTime ? { label: 'Cook time', value: `${recipe.cookTime} min` } : null,
+  totalTime > 0 ? { label: 'Total time', value: `${totalTime} min` } : null,
+  recipe.servings ? { label: 'Servings', value: recipe.servings } : null,
+  recipe.calories ? { label: 'Calories', value: recipe.calories } : null,
+].filter(Boolean)
+
+const tableOfContents = [
+  recipe.description ? { href: '#recipe-overview', label: 'Overview' } : null,
+  recipeFacts.length > 0 ? { href: '#recipe-facts', label: 'Recipe Details' } : null,
+  recipe.ingredients?.length > 0 ? { href: '#recipe-ingredients', label: `Ingredients (${recipe.ingredients.length})` } : null,
+  recipe.steps?.length > 0 ? { href: '#recipe-instructions', label: `Instructions (${recipe.steps.length} steps)` } : null,
+  recipe.body ? { href: '#recipe-notes', label: 'Chef\'s Notes' } : null,
+].filter(Boolean)
 
   const ratingBreakdownUI = (
     <div className="rating-breakdown" style={{
@@ -61,7 +69,7 @@ export default async function RecipePage({ params }) {
       width: '100%'
     }}>
         {[5, 4, 3, 2, 1].map(stars => {
-          const count = recipe.ratingBreakdown?.[stars] || 0;
+          const count = recipe.ratingBreakdown?.[`star${stars}`] || 0;
           const percentage = recipe.ratingCount ? (count / recipe.ratingCount) * 100 : 0;
           return (
             <div key={stars} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', fontSize: '0.75rem' }}>
@@ -139,7 +147,7 @@ export default async function RecipePage({ params }) {
             <RecipeActions />
 
             {recipeFacts.length > 0 && (
-              <div className="recipe-facts-grid">
+                <div id="recipe-facts" className="recipe-facts-grid">
                 {recipeFacts.map(fact => (
                   <div key={fact.label} className="recipe-fact-card">
                     <p>{fact.label}</p>

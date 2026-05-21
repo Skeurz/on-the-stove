@@ -85,57 +85,152 @@ export default function RootLayout({ children }) {
 
         <main>{children}</main>
 
-        <footer className="site-footer">
-          <div className="footer-content">
-            <div style={{
-              display: 'flex',
-              justifyContent: 'center',
-              flexWrap: 'wrap',
-              gap: '0.5rem 1.5rem',
-              marginBottom: '0.75rem',
-            }}>
-              {[
-                { label: 'About Me', href: '/about' },
-                { label: 'GDPR Policy', href: '/gdpr-policy' },
-                { label: 'Privacy Policy', href: '/privacy-policy' },
-                { label: 'Disclaimer', href: '/disclaimer' },
-                { label: 'Terms of Service', href: '/terms-of-service' },
-              ].map(link => (
-                <Link key={link.href} href={link.href} className="footer-nav-link" style={{
-                  color: 'rgba(253,246,238,0.5)',
+        <footer style={{
+          background: 'linear-gradient(135deg, #1A0A02 0%, #1E0E05 40%, #1A0A02 100%)',
+          borderTop: '1px solid rgba(232,98,42,0.2)',
+          marginTop: '6rem',
+        }}>
+         
+
+          {/* Middle footer */}
+          <div style={{
+            maxWidth: '1200px',
+            margin: '0 auto',
+            padding: '2.5rem 2rem',
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
+            gap: '2rem',
+          }}>
+            {/* Categories */}
+            <div>
+              <p style={{
+                fontFamily: '"Lato", sans-serif',
+                fontSize: '0.7rem',
+                letterSpacing: '2px',
+                textTransform: 'uppercase',
+                color: '#E8622A',
+                marginBottom: '1rem',
+                fontWeight: '700',
+              }}>
+                Categories
+              </p>
+              {navLinks.map(link => (
+                <Link key={link.href} href={link.href} style={{
+                  display: 'block',
                   fontFamily: '"Lato", sans-serif',
-                  fontSize: '0.8rem',
+                  fontSize: '0.875rem',
+                  color: 'rgba(253,246,238,0.6)',
+                  marginBottom: '0.5rem',
+                  transition: 'color 0.15s',
                 }}>
                   {link.label}
                 </Link>
               ))}
-              <Link href="/contact" className="footer-contact-button button button-link" style={{
-                marginTop: '-0.25rem',
-                background: '#E8622A',
-                color: 'white',
+            </div>
+
+            {/* Quick links */}
+            <div>
+              <p style={{
                 fontFamily: '"Lato", sans-serif',
-                fontSize: '0.75rem',
+                fontSize: '0.7rem',
+                letterSpacing: '2px',
+                textTransform: 'uppercase',
+                color: '#E8622A',
+                marginBottom: '1rem',
                 fontWeight: '700',
-                padding: '0.25rem 0.75rem',
-                borderRadius: '999px',
-                minWidth: 'fit-content',
               }}>
-                Contact
-              </Link>
+                Quick Links
+              </p>
+              {[
+                { label: 'About Adelaide', href: '/about' },
+                { label: 'All Recipes', href: '/recipes' },
+                { label: 'My Collections', href: '/collections' },
+                { label: 'Contact', href: '/contact' },
+              ].map(link => (
+                <Link key={link.href} href={link.href} style={{
+                  display: 'block',
+                  fontFamily: '"Lato", sans-serif',
+                  fontSize: '0.875rem',
+                  color: 'rgba(253,246,238,0.6)',
+                  marginBottom: '0.5rem',
+                }}>
+                  {link.label}
+                </Link>
+              ))}
             </div>
-            <div className="footer-socials" style={{
-              display: 'flex',
-              justifyContent: 'center',
-              gap: '1rem',
-              marginBottom: '0.5rem',
-            }}>
-              <a href="https://www.instagram.com/officialonthestove/" target="_blank" rel="noopener noreferrer" className="social-link" aria-label="Instagram">
-                <img src="/instagram.png" alt="Instagram" className="social-icon" />
-              </a>
-              <a href="https://www.pinterest.com/officialonthestove/" target="_blank" rel="noopener noreferrer" className="social-link" aria-label="Pinterest">
-                <img src="/pinterest.png" alt="Pinterest" className="social-icon" />
-              </a>
+
+            {/* Legal */}
+            <div>
+              <p style={{
+                fontFamily: '"Lato", sans-serif',
+                fontSize: '0.7rem',
+                letterSpacing: '2px',
+                textTransform: 'uppercase',
+                color: '#E8622A',
+                marginBottom: '1rem',
+                fontWeight: '700',
+              }}>
+                Legal
+              </p>
+              {[
+                { label: 'Privacy Policy', href: '/privacy-policy' },
+                { label: 'GDPR Policy', href: '/gdpr-policy' },
+                { label: 'Disclaimer', href: '/disclaimer' },
+                { label: 'Terms of Service', href: '/terms-of-service' },
+              ].map(link => (
+                <Link key={link.href} href={link.href} style={{
+                  display: 'block',
+                  fontFamily: '"Lato", sans-serif',
+                  fontSize: '0.875rem',
+                  color: 'rgba(253,246,238,0.6)',
+                  marginBottom: '0.5rem',
+                }}>
+                  {link.label}
+                </Link>
+              ))}
             </div>
+
+            {/* Social */}
+            <div>
+              <p style={{
+                fontFamily: '"Lato", sans-serif',
+                fontSize: '0.7rem',
+                letterSpacing: '2px',
+                textTransform: 'uppercase',
+                color: '#E8622A',
+                marginBottom: '1rem',
+                fontWeight: '700',
+              }}>
+                Follow Along
+              </p>
+              <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '1rem' }}>
+                <a href="https://www.instagram.com/officialonthestove/" target="_blank" rel="noopener noreferrer" className="social-link" aria-label="Instagram">
+                  <img src="/instagram.png" alt="Instagram" className="social-icon" />
+                </a>
+                <a href="https://www.pinterest.com/officialonthestove/" target="_blank" rel="noopener noreferrer" className="social-link" aria-label="Pinterest">
+                  <img src="/pinterest.png" alt="Pinterest" className="social-icon" />
+                </a>
+              </div>
+              <p style={{
+                fontFamily: '"Lato", sans-serif',
+                fontSize: '0.8rem',
+                color: 'rgba(253,246,238,0.45)',
+                lineHeight: 1.6,
+              }}>
+                New recipes every week. Follow for daily inspiration!
+              </p>
+            </div>
+          </div>
+
+          {/* Bottom bar */}
+          <div style={{
+            borderTop: '1px solid rgba(255,255,255,0.06)',
+            padding: '1.25rem 2rem',
+            textAlign: 'center',
+            fontFamily: '"Lato", sans-serif',
+            fontSize: '0.8rem',
+            color: 'rgba(253,246,238,0.35)',
+          }}>
             © {new Date().getFullYear()} On The Stove · Made with ❤️ by Adelaide
           </div>
         </footer>

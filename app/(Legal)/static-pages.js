@@ -757,7 +757,7 @@ function ContactForm() {
         />
       </label>
 
-      <button type="submit" className="full-width-mobile" style={{
+      <button type="submit" className="full-width-mobile button" suppressHydrationWarning style={{
         background: 'var(--orange)',
         color: 'var(--cream)',
         border: 'none',

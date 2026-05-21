@@ -86,7 +86,7 @@ export default async function Home({ searchParams }) {
             }}>
               Browse Recipes
             </Link>
-            <Link href="/collections" className="sparkle-button" style={{
+           <Link href="/collections" className="sparkle-button" style={{ 
               background: 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(244,148,106,0.15) 100%)',
               color: 'white',
               padding: '0.85rem 2.2rem',
@@ -99,8 +99,8 @@ export default async function Home({ searchParams }) {
               backdropFilter: 'blur(4px)',
               boxShadow: '0 0 15px rgba(244,148,106,0.2)',
             }}>
-              ✨ My collections
-            </Link>
+              ✨ My collections 
+            </Link> 
             <Link href="/about" style={{
               background: 'rgba(255,255,255,0.1)',
               color: 'white',

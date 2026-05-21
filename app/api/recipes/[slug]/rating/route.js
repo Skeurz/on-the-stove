@@ -41,7 +41,8 @@ async function getRecipeRatings(slug) {
   const result = await client.fetch(
     defineQuery(`*[_type == "recipe" && slug.current == $slug][0]{
       "ratingCount": coalesce(ratingCount, 0),
-      "ratingTotal": coalesce(ratingTotal, 0)
+      "ratingTotal": coalesce(ratingTotal, 0),
+      "ratingBreakdown": coalesce(ratingBreakdown, {})
     }`),
     { slug }
   )
@@ -67,10 +68,11 @@ export async function GET(request, { params }) {
       : 0
 
     return Response.json({
-      average,
-      count: ratings.ratingCount,
-      userVote: existingVote ? existingVote.value : null,
-    })
+  average,
+  count: ratings.ratingCount,
+  userVote: existingVote ? existingVote.value : null,
+  ratingBreakdown: ratings.ratingBreakdown || {},
+})
   } catch (error) {
     console.error('Error fetching rating:', error)
     return Response.json({ error: 'Failed to fetch rating' }, { status: 500 })
@@ -116,7 +118,7 @@ export async function POST(request, { params }) {
     }
 
     // Create the rating document
-    const ratingDoc = await writeClient.create({
+    await writeClient.create({
       _type: 'rating',
       recipe: { _ref: recipe._id, _type: 'reference' },
       value,
@@ -125,13 +127,21 @@ export async function POST(request, { params }) {
       createdAt: new Date().toISOString(),
     })
 
-   const updatedRecipe = await writeClient
+    // Ensure ratingBreakdown exists first
+    await writeClient
       .patch(recipe._id)
-      .setIfMissing({ ratingBreakdown: { "1": 0, "2": 0, "3": 0, "4": 0, "5": 0 } })
-       .inc({
+      .setIfMissing({ 
+        ratingBreakdown: { "1": 0, "2": 0, "3": 0, "4": 0, "5": 0 }
+      })
+      .commit()
+
+    // Then increment the right key and totals
+    const updatedRecipe = await writeClient
+      .patch(recipe._id)
+      .inc({
         ratingTotal: value,
         ratingCount: 1,
-        [`ratingBreakdown.${value}`]: 1
+       [`ratingBreakdown.star${value}`]: 1,
       })
       .commit({ visibility: 'async' })
 
