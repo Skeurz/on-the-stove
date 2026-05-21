@@ -72,10 +72,10 @@ export default function RootLayout({ children }) {
               gap: '1rem',
               marginBottom: '0.5rem',
             }}>
-              <a href="https://instagram.com/" target="_blank" rel="noopener noreferrer" className="social-link" aria-label="Instagram">
+              <a href="https://www.instagram.com/officialonthestove/" target="_blank" rel="noopener noreferrer" className="social-link" aria-label="Instagram">
                 <img src="/instagram.png" alt="Instagram" className="social-icon" />
               </a>
-              <a href="https://pinterest.com/" target="_blank" rel="noopener noreferrer" className="social-link" aria-label="Pinterest">
+              <a href="https://www.pinterest.com/officialonthestove/" target="_blank" rel="noopener noreferrer" className="social-link" aria-label="Pinterest">
                 <img src="/pinterest.png" alt="Pinterest" className="social-icon" />
               </a>
             </div>
