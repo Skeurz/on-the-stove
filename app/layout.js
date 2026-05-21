@@ -11,6 +11,7 @@ const navLinks = [
   { label: 'Snacks & Sides', href: '/category/snacksnsides' },
   { label: 'Desserts', href: '/category/desserts' },
   { label: 'Drinks & Shakes', href: '/category/drinks-shakes' },
+  { label: 'My collections', href: '/collections' },
 ]
 
 export const metadata = {

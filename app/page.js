@@ -86,6 +86,19 @@ export default async function Home({ searchParams }) {
             }}>
               Browse Recipes
             </Link>
+            <Link href="/collections" style={{
+              background: 'rgba(255,255,255,0.1)',
+              color: 'white',
+              padding: '0.85rem 2.2rem',
+              borderRadius: '50px',
+              fontFamily: '"Lato", sans-serif',
+              fontWeight: '400',
+              fontSize: '0.95rem',
+              border: '1px solid rgba(255,255,255,0.2)',
+              display: 'inline-block',
+            }}>
+              My collections
+            </Link>
             <Link href="/about" style={{
               background: 'rgba(255,255,255,0.1)',
               color: 'white',
@@ -135,6 +148,7 @@ export default async function Home({ searchParams }) {
             { label: '🥨 Snacks', href: '/category/snacksnsides' },
             { label: '🍰 Desserts', href: '/category/desserts' },
             { label: '🥤 Drinks', href: '/category/drinks-shakes' },
+            { label: '✨ My collections', href: '/collections' },
           ].map(cat => (
             <Link key={cat.href} href={cat.href} style={{
               background: 'transparent',

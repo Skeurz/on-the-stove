@@ -12,6 +12,7 @@ const navLinks = [
   { label: 'Snacks & Sides', href: '/category/snacksnsides' },
   { label: 'Desserts', href: '/category/desserts' },
   { label: 'Drinks & Shakes', href: '/category/drinks-shakes' },
+ // { label: 'My collections', href: '/collections' },
 ]
 
 const categoryLabel = {
@@ -21,6 +22,7 @@ const categoryLabel = {
   snacksnsides: 'Snacks & Sides',
   desserts: 'Desserts',
   'drinks-shakes': 'Drinks & Shakes',
+  // { label: 'My collections', href: '/collections' },
 }
 
 export default function Navbar() {
@@ -255,6 +257,16 @@ export default function Navbar() {
             )}
           </div>
 
+          <Link href="/collections" style={{
+            color: 'rgba(253,246,238,0.7)',
+            fontFamily: '"Lato", sans-serif',
+            fontSize: '0.88rem',
+            padding: '0.4rem 0.75rem',
+            borderRadius: '6px',
+          }}>
+            My collections
+          </Link>
+
           <Link href="/about" style={{
             color: 'rgba(253,246,238,0.7)',
             fontFamily: '"Lato", sans-serif',
@@ -349,7 +361,7 @@ export default function Navbar() {
                   suggestions.map((item) => (
                     <Link
                       key={item._id}
-                      href={`/recipe/${item.slug.current}`}
+                      href={`/${item.slug.current}`}
                       onClick={closeSearch}
                       style={{
                         display: 'grid',
@@ -524,6 +536,18 @@ export default function Navbar() {
               {link.label}
             </Link>
           ))}
+
+          <Link href="/collections" onClick={() => setMobileOpen(false)} style={{
+            display: 'block',
+            color: 'rgba(253,246,238,0.8)',
+            fontFamily: '"Lato", sans-serif',
+            fontSize: '1rem',
+            padding: '0.75rem 0',
+            borderTop: '1px solid rgba(255,255,255,0.06)',
+            marginTop: '0.5rem',
+          }}>
+            My collections
+          </Link>
 
           <Link href="/about" onClick={() => setMobileOpen(false)} style={{
             display: 'block',

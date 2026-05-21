@@ -69,7 +69,7 @@ function RatingStars({ total, count }) {
 
 export default function RecipeCard({ recipe, imageUrl }) {
   return (
-    <Link href={`/recipe/${recipe.slug.current}`}>
+    <Link href={`/${recipe.slug.current}`}>
       <div
         style={{
           background: 'var(--cream-light)',
