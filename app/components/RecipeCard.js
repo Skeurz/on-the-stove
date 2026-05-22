@@ -46,7 +46,7 @@ function RatingStars({ total, count }) {
       gap: '0.25rem',
       fontFamily: '"Lato", sans-serif',
       fontSize: '0.78rem',
-      color: 'var(--text-light)',
+      color: 'var(--text)',
     }}>
       {stars}
       {hasRatings ? (
@@ -54,12 +54,12 @@ function RatingStars({ total, count }) {
           <span style={{ marginLeft: '0.15rem', fontWeight: '700', color: 'var(--brown-light)' }}>
             {average.toFixed(1)}
           </span>
-          <span style={{ color: 'var(--gray)' }}>
+          <span style={{ color: 'var(--text-light)' }}>
             ({count})
           </span>
         </>
       ) : (
-        <span style={{ color: 'var(--gray)', fontSize: '0.72rem' }}>
+        <span style={{ color: 'var(--text-light)', fontSize: '0.72rem' }}>
           No ratings yet
         </span>
       )}

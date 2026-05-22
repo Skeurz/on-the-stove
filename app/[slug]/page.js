@@ -72,7 +72,7 @@ export default async function RecipePage({ params }) {
         const percentage = recipe.ratingCount ? (count / recipe.ratingCount) * 100 : 0
         return (
           <div key={stars} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', fontSize: '0.75rem' }}>
-            <span style={{ minWidth: '45px', fontWeight: '700', color: 'var(--text-light)' }}>{stars} ★</span>
+            <span style={{ minWidth: '45px', fontWeight: '700', color: 'var(--text)' }}>{stars} ★</span>
             <div style={{ flex: 1, height: '6px', background: 'var(--gray)', borderRadius: '10px', overflow: 'hidden' }}>
               <div style={{
                 width: `${percentage}%`,
@@ -81,7 +81,7 @@ export default async function RecipePage({ params }) {
                 transition: 'width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)'
               }} />
             </div>
-            <span style={{ minWidth: '16px', textAlign: 'right', color: 'var(--text-light)' }}>{count}</span>
+            <span style={{ minWidth: '16px', textAlign: 'right', color: 'var(--text)' }}>{count}</span>
           </div>
         )
       })}
@@ -89,11 +89,16 @@ export default async function RecipePage({ params }) {
   )
 
   return (
-    <div style={{ background: 'var(--cream)' }}>
+    <div style={{ 
+      backgroundImage: 'url("/background.jpg")', 
+      backgroundSize: 'cover',
+      backgroundAttachment: 'fixed',
+      minHeight: '100vh' 
+    }}>
 
       {/* ── HERO SECTION ── */}
       <div style={{
-        maxWidth: '860px',
+        maxWidth: '1200px',
         margin: '0 auto',
         padding: '3rem 2rem 0',
       }}>
@@ -152,13 +157,16 @@ export default async function RecipePage({ params }) {
             ))}
           </div>
         )}
+        <div style={{ marginTop: '1.5rem' }}>
+          <RecipeActions />
+        </div>
       </div>
 
-      {/* ── FULL WIDTH HERO IMAGE ── */}
+      {/* ── HERO IMAGE ── */}
       {recipe.mainImage && (
         <div style={{
-          maxWidth: '860px',
-          margin: '0 auto',
+          maxWidth: '1200px',
+          margin: '1.5rem auto 0',
           padding: '0 2rem',
         }}>
           <div style={{
@@ -167,7 +175,8 @@ export default async function RecipePage({ params }) {
             overflow: 'hidden',
             position: 'relative',
             aspectRatio: '16/9',
-            boxShadow: '0 20px 60px rgba(61,32,16,0.15)',
+            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+            border: '1px solid var(--gray)',
           }}>
             <Image
               src={urlFor(recipe.mainImage).width(1200).height(675).url()}
@@ -177,7 +186,6 @@ export default async function RecipePage({ params }) {
               priority
             />
           </div>
-          <RecipeActions />
         </div>
       )}
 
@@ -187,12 +195,17 @@ export default async function RecipePage({ params }) {
         margin: '3rem auto 0',
         padding: '0 2rem 4rem',
         display: 'grid',
-        gridTemplateColumns: '1fr 320px',
-        gap: '3rem',
+        gridTemplateColumns: '260px 1fr 320px',
+        gap: '2.5rem',
         alignItems: 'start',
       }}
         className="recipe-page-layout"
       >
+
+        {/* ── LEFT: Navigation ── */}
+        <aside style={{ position: 'sticky', top: '88px' }}>
+          <TableOfContents items={tableOfContents} />
+        </aside>
 
         {/* ── LEFT: Main content ── */}
         <div>
@@ -376,16 +389,38 @@ export default async function RecipePage({ params }) {
         </div>
 
         {/* ── RIGHT: Sidebar ── */}
-        {author && (
-          <aside style={{ position: 'sticky', top: '88px' }}>
+        <aside style={{ position: 'sticky', top: '88px' }}>
+          
+          {/* Main Recipe Image in Sidebar */}
+          {recipe.mainImage && (
+            <div style={{ marginBottom: '1.5rem' }}>
+              <div style={{
+                width: '100%',
+                borderRadius: '20px',
+                overflow: 'hidden',
+                position: 'relative',
+                aspectRatio: '1/1',
+                boxShadow: '0 15px 35px rgba(0,0,0,0.12)',
+                border: '1px solid var(--gray)',
+                background: 'var(--cream-light)',
+              }}>
+                <Image
+                  src={urlFor(recipe.mainImage).width(600).height(600).url()}
+                  alt={recipe.title}
+                  fill
+                  style={{ objectFit: 'cover' }}
+                  priority
+                />
+              </div>
+            </div>
+          )}
 
-            {/* Table of Contents */}
-            <TableOfContents items={tableOfContents} />
-            {/* Author card */}
+          {/* Author card */}
+          {author && (
             <div style={{
               background: 'var(--cream-light)',
               border: '1px solid var(--gray)',
-              borderRadius: '20px',
+              borderRadius: '24px',
               padding: '1.75rem',
               textAlign: 'center',
               marginBottom: '1.5rem',
@@ -456,25 +491,25 @@ export default async function RecipePage({ params }) {
                 Learn more
               </Link>
             </div>
+          )}
 
-            {/* Back button */}
-            <Link href="/recipes" style={{
-              display: 'block',
-              background: 'var(--cream-light)',
-              border: '1px solid var(--gray)',
-              borderRadius: '50px',
-              padding: '0.75rem',
-              textAlign: 'center',
-              fontFamily: '"Lato", sans-serif',
-              fontSize: '0.88rem',
-              fontWeight: '700',
-              color: 'var(--brown)',
-            }}>
-              ← Back to all recipes
-            </Link>
+          {/* Back button */}
+          <Link href="/recipes" style={{
+            display: 'block',
+            background: 'var(--cream-light)',
+            border: '1px solid var(--gray)',
+            borderRadius: '50px',
+            padding: '0.75rem',
+            textAlign: 'center',
+            fontFamily: '"Lato", sans-serif',
+            fontSize: '0.88rem',
+            fontWeight: '700',
+            color: 'var(--brown)',
+          }}>
+            ← Back to all recipes
+          </Link>
 
-          </aside>
-        )}
+        </aside>
       </div>
 
       {/* ── SUGGESTED RECIPES ── */}
