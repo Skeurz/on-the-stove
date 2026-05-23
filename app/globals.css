@@ -135,7 +135,10 @@ input[type="reset"]:not(:disabled):active,
 body {
   overflow-x: hidden;
 }
-
+html, body {
+  max-width: 100vw;
+  overflow-x: clip;
+}
 /* Social icon sizing */
 .social-icon {
   height: 45px; /* 2.5x larger */
@@ -1100,4 +1103,50 @@ body {
     background: white !important;
     color: #1E0E05 !important;
   }
+}
+.recipe-main-layout {
+  display: grid;
+  grid-template-columns: 260px 1fr 320px;
+  gap: 2.5rem;
+  align-items: start;
+}
+
+.recipe-toc-aside {
+  position: sticky;
+  top: 88px;
+}
+
+.recipe-right-aside {
+  position: sticky;
+  top: 88px;
+}
+
+@media (max-width: 1100px) {
+  .recipe-main-layout {
+    grid-template-columns: 1fr 300px !important;
+  }
+  .recipe-toc-aside {
+    display: none !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .recipe-main-layout {
+    grid-template-columns: 1fr !important;
+  }
+  .recipe-right-aside {
+    position: static !important;
+  }
+}
+@media (max-width: 768px) {
+  .hero-section.with-video {
+    margin-top: 0 !important;
+    padding-top: 4rem !important;
+  }
+}
+.site-header {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 100 !important;
+  width: 100% !important;
 }

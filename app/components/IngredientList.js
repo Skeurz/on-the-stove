@@ -1,9 +1,26 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
-export default function IngredientList({ ingredients }) {
+export default function IngredientList({ ingredients, recipeSlug }) {
   const [checked, setChecked] = useState({})
+  const [mounted, setMounted] = useState(false)
+  const storageKey = `ingredients-${recipeSlug}`
+
+  useEffect(() => {
+    setMounted(true)
+    try {
+      const saved = localStorage.getItem(storageKey)
+      if (saved) setChecked(JSON.parse(saved))
+    } catch { }
+  }, [storageKey])
+
+  useEffect(() => {
+    if (!mounted) return
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(checked))
+    } catch { }
+  }, [checked, mounted, storageKey])
 
   const toggle = (index) => {
     setChecked(prev => ({ ...prev, [index]: !prev[index] }))
@@ -11,7 +28,10 @@ export default function IngredientList({ ingredients }) {
 
   const allChecked = ingredients.every((_, i) => checked[i])
 
-  const resetAll = () => setChecked({})
+  const resetAll = () => {
+    setChecked({})
+    try { localStorage.removeItem(storageKey) } catch { }
+  }
 
   return (
     <div>
@@ -34,9 +54,9 @@ export default function IngredientList({ ingredients }) {
               transition: 'color 0.2s',
               textDecoration: checked[i] ? 'line-through' : 'none',
               opacity: checked[i] ? 0.5 : 1,
+              userSelect: 'none',
             }}
           >
-            {/* Custom checkbox */}
             <span style={{
               width: '20px',
               height: '20px',
@@ -61,7 +81,6 @@ export default function IngredientList({ ingredients }) {
         ))}
       </ul>
 
-      {/* Progress + Reset */}
       <div style={{
         marginTop: '1rem',
         display: 'flex',
@@ -94,21 +113,18 @@ export default function IngredientList({ ingredients }) {
           </p>
         </div>
 
-        {Object.values(checked).some(Boolean) && (
-          <button
-            onClick={resetAll}
-            style={{
-              background: 'none',
-              border: '1px solid var(--gray)',
-              borderRadius: '50px',
-              padding: '0.3rem 0.85rem',
-              fontFamily: '"Lato", sans-serif',
-              fontSize: '0.75rem',
-              color: 'var(--text-light)',
-              cursor: 'pointer',
-              flexShrink: 0,
-            }}
-          >
+        {Object.values(checked).some(Boolean) && !allChecked && (
+          <button onClick={resetAll} style={{
+            background: 'none',
+            border: '1px solid var(--gray)',
+            borderRadius: '50px',
+            padding: '0.3rem 0.85rem',
+            fontFamily: '"Lato", sans-serif',
+            fontSize: '0.75rem',
+            color: 'var(--text-light)',
+            cursor: 'pointer',
+            flexShrink: 0,
+          }}>
             Reset
           </button>
         )}

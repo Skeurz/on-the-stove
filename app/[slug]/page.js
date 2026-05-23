@@ -97,10 +97,10 @@ export default async function RecipePage({ params }) {
     }}>
 
       {/* ── HERO SECTION ── */}
-      <div style={{
+      <div className="content-section" style={{
         maxWidth: '1200px',
         margin: '0 auto',
-        padding: '3rem 2rem 0',
+        paddingTop: '3rem',
       }}>
         {/* Category + breadcrumb */}
         <div style={{ marginBottom: '1rem' }}>
@@ -136,6 +136,8 @@ export default async function RecipePage({ params }) {
             flexWrap: 'wrap',
             gap: '0.5rem',
             marginBottom: '1.5rem',
+            overflowX: 'auto',
+            paddingBottom: '0.25rem',
           }}>
             {recipeFacts.map(fact => (
               <div key={fact.label} style={{
@@ -190,20 +192,17 @@ export default async function RecipePage({ params }) {
       )}
 
       {/* ── MAIN CONTENT + SIDEBAR ── */}
-      <div style={{
-        maxWidth: '1200px',
-        margin: '3rem auto 0',
-        padding: '0 2rem 4rem',
-        display: 'grid',
-        gridTemplateColumns: '260px 1fr 320px',
-        gap: '2.5rem',
-        alignItems: 'start',
-      }}
-        className="recipe-page-layout"
+      <div
+        className="recipe-main-layout content-section"
+        style={{
+          maxWidth: '1200px',
+          margin: '3rem auto 0',
+          paddingBottom: '4rem',
+        }}
       >
 
         {/* ── LEFT: Navigation ── */}
-        <aside style={{ position: 'sticky', top: '88px' }}>
+        <aside className="recipe-toc-aside">
           <TableOfContents items={tableOfContents} />
         </aside>
 
@@ -220,13 +219,24 @@ export default async function RecipePage({ params }) {
               border: '1px solid var(--gray)',
               borderLeft: '4px solid var(--orange)',
             }}>
+              <h2 style={{
+                fontFamily: '"Playfair Display", serif',
+                fontSize: '1.75rem',
+                color: 'var(--brown)',
+                marginBottom: '1rem',
+                fontWeight: '700',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.75rem'
+              }}>
+                📖 Overview
+              </h2>
               <p style={{
                 fontFamily: '"Lato", sans-serif',
-                fontSize: '1.1rem',
-                lineHeight: 1.85,
+                fontSize: '1.15rem',
+                lineHeight: 1.9,
                 color: 'var(--text)',
                 margin: 0,
-                fontStyle: 'italic',
               }}>
                 {recipe.description}
               </p>
@@ -243,29 +253,28 @@ export default async function RecipePage({ params }) {
               marginBottom: '2rem',
             }}>
               <div style={{
-                display: 'grid',
-                gridTemplateColumns: recipe.ingredients?.length > 0 && recipe.steps?.length > 0
-                  ? 'minmax(240px, 0.8fr) minmax(0, 1.2fr)'
-                  : '1fr',
+            display: 'flex',
+            flexDirection: 'column',
               }}>
-
                 {/* Ingredients */}
                 {recipe.ingredients?.length > 0 && (
                   <div style={{
                     padding: '2rem',
-                    borderRight: recipe.steps?.length > 0 ? '1px solid var(--gray)' : 'none',
+                borderBottom: recipe.steps?.length > 0 ? '1px solid var(--gray)' : 'none',
                   }}>
                     <h2 style={{
                       fontFamily: '"Playfair Display", serif',
-                      fontSize: '1.4rem',
+                      fontSize: '1.75rem',
                       color: 'var(--brown)',
                       marginBottom: '1.25rem',
                       paddingBottom: '0.75rem',
                       borderBottom: '2px solid var(--orange)',
+                      fontWeight: '700',
+                      letterSpacing: '-0.01em',
                     }}>
                       🧂 Ingredients
                     </h2>
-                    <IngredientList ingredients={recipe.ingredients} />
+                    <IngredientList ingredients={recipe.ingredients} recipeSlug={slug} />
                   </div>
                 )}
 
@@ -274,11 +283,13 @@ export default async function RecipePage({ params }) {
                   <div style={{ padding: '2rem' }}>
                     <h2 style={{
                       fontFamily: '"Playfair Display", serif',
-                      fontSize: '1.4rem',
+                      fontSize: '1.75rem',
                       color: 'var(--brown)',
                       marginBottom: '1.25rem',
                       paddingBottom: '0.75rem',
                       borderBottom: '2px solid var(--orange)',
+                      fontWeight: '700',
+                      letterSpacing: '-0.01em',
                     }}>
                       👨‍🍳 Instructions
                     </h2>
@@ -335,11 +346,13 @@ export default async function RecipePage({ params }) {
             }}>
               <h3 style={{
                 fontFamily: '"Playfair Display", serif',
-                fontSize: '1.4rem',
+                fontSize: '1.75rem',
                 color: 'var(--brown)',
                 marginBottom: '1.25rem',
                 paddingBottom: '0.75rem',
                 borderBottom: '2px solid var(--orange)',
+                fontWeight: '700',
+                letterSpacing: '-0.01em',
               }}>
                 📝 Chef's Notes
               </h3>
@@ -389,7 +402,7 @@ export default async function RecipePage({ params }) {
         </div>
 
         {/* ── RIGHT: Sidebar ── */}
-        <aside style={{ position: 'sticky', top: '88px' }}>
+        <aside className="recipe-right-aside">
           
           {/* Main Recipe Image in Sidebar */}
           {recipe.mainImage && (

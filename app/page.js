@@ -25,7 +25,7 @@ export default async function Home({ searchParams }) {
         position: 'relative',
         overflow: 'hidden',
         marginTop: '-68px',
-        padding: 'calc(7rem + 72px) 2rem 5rem',
+        padding: 'calc(7rem + 68px) 2rem 5rem',
         color: 'white',
         textAlign: 'center',
       }}>

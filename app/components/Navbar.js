@@ -33,6 +33,14 @@ export default function Navbar() {
   const [suggestions, setSuggestions] = useState([])
   const [suggestionsOpen, setSuggestionsOpen] = useState(false)
   const [heroVisible, setHeroVisible] = useState(true)
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth <= 768)
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
   const searchInputRef = useRef(null)
   const pathname = usePathname()
   const isHome = pathname === '/' || pathname === ''
@@ -47,26 +55,14 @@ export default function Navbar() {
       return
     }
 
-    const heroSection = document.querySelector('.hero-section.with-video')
-    if (!heroSection) {
-      setHeroVisible(false)
-      return
+    const handleScroll = () => {
+      setHeroVisible(window.scrollY < 50)
     }
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setHeroVisible(entry.isIntersecting)
-      },
-      {
-        rootMargin: '0px 0px -100px 0px',
-      }
-    )
+    handleScroll()
 
-    observer.observe(heroSection)
-
-    return () => {
-      observer.disconnect()
-    }
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
   }, [isHome])
 
   useEffect(() => {
@@ -143,14 +139,21 @@ export default function Navbar() {
     }
   }
 
-  return (
+  
+    return (
     <header className="site-header" style={{
-      background: isHome && heroVisible ? 'transparent' : '#1E0E05',
-      borderBottom: isHome && heroVisible ? 'none' : '1px solid rgba(255,255,255,0.06)',
+      background: isHome && heroVisible && !isMobile
+        ? 'transparent' 
+        : 'linear-gradient(135deg, #1A0A02 0%, #2D1205 50%, #1A0A02 100%)',
+      borderBottom: isHome && heroVisible && !isMobile ? 'none' : '1px solid rgba(232,98,42,0.15)',
+      boxShadow: isHome && heroVisible && !isMobile ? 'none' : '0 4px 24px rgba(0,0,0,0.3)',
       position: 'sticky',
       top: 0,
       zIndex: 100,
+      width: '100%',
+      transition: 'background 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease',
     }}>
+
       <div className="header-inner" style={{
         maxWidth: '1200px',
         margin: '0 auto',
