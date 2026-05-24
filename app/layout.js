@@ -15,8 +15,45 @@ const navLinks = [
 ]
 
 export const metadata = {
-  title: 'On The Stove – Cook With Adelaide',
+  title: {
+    default: 'On The Stove – Cook With Adelaide',
+    template: '%s – On The Stove',
+  },
   description: 'From My Kitchen, To Yours. Simple, comforting recipes for real life.',
+  keywords: ['recipes', 'cooking', 'food blog', 'easy recipes', 'home cooking', 'Adelaide'],
+  authors: [{ name: 'Adelaide' }],
+  creator: 'Adelaide',
+  openGraph: {
+    type: 'website',
+    locale: 'en_US',
+    url: 'https://onthestove.com',
+    siteName: 'On The Stove',
+    title: 'On The Stove – Cook With Adelaide',
+    description: 'From My Kitchen, To Yours. Simple, comforting recipes for real life.',
+    images: [{
+      url: 'https://onthestove.com/og-image.jpg',
+      width: 1200,
+      height: 630,
+      alt: 'On The Stove – Cook With Adelaide',
+    }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'On The Stove – Cook With Adelaide',
+    description: 'From My Kitchen, To Yours. Simple, comforting recipes for real life.',
+    images: ['https://onthestove.com/og-image.jpg'],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
 }
 
 export default function RootLayout({ children }) {

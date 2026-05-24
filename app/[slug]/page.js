@@ -20,11 +20,55 @@ const categoryLabel = {
   'drinks-shakes': 'Drinks & Shakes',
 }
 
+export async function generateMetadata({ params }) {
+  const { slug } = await params
+  const recipe = await client.fetch(
+    `*[_type == "recipe" && slug.current == $slug][0]{
+      title,
+      description,
+      seoTitle,
+      seoDescription,
+      mainImage
+    }`,
+    { slug }
+  )
+
+  if (!recipe) return {}
+
+  const title = recipe.seoTitle || recipe.title
+  const description = recipe.seoDescription || recipe.description
+  const imageUrl = recipe.mainImage
+    ? urlFor(recipe.mainImage).width(1200).height(630).url()
+    : null
+
+  return {
+    title: `${title} – On The Stove`,
+    description,
+    openGraph: {
+      title: `${title} – On The Stove`,
+      description,
+      type: 'article',
+      images: imageUrl ? [{ url: imageUrl, width: 1200, height: 630 }] : [],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${title} – On The Stove`,
+      description,
+      images: imageUrl ? [imageUrl] : [],
+    },
+  }
+}
+
 export default async function RecipePage({ params }) {
   const { slug } = await params
   const [recipe, author] = await Promise.all([
     client.fetch(`*[_type == "recipe" && slug.current == $slug][0]{
       ...,
+      "tips": tips[]{
+        _key,
+        title,
+        description
+      },
       "ratingBreakdown": {
         "star1": coalesce(ratingBreakdown.star1, 0),
         "star2": coalesce(ratingBreakdown.star2, 0),
@@ -45,19 +89,24 @@ export default async function RecipePage({ params }) {
 
   const totalTime = (recipe.prepTime || 0) + (recipe.cookTime || 0)
 
+  const difficultyLabel = { easy: '🟢 Easy', medium: '🟡 Medium', hard: '🔴 Hard' }
+
   const recipeFacts = [
     recipe.prepTime ? { label: 'Prep', value: `${recipe.prepTime} min`, icon: '⏱' } : null,
     recipe.cookTime ? { label: 'Cook', value: `${recipe.cookTime} min`, icon: '🔥' } : null,
     totalTime > 0 ? { label: 'Total', value: `${totalTime} min`, icon: '🕐' } : null,
     recipe.servings ? { label: 'Serves', value: recipe.servings, icon: '🍽' } : null,
     recipe.calories ? { label: 'Calories', value: recipe.calories, icon: '⚡' } : null,
+    recipe.difficulty ? { label: 'Difficulty', value: difficultyLabel[recipe.difficulty], icon: '📊' } : null,
+    recipe.cuisine ? { label: 'Cuisine', value: recipe.cuisine, icon: '🌍' } : null,
   ].filter(Boolean)
+
   const tableOfContents = [
     recipe.description ? { href: '#recipe-overview', label: '📖 Overview' } : null,
     recipeFacts.length > 0 ? { href: '#recipe-facts', label: '⏱ Recipe Details' } : null,
     recipe.ingredients?.length > 0 ? { href: '#recipe-ingredients', label: `🧂 Ingredients (${recipe.ingredients.length})` } : null,
     recipe.steps?.length > 0 ? { href: '#recipe-instructions', label: `👨‍🍳 Instructions (${recipe.steps.length} steps)` } : null,
-    recipe.body ? { href: '#recipe-notes', label: '📝 Chef\'s Notes' } : null,
+    recipe.tips?.length > 0 ? { href: '#recipe-tips', label: '💡 Chef\'s Tips' } : null,
   ].filter(Boolean)
 
   const ratingBreakdownUI = (
@@ -243,7 +292,33 @@ export default async function RecipePage({ params }) {
             </div>
           )}
 
+          {/* Tags */}
+          {recipe.tags?.length > 0 && (
+            <div style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: '0.5rem',
+              marginBottom: '2rem',
+            }}>
+              {recipe.tags.map(tag => (
+                <span key={tag} style={{
+                  background: 'var(--gray)',
+                  color: 'var(--text-light)',
+                  fontFamily: '"Lato", sans-serif',
+                  fontSize: '0.78rem',
+                  fontWeight: '700',
+                  padding: '0.3rem 0.85rem',
+                  borderRadius: '50px',
+                  letterSpacing: '0.3px',
+                }}>
+                  #{tag}
+                </span>
+              ))}
+            </div>
+          )}
+
           {/* Ingredients + Steps */}
+
           {(recipe.ingredients?.length > 0 || recipe.steps?.length > 0) && (
             <div id="recipe-ingredients" style={{
               background: 'var(--cream-light)',
@@ -335,35 +410,69 @@ export default async function RecipePage({ params }) {
             </div>
           )}
 
-          {/* Chef's Notes */}
-          {recipe.body && (
-            <div id="recipe-notes" style={{
-              background: 'var(--cream-light)',
+          {/* Chef's Tips */}
+          {recipe.tips?.length > 0 && (
+            <div id="recipe-tips" style={{
+              background: 'linear-gradient(135deg, rgba(232,98,42,0.06), rgba(232,98,42,0.02))',
               borderRadius: '20px',
               padding: '2rem',
-              border: '1px solid var(--gray)',
+              border: '1px solid rgba(232,98,42,0.2)',
               marginBottom: '2rem',
             }}>
               <h3 style={{
                 fontFamily: '"Playfair Display", serif',
-                fontSize: '1.75rem',
+                fontSize: '1.4rem',
                 color: 'var(--brown)',
                 marginBottom: '1.25rem',
                 paddingBottom: '0.75rem',
                 borderBottom: '2px solid var(--orange)',
-                fontWeight: '700',
-                letterSpacing: '-0.01em',
               }}>
-                📝 Chef's Notes
+                💡 Chef's Tips
               </h3>
-              <div style={{
-                fontFamily: '"Lato", sans-serif',
-                fontSize: '1rem',
-                lineHeight: 1.9,
-                color: 'var(--text)',
-              }}>
-                <PortableText value={recipe.body} />
-              </div>
+              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                {recipe.tips.filter(tip => typeof tip === 'object').map((tip, i) => (
+                  <li key={tip._key || i} style={{
+                    display: 'flex',
+                    gap: '0.75rem',
+                    alignItems: 'flex-start',
+                    padding: '0.75rem 0',
+                    borderBottom: i < recipe.tips.length - 1 ? '1px solid rgba(232,98,42,0.1)' : 'none',
+                  }}>
+                    <span style={{
+                      color: 'var(--orange)',
+                      flexShrink: 0,
+                      marginTop: '3px',
+                      fontWeight: '700',
+                    }}>✓</span>
+                    <div>
+                      {tip.title && (
+                        <p style={{
+                          fontFamily: '"Playfair Display", serif',
+                          fontSize: '1rem',
+                          fontWeight: '700',
+                          color: 'var(--brown)',
+                          marginBottom: '0.25rem',
+                          margin: 0,
+                        }}>
+                          {tip.title}
+                        </p>
+                      )}
+                      {tip.description && (
+                        <p style={{
+                          fontFamily: '"Lato", sans-serif',
+                          fontSize: '0.9rem',
+                          color: 'var(--text-light)',
+                          lineHeight: 1.7,
+                          margin: 0,
+                          marginTop: '0.25rem',
+                        }}>
+                          {tip.description}
+                        </p>
+                      )}
+                    </div>
+                  </li>
+                ))}
+              </ul>
             </div>
           )}
 

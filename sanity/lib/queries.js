@@ -14,7 +14,8 @@ export const getAllRecipes = defineQuery(`
     calories,
     publishedAt,
     ratingTotal,
-    ratingCount
+    ratingCount,
+    difficulty
   }
 `)
 
@@ -33,7 +34,8 @@ export const getPaginatedRecipes = defineQuery(`
       calories,
       publishedAt,
       ratingTotal,
-      ratingCount
+      ratingCount,
+      difficulty
     },
     "total": count(*[_type == "recipe"])
   }
@@ -54,6 +56,10 @@ export const getRecipeBySlug = defineQuery(`
     ingredients,
     steps,
     body,
+    tips,
+    tags,
+    difficulty,
+    cuisine,
     publishedAt
   }
 `)
@@ -72,7 +78,8 @@ export const getRecipesByCategory = defineQuery(`
     calories,
     publishedAt,
     ratingTotal,
-    ratingCount
+    ratingCount,
+    difficulty
   }
 `)
 
@@ -91,7 +98,8 @@ export const getPaginatedRecipesByCategory = defineQuery(`
       calories,
       publishedAt,
       ratingTotal,
-      ratingCount
+      ratingCount,
+      difficulty
     },
     "total": count(*[_type == "recipe" && category == $category])
   }
@@ -118,7 +126,8 @@ export const searchRecipes = defineQuery(`
     calories,
     publishedAt,
     ratingTotal,
-    ratingCount
+    ratingCount,
+    difficulty
   }
 `)
 
@@ -138,6 +147,7 @@ export const searchRecipeSuggestions = defineQuery(`
     mainImage
   }
 `)
+
 export const getAuthor = defineQuery(`
   *[_type == "author"][0] {
     name,
@@ -158,6 +168,7 @@ export const getSuggestedRecipes = defineQuery(`
     prepTime,
     cookTime,
     ratingTotal,
-    ratingCount
+    ratingCount,
+    difficulty
   }
 `)

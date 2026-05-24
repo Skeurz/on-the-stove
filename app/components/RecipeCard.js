@@ -30,7 +30,7 @@ function RatingStars({ total, count }) {
   for (let i = 0; i < 5; i++) {
     stars.push(
       <span key={i} style={{
-        color: i < fullStars ? 'var(--orange)' : 'var(--gray)',
+        color: i < fullStars ? 'var(--orange)' : 'var(--text-light)',
         fontSize: '0.85rem',
         lineHeight: 1,
       }}>
@@ -149,9 +149,14 @@ export default function RecipeCard({ recipe, imageUrl }) {
             fontFamily: '"Playfair Display", serif',
             fontSize: '1.15rem',
             fontWeight: '700',
-            color: 'var(--brown)',
+            color: '#2C1A0E',
             lineHeight: 1.35,
             marginBottom: '0.6rem',
+            minHeight: '2.7rem',
+            display: '-webkit-box',
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: 'vertical',
+            overflow: 'hidden',
           }}>
             {recipe.title}
           </h3>
@@ -201,14 +206,45 @@ export default function RecipeCard({ recipe, imageUrl }) {
                 🍽 {recipe.servings} servings
               </span>
             )}
-            {!recipe.prepTime && !recipe.cookTime && !recipe.servings && (
+
+           {!recipe.prepTime && !recipe.cookTime && !recipe.servings && (
               <span style={{ color: '#E8622A' }}>View Recipe →</span>
             )}
+
           </div>
 
-          {/* Star rating */}
-          <div style={{ marginTop: '0.6rem' }}>
+          {/* Star rating + difficulty */}
+          <div style={{
+            marginTop: '0.6rem',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: '0.5rem',
+          }}>
             <RatingStars total={recipe.ratingTotal} count={recipe.ratingCount} />
+            {recipe.difficulty && (
+              <span style={{
+                background: recipe.difficulty === 'easy'
+                  ? 'rgba(34,197,94,0.1)'
+                  : recipe.difficulty === 'medium'
+                  ? 'rgba(234,179,8,0.1)'
+                  : 'rgba(239,68,68,0.1)',
+                color: recipe.difficulty === 'easy'
+                  ? '#16a34a'
+                  : recipe.difficulty === 'medium'
+                  ? '#ca8a04'
+                  : '#dc2626',
+                padding: '0.2rem 0.6rem',
+                borderRadius: '50px',
+                fontSize: '0.72rem',
+                fontWeight: '700',
+                fontFamily: '"Lato", sans-serif',
+                whiteSpace: 'nowrap',
+                flexShrink: 0,
+              }}>
+                {recipe.difficulty === 'easy' ? '🟢 Easy' : recipe.difficulty === 'medium' ? '🟡 Medium' : '🔴 Hard'}
+              </span>
+            )}
           </div>
         </div>
       </div>
