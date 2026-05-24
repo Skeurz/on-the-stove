@@ -4,6 +4,7 @@ import { urlFor } from '@/sanity/lib/image'
 import Image from 'next/image'
 import Link from 'next/link'
 import RecipeCard from './components/RecipeCard'
+import NewsletterSignup from './components/NewsletterSignup'
 
 const RECIPES_PER_PAGE = 8
 
@@ -322,11 +323,20 @@ export default async function Home({ searchParams }) {
                </div>
              </aside>
            )}
-         </div>
+         </div>      
        </section>
+
+      {/* Newsletter */}
+      <section className="content-section" style={{
+        maxWidth: '1200px',
+        margin: '0 auto 4rem',
+      }}>
+        <NewsletterSignup source="homepage" />
+      </section>
      </div>
    )
 }
+
 
 function Pagination({ currentPage, totalPages }) {
   const pages = Array.from({ length: totalPages }, (_, index) => index + 1)

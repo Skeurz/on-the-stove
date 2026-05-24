@@ -57,10 +57,23 @@ export const getRecipeBySlug = defineQuery(`
     steps,
     body,
     tips,
+    helpfulTips,
+    variations,
+    veganAdaptation,
+    storageTips,
+    faqs,
     tags,
     difficulty,
     cuisine,
-    publishedAt
+    publishedAt,
+    secondaryImage,
+    "preparationImages": preparationImages[]{
+      _key,
+      image,
+      caption,
+      stepNumber
+    },
+    videoUrl,
   }
 `)
 

@@ -43,6 +43,65 @@ export const recipe = {
       validation: Rule => Rule.required()
     },
     {
+      name: 'secondaryImage',
+      title: 'Secondary Image',
+      type: 'image',
+      options: { hotspot: true },
+      group: 'content',
+      description: 'A second beauty shot — plating, close-up, or lifestyle photo',
+    },
+    {
+      name: 'preparationImages',
+      title: 'Preparation Photos',
+      type: 'array',
+      group: 'content',
+      description: 'Step-by-step preparation photos',
+      of: [{
+        type: 'object',
+        fields: [
+          {
+            name: 'image',
+            title: 'Photo',
+            type: 'image',
+            options: { hotspot: true },
+          },
+          {
+            name: 'caption',
+            title: 'Caption',
+            type: 'string',
+            description: 'e.g. "Mix the dry ingredients"',
+          },
+          {
+            name: 'stepNumber',
+            title: 'Step Number',
+            type: 'number',
+            description: 'Which step does this photo correspond to?',
+          }
+        ],
+        preview: {
+          select: {
+            title: 'caption',
+            subtitle: 'stepNumber',
+            media: 'image',
+          },
+          prepare({ title, subtitle, media }) {
+            return {
+              title: title || 'Untitled photo',
+              subtitle: subtitle ? `Step ${subtitle}` : '',
+              media,
+            }
+          }
+        }
+      }]
+    },
+    {
+      name: 'videoUrl',
+      title: 'Recipe Video',
+      type: 'url',
+      group: 'content',
+      description: 'YouTube or TikTok URL for the recipe video',
+    },
+    {
       name: 'category',
       title: 'Category',
       type: 'string',
@@ -156,41 +215,103 @@ export const recipe = {
       group: 'details',
       of: [{ type: 'string' }]
     },
+    
     {
       name: 'steps',
       title: 'Steps',
       type: 'array',
       group: 'details',
-      of: [{ type: 'text' }]
+      of: [{
+        type: 'object',
+        fields: [
+          {
+            name: 'title',
+            title: 'Step Title',
+            type: 'string',
+            description: 'e.g. "Preheat the oven" or "Mix dry ingredients"'
+          },
+          {
+            name: 'description',
+            title: 'Step Description',
+            type: 'text',
+            rows: 3,
+          }
+        ],
+        preview: {
+          select: { title: 'title', subtitle: 'description' }
+        }
+      }]
     },
     
     {
-  name: 'tips',
-  title: "Chef's Tips",
-  type: 'array',
-  group: 'details',
-  description: 'Pro tips, substitutions, storage advice',
-  of: [{
-    type: 'object',
-    fields: [
-      {
-        name: 'title',
-        title: 'Tip Title',
-        type: 'string',
-        description: 'e.g. "Use Fresh Blueberries"'
-      },
-      {
-        name: 'description',
-        title: 'Tip Description',
-        type: 'text',
-        rows: 2,
-      }
-    ],
-    preview: {
-      select: { title: 'title', subtitle: 'description' }
-    }
-  }]
-},
+      name: 'helpfulTips',
+      title: '💡 Helpful Tips',
+      type: 'array',
+      group: 'details',
+      description: 'Pro tips, substitutions, and tricks',
+      of: [{
+        type: 'object',
+        fields: [
+          { name: 'title', title: 'Tip Title', type: 'string' },
+          { name: 'description', title: 'Tip Description', type: 'text', rows: 2 }
+        ],
+        preview: { select: { title: 'title', subtitle: 'description' } }
+      }]
+    },
+    {
+      name: 'variations',
+      title: '🔄 Easy Variations',
+      type: 'array',
+      group: 'details',
+      description: 'Simple ways to change up the recipe',
+      of: [{
+        type: 'object',
+        fields: [
+          { name: 'title', title: 'Variation Title', type: 'string' },
+          { name: 'description', title: 'Variation Description', type: 'text', rows: 2 }
+        ],
+        preview: { select: { title: 'title', subtitle: 'description' } }
+      }]
+    },
+    {
+      name: 'veganAdaptation',
+      title: '🌱 How to Make This Vegan',
+      type: 'array',
+      group: 'details',
+      description: 'Vegan substitutions for this recipe',
+      of: [{ type: 'string' }]
+    },
+    {
+      name: 'storageTips',
+      title: '📦 Storage Tips',
+      type: 'array',
+      group: 'details',
+      description: 'How to store, refrigerate, or freeze',
+      of: [{
+        type: 'object',
+        fields: [
+          { name: 'method', title: 'Storage Method', type: 'string', description: 'e.g. Room temperature, Refrigerator, Freezer' },
+          { name: 'duration', title: 'Duration', type: 'string', description: 'e.g. Up to 3 days' },
+          { name: 'notes', title: 'Notes', type: 'string' }
+        ],
+        preview: { select: { title: 'method', subtitle: 'duration' } }
+      }]
+    },
+    {
+      name: 'faqs',
+      title: '❓ Frequently Asked Questions',
+      type: 'array',
+      group: 'details',
+      description: 'Common questions and answers',
+      of: [{
+        type: 'object',
+        fields: [
+          { name: 'question', title: 'Question', type: 'string' },
+          { name: 'answer', title: 'Answer', type: 'text', rows: 3 }
+        ],
+        preview: { select: { title: 'question', subtitle: 'answer' } }
+      }]
+    },
 
     // ── SEO ──
     {

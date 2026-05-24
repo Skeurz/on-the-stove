@@ -10,6 +10,7 @@ import SuggestedRecipes from '@/app/components/SuggestedRecipes'
 import RecipeActions from '@/app/components/RecipeActions'
 import IngredientList from '@/app/components/IngredientList'
 import TableOfContents from '@/app/components/TableOfContents'
+import NewsletterSignup from '@/app/components/NewsletterSignup'
 
 const categoryLabel = {
   lunch: 'Lunch',
@@ -64,11 +65,15 @@ export default async function RecipePage({ params }) {
   const [recipe, author] = await Promise.all([
     client.fetch(`*[_type == "recipe" && slug.current == $slug][0]{
       ...,
-      "tips": tips[]{
-        _key,
-        title,
-        description
-      },
+      "steps": steps[]{ _key, title, description },
+      "preparationImages": preparationImages[]{ _key, image, caption, stepNumber },
+      secondaryImage,
+      videoUrl,
+      "helpfulTips": helpfulTips[]{ _key, title, description },
+      "variations": variations[]{ _key, title, description },
+      "veganAdaptation": veganAdaptation,
+      "storageTips": storageTips[]{ _key, method, duration, notes },
+      "faqs": faqs[]{ _key, question, answer },
       "ratingBreakdown": {
         "star1": coalesce(ratingBreakdown.star1, 0),
         "star2": coalesce(ratingBreakdown.star2, 0),
@@ -106,7 +111,13 @@ export default async function RecipePage({ params }) {
     recipeFacts.length > 0 ? { href: '#recipe-facts', label: '⏱ Recipe Details' } : null,
     recipe.ingredients?.length > 0 ? { href: '#recipe-ingredients', label: `🧂 Ingredients (${recipe.ingredients.length})` } : null,
     recipe.steps?.length > 0 ? { href: '#recipe-instructions', label: `👨‍🍳 Instructions (${recipe.steps.length} steps)` } : null,
-    recipe.tips?.length > 0 ? { href: '#recipe-tips', label: '💡 Chef\'s Tips' } : null,
+    recipe.preparationImages?.length > 0 ? { href: '#prep-photos', label: '📸 Step by Step Photos' } : null,
+    recipe.videoUrl ? { href: '#video', label: '🎥 Watch the Recipe' } : null,
+    recipe.helpfulTips?.length > 0 ? { href: '#helpful-tips', label: '💡 Helpful Tips' } : null,
+    recipe.variations?.length > 0 ? { href: '#variations', label: '🔄 Easy Variations' } : null,
+    recipe.veganAdaptation?.length > 0 ? { href: '#vegan', label: '🌱 Vegan Adaptation' } : null,
+    recipe.storageTips?.length > 0 ? { href: '#storage', label: '📦 Storage Tips' } : null,
+    recipe.faqs?.length > 0 ? { href: '#faqs', label: '❓ FAQs' } : null,
   ].filter(Boolean)
 
   const ratingBreakdownUI = (
@@ -370,37 +381,69 @@ export default async function RecipePage({ params }) {
                     </h2>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                       {recipe.steps.map((step, i) => (
-                        <div key={i} style={{
+                        <div key={step._key || i} style={{
                           display: 'flex',
                           gap: '1rem',
                           alignItems: 'flex-start',
+                          background: 'var(--cream)',
+                          borderRadius: '14px',
+                          padding: '1.25rem',
+                          border: '1px solid var(--gray)',
                         }}>
                           <span style={{
                             background: 'var(--orange)',
                             color: 'white',
                             borderRadius: '50%',
-                            width: '30px',
-                            height: '30px',
+                            width: '32px',
+                            height: '32px',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
                             fontFamily: '"Lato", sans-serif',
                             fontWeight: '700',
-                            fontSize: '0.82rem',
+                            fontSize: '0.85rem',
                             flexShrink: 0,
+                            marginTop: '2px',
                           }}>
                             {i + 1}
                           </span>
-                          <p style={{
-                            fontFamily: '"Lato", sans-serif',
-                            fontSize: '0.975rem',
-                            color: 'var(--text)',
-                            lineHeight: 1.8,
-                            margin: 0,
-                            paddingTop: '3px',
-                          }}>
-                            {step}
-                          </p>
+                          <div style={{ flex: 1 }}>
+                            {step.title && (
+                              <p style={{
+                                fontFamily: '"Playfair Display", serif',
+                                fontSize: '1rem',
+                                fontWeight: '700',
+                                color: 'var(--brown)',
+                                marginBottom: '0.35rem',
+                                margin: 0,
+                              }}>
+                                {step.title}
+                              </p>
+                            )}
+                            {step.description && (
+                              <p style={{
+                                fontFamily: '"Lato", sans-serif',
+                                fontSize: '0.95rem',
+                                color: 'var(--text)',
+                                lineHeight: 1.8,
+                                margin: 0,
+                                marginTop: step.title ? '0.35rem' : 0,
+                              }}>
+                                {step.description}
+                              </p>
+                            )}
+                            {typeof step === 'string' && (
+                              <p style={{
+                                fontFamily: '"Lato", sans-serif',
+                                fontSize: '0.95rem',
+                                color: 'var(--text)',
+                                lineHeight: 1.8,
+                                margin: 0,
+                              }}>
+                                {step}
+                              </p>
+                            )}
+                          </div>
                         </div>
                       ))}
                     </div>
@@ -410,10 +453,122 @@ export default async function RecipePage({ params }) {
             </div>
           )}
 
-          {/* Chef's Tips */}
-          {recipe.tips?.length > 0 && (
-            <div id="recipe-tips" style={{
-              background: 'linear-gradient(135deg, rgba(232,98,42,0.06), rgba(232,98,42,0.02))',
+          {/* Preparation Photos */}
+          {recipe.preparationImages?.length > 0 && (
+            <div style={{
+              background: 'var(--cream-light)',
+              borderRadius: '20px',
+              padding: '2rem',
+              border: '1px solid var(--gray)',
+              marginBottom: '2rem',
+            }}>
+              <h3 style={{
+                fontFamily: '"Playfair Display", serif',
+                fontSize: '1.4rem',
+                color: 'var(--brown)',
+                marginBottom: '1.25rem',
+                paddingBottom: '0.75rem',
+                borderBottom: '2px solid var(--orange)',
+              }}>📸 Step by Step Photos</h3>
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+                gap: '1rem',
+              }}>
+                {recipe.preparationImages.map((item, i) => (
+                  <div key={item._key || i} style={{ borderRadius: '12px', overflow: 'hidden', border: '1px solid var(--gray)' }}>
+                    <div style={{ position: 'relative', aspectRatio: '4/3' }}>
+                      <Image
+                        src={urlFor(item.image).width(400).height(300).url()}
+                        alt={item.caption || `Step ${item.stepNumber || i + 1}`}
+                        fill
+                        style={{ objectFit: 'cover' }}
+                      />
+                      {item.stepNumber && (
+                        <div style={{
+                          position: 'absolute',
+                          top: '8px',
+                          left: '8px',
+                          background: 'var(--orange)',
+                          color: 'white',
+                          borderRadius: '50%',
+                          width: '28px',
+                          height: '28px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontFamily: '"Lato", sans-serif',
+                          fontWeight: '700',
+                          fontSize: '0.8rem',
+                        }}>
+                          {item.stepNumber}
+                        </div>
+                      )}
+                    </div>
+                    {item.caption && (
+                      <p style={{
+                        fontFamily: '"Lato", sans-serif',
+                        fontSize: '0.8rem',
+                        color: 'var(--text-light)',
+                        padding: '0.6rem 0.75rem',
+                        margin: 0,
+                        background: 'var(--cream)',
+                      }}>
+                        {item.caption}
+                      </p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Video */}
+          {recipe.videoUrl && (
+            <div style={{
+              background: 'var(--cream-light)',
+              borderRadius: '20px',
+              padding: '2rem',
+              border: '1px solid var(--gray)',
+              marginBottom: '2rem',
+            }}>
+              <h3 style={{
+                fontFamily: '"Playfair Display", serif',
+                fontSize: '1.4rem',
+                color: 'var(--brown)',
+                marginBottom: '1.25rem',
+                paddingBottom: '0.75rem',
+                borderBottom: '2px solid var(--orange)',
+              }}>🎥 Watch the Recipe</h3>
+              <div style={{
+                position: 'relative',
+                paddingBottom: '56.25%',
+                height: 0,
+                overflow: 'hidden',
+                borderRadius: '12px',
+              }}>
+                <iframe
+                  src={recipe.videoUrl.replace('watch?v=', 'embed/').replace('youtu.be/', 'www.youtube.com/embed/').replace('tiktok.com', 'tiktok.com/embed')}
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    border: 'none',
+                    borderRadius: '12px',
+                  }}
+                  allowFullScreen
+                  title={`${recipe.title} video`}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Helpful Tips */}
+          {recipe.helpfulTips?.length > 0 && (
+            <div id="helpful-tips" style={{
+              background: 'var(--cream-light)',
               borderRadius: '20px',
               padding: '2rem',
               border: '1px solid rgba(232,98,42,0.2)',
@@ -426,55 +581,176 @@ export default async function RecipePage({ params }) {
                 marginBottom: '1.25rem',
                 paddingBottom: '0.75rem',
                 borderBottom: '2px solid var(--orange)',
-              }}>
-                💡 Chef's Tips
-              </h3>
-              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                {recipe.tips.filter(tip => typeof tip === 'object').map((tip, i) => (
+              }}>💡 Helpful Tips</h3>
+              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column' }}>
+                {recipe.helpfulTips.map((tip, i) => (
                   <li key={tip._key || i} style={{
-                    display: 'flex',
-                    gap: '0.75rem',
-                    alignItems: 'flex-start',
+                    display: 'flex', gap: '0.75rem', alignItems: 'flex-start',
                     padding: '0.75rem 0',
-                    borderBottom: i < recipe.tips.length - 1 ? '1px solid rgba(232,98,42,0.1)' : 'none',
+                    borderBottom: i < recipe.helpfulTips.length - 1 ? '1px solid rgba(232,98,42,0.1)' : 'none',
                   }}>
-                    <span style={{
-                      color: 'var(--orange)',
-                      flexShrink: 0,
-                      marginTop: '3px',
-                      fontWeight: '700',
-                    }}>✓</span>
+                    <span style={{ color: 'var(--orange)', flexShrink: 0, fontWeight: '700' }}>✓</span>
                     <div>
-                      {tip.title && (
-                        <p style={{
-                          fontFamily: '"Playfair Display", serif',
-                          fontSize: '1rem',
-                          fontWeight: '700',
-                          color: 'var(--brown)',
-                          marginBottom: '0.25rem',
-                          margin: 0,
-                        }}>
-                          {tip.title}
-                        </p>
-                      )}
-                      {tip.description && (
-                        <p style={{
-                          fontFamily: '"Lato", sans-serif',
-                          fontSize: '0.9rem',
-                          color: 'var(--text-light)',
-                          lineHeight: 1.7,
-                          margin: 0,
-                          marginTop: '0.25rem',
-                        }}>
-                          {tip.description}
-                        </p>
-                      )}
+                      {tip.title && <p style={{ fontFamily: '"Playfair Display", serif', fontSize: '1rem', fontWeight: '700', color: 'var(--brown)', marginBottom: '0.25rem', margin: 0 }}>{tip.title}</p>}
+                      {tip.description && <p style={{ fontFamily: '"Lato", sans-serif', fontSize: '0.9rem', color: 'var(--text-light)', lineHeight: 1.7, margin: 0, marginTop: '0.25rem' }}>{tip.description}</p>}
                     </div>
                   </li>
                 ))}
               </ul>
             </div>
           )}
+
+          {/* Easy Variations */}
+          {recipe.variations?.length > 0 && (
+            <div id="variations" style={{
+              background: 'var(--cream-light)',
+              borderRadius: '20px',
+              padding: '2rem',
+              border: '1px solid var(--gray)',
+              marginBottom: '2rem',
+            }}>
+              <h3 style={{
+                fontFamily: '"Playfair Display", serif',
+                fontSize: '1.4rem',
+                color: 'var(--brown)',
+                marginBottom: '1.25rem',
+                paddingBottom: '0.75rem',
+                borderBottom: '2px solid var(--orange)',
+              }}>🔄 Easy Variations</h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                {recipe.variations.map((v, i) => (
+                  <div key={v._key || i} style={{
+                    background: 'var(--cream)',
+                    borderRadius: '12px',
+                    padding: '1rem 1.25rem',
+                    border: '1px solid var(--gray)',
+                  }}>
+                    {v.title && <p style={{ fontFamily: '"Playfair Display", serif', fontSize: '1rem', fontWeight: '700', color: 'var(--brown)', marginBottom: '0.35rem' }}>{v.title}</p>}
+                    {v.description && <p style={{ fontFamily: '"Lato", sans-serif', fontSize: '0.9rem', color: 'var(--text-light)', lineHeight: 1.7, margin: 0 }}>{v.description}</p>}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Vegan Adaptation */}
+          {recipe.veganAdaptation?.length > 0 && (
+            <div id="vegan" style={{
+              background: 'var(--cream-light)',
+              borderRadius: '20px',
+              padding: '2rem',
+              border: '1px solid rgba(34,197,94,0.3)',
+              marginBottom: '2rem',
+            }}>
+              <h3 style={{
+                fontFamily: '"Playfair Display", serif',
+                fontSize: '1.4rem',
+                color: 'var(--brown)',
+                marginBottom: '1.25rem',
+                paddingBottom: '0.75rem',
+                borderBottom: '2px solid rgba(34,197,94,0.6)',
+              }}>🌱 How to Make This Vegan</h3>
+              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+                {recipe.veganAdaptation.map((item, i) => (
+                  <li key={i} style={{
+                    display: 'flex', gap: '0.75rem', alignItems: 'flex-start',
+                    fontFamily: '"Lato", sans-serif', fontSize: '0.95rem',
+                    color: 'var(--text)', lineHeight: 1.7,
+                  }}>
+                    <span style={{ color: '#16a34a', flexShrink: 0, fontWeight: '700' }}>🌿</span>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {/* Storage Tips */}
+          {recipe.storageTips?.length > 0 && (
+            <div id="storage" style={{
+              background: 'var(--cream-light)',
+              borderRadius: '20px',
+              padding: '2rem',
+              border: '1px solid var(--gray)',
+              marginBottom: '2rem',
+            }}>
+              <h3 style={{
+                fontFamily: '"Playfair Display", serif',
+                fontSize: '1.4rem',
+                color: 'var(--brown)',
+                marginBottom: '1.25rem',
+                paddingBottom: '0.75rem',
+                borderBottom: '2px solid var(--orange)',
+              }}>📦 Storage Tips</h3>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '1rem' }}>
+                {recipe.storageTips.map((tip, i) => (
+                  <div key={tip._key || i} style={{
+                    background: 'var(--cream)',
+                    borderRadius: '12px',
+                    padding: '1rem',
+                    border: '1px solid var(--gray)',
+                    textAlign: 'center',
+                  }}>
+                    <p style={{ fontFamily: '"Playfair Display", serif', fontSize: '0.95rem', fontWeight: '700', color: 'var(--brown)', marginBottom: '0.25rem' }}>{tip.method}</p>
+                    <p style={{ fontFamily: '"Lato", sans-serif', fontSize: '0.85rem', color: 'var(--orange)', fontWeight: '700', marginBottom: '0.25rem' }}>{tip.duration}</p>
+                    {tip.notes && <p style={{ fontFamily: '"Lato", sans-serif', fontSize: '0.78rem', color: 'var(--text-light)', lineHeight: 1.5, margin: 0 }}>{tip.notes}</p>}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* FAQs */}
+          {recipe.faqs?.length > 0 && (
+            <div id="faqs" style={{
+              background: 'var(--cream-light)',
+              borderRadius: '20px',
+              padding: '2rem',
+              border: '1px solid var(--gray)',
+              marginBottom: '2rem',
+            }}>
+              <h3 style={{
+                fontFamily: '"Playfair Display", serif',
+                fontSize: '1.4rem',
+                color: 'var(--brown)',
+                marginBottom: '1.25rem',
+                paddingBottom: '0.75rem',
+                borderBottom: '2px solid var(--orange)',
+              }}>❓ Frequently Asked Questions</h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                {recipe.faqs.map((faq, i) => (
+                  <div key={faq._key || i} style={{
+                    borderBottom: i < recipe.faqs.length - 1 ? '1px solid var(--gray)' : 'none',
+                    paddingBottom: i < recipe.faqs.length - 1 ? '1rem' : 0,
+                  }}>
+                    <p style={{ fontFamily: '"Playfair Display", serif', fontSize: '1rem', fontWeight: '700', color: 'var(--brown)', marginBottom: '0.5rem' }}>Q: {faq.question}</p>
+                    <p style={{ fontFamily: '"Lato", sans-serif', fontSize: '0.9rem', color: 'var(--text-light)', lineHeight: 1.7, margin: 0 }}>{faq.answer}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+        {/* Secondary Image */}
+          {recipe.secondaryImage && (
+            <div style={{
+              borderRadius: '20px',
+              overflow: 'hidden',
+              position: 'relative',
+              aspectRatio: '16/9',
+              border: '1px solid var(--gray)',
+              marginBottom: '2rem',
+              boxShadow: '0 8px 30px rgba(0,0,0,0.08)',
+            }}>
+              <Image
+                src={urlFor(recipe.secondaryImage).width(900).height(506).url()}
+                alt={`${recipe.title} - photo`}
+                fill
+                style={{ objectFit: 'cover' }}
+              />
+            </div>
+          )}
+
 
           {/* Rating Section */}
           <div style={{
@@ -508,6 +784,35 @@ export default async function RecipePage({ params }) {
             {ratingBreakdownUI}
           </div>
 
+          {/* Newsletter */}
+          <div style={{
+            background: 'var(--cream-light)',
+            borderRadius: '20px',
+            padding: '1.5rem',
+            border: '1px solid var(--gray)',
+            marginBottom: '2rem',
+          }}>
+            <p style={{
+              fontFamily: '"Playfair Display", serif',
+              fontSize: '1.1rem',
+              color: 'var(--brown)',
+              marginBottom: '0.35rem',
+              fontWeight: '700',
+            }}>
+              🍳 Enjoyed this recipe?
+            </p>
+            <p style={{
+              fontFamily: '"Lato", sans-serif',
+              fontSize: '0.85rem',
+              color: 'var(--text-light)',
+              marginBottom: '1rem',
+              lineHeight: 1.6,
+            }}>
+              Get new recipes from Adelaide every week — free, no spam.
+            </p>
+            <NewsletterSignup source="recipe-page" compact />
+          </div>
+
         </div>
 
         {/* ── RIGHT: Sidebar ── */}
@@ -535,6 +840,7 @@ export default async function RecipePage({ params }) {
                 />
               </div>
             </div>
+            
           )}
 
           {/* Author card */}
