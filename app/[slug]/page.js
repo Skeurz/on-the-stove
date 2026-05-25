@@ -328,9 +328,8 @@ export default async function RecipePage({ params }) {
             </div>
           )}
 
-          {/* Ingredients + Steps */}
-
-          {(recipe.ingredients?.length > 0 || recipe.steps?.length > 0) && (
+          {/* Ingredients */}
+          {recipe.ingredients?.length > 0 && (
             <div id="recipe-ingredients" style={{
               background: 'var(--cream-light)',
               borderRadius: '20px',
@@ -338,124 +337,114 @@ export default async function RecipePage({ params }) {
               overflow: 'hidden',
               marginBottom: '2rem',
             }}>
-              <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-              }}>
-                {/* Ingredients */}
-                {recipe.ingredients?.length > 0 && (
-                  <div style={{
-                    padding: '2rem',
-                borderBottom: recipe.steps?.length > 0 ? '1px solid var(--gray)' : 'none',
-                  }}>
-                    <h2 style={{
-                      fontFamily: '"Playfair Display", serif',
-                      fontSize: '1.75rem',
-                      color: 'var(--brown)',
-                      marginBottom: '1.25rem',
-                      paddingBottom: '0.75rem',
-                      borderBottom: '2px solid var(--orange)',
-                      fontWeight: '700',
-                      letterSpacing: '-0.01em',
-                    }}>
-                      🧂 Ingredients
-                    </h2>
-                    <IngredientList ingredients={recipe.ingredients} recipeSlug={slug} />
-                  </div>
-                )}
+              <div style={{ padding: '2rem' }}>
+                <h2 style={{
+                  fontFamily: '"Playfair Display", serif',
+                  fontSize: '1.75rem',
+                  color: 'var(--brown)',
+                  marginBottom: '1.25rem',
+                  paddingBottom: '0.75rem',
+                  borderBottom: '2px solid var(--orange)',
+                  fontWeight: '700',
+                }}>
+                  🧂 Ingredients
+                </h2>
+                <IngredientList ingredients={recipe.ingredients} recipeSlug={slug} />
+              </div>
+            </div>
+          )}
 
-                {/* Steps */}
-                {recipe.steps?.length > 0 && (
-                  <div style={{ padding: '2rem' }}>
-                    <h2 style={{
-                      fontFamily: '"Playfair Display", serif',
-                      fontSize: '1.75rem',
-                      color: 'var(--brown)',
-                      marginBottom: '1.25rem',
-                      paddingBottom: '0.75rem',
-                      borderBottom: '2px solid var(--orange)',
-                      fontWeight: '700',
-                      letterSpacing: '-0.01em',
+          {/* Instructions */}
+          {recipe.steps?.length > 0 && (
+            <div id="recipe-instructions" style={{
+              background: 'var(--cream-light)',
+              borderRadius: '20px',
+              border: '1px solid var(--gray)',
+              overflow: 'hidden',
+              marginBottom: '2rem',
+            }}>
+              <div style={{ padding: '2rem' }}>
+                <h2 style={{
+                  fontFamily: '"Playfair Display", serif',
+                  fontSize: '1.75rem',
+                  color: 'var(--brown)',
+                  marginBottom: '1.25rem',
+                  paddingBottom: '0.75rem',
+                  borderBottom: '2px solid var(--orange)',
+                  fontWeight: '700',
+                }}>
+                  👨‍🍳 Instructions
+                </h2>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                  {recipe.steps.map((step, i) => (
+                    <div key={step._key || i} style={{
+                      display: 'flex',
+                      gap: '1rem',
+                      alignItems: 'flex-start',
+                      background: 'var(--cream)',
+                      borderRadius: '14px',
+                      padding: '1.25rem',
+                      border: '1px solid var(--gray)',
                     }}>
-                      👨‍🍳 Instructions
-                    </h2>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                      {recipe.steps.map((step, i) => (
-                        <div key={step._key || i} style={{
-                          display: 'flex',
-                          gap: '1rem',
-                          alignItems: 'flex-start',
-                          background: 'var(--cream)',
-                          borderRadius: '14px',
-                          padding: '1.25rem',
-                          border: '1px solid var(--gray)',
+                      <div style={{ flex: 1 }}>
+                        <p style={{
+                          fontFamily: '"Lato", sans-serif',
+                          fontSize: '0.72rem',
+                          fontWeight: '700',
+                          letterSpacing: '1.5px',
+                          textTransform: 'uppercase',
+                          color: 'var(--orange)',
+                          margin: 0,
+                          marginBottom: '0.35rem',
                         }}>
-                          <span style={{
-                            background: 'var(--orange)',
-                            color: 'white',
-                            borderRadius: '50%',
-                            width: '32px',
-                            height: '32px',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            fontFamily: '"Lato", sans-serif',
+                          Step {i + 1}
+                        </p>
+                        {step.title && (
+                          <p style={{
+                            fontFamily: '"Playfair Display", serif',
+                            fontSize: '1rem',
                             fontWeight: '700',
-                            fontSize: '0.85rem',
-                            flexShrink: 0,
-                            marginTop: '2px',
+                            color: 'var(--brown)',
+                            margin: 0,
+                            marginBottom: '0.35rem',
                           }}>
-                            {i + 1}
-                          </span>
-                          <div style={{ flex: 1 }}>
-                            {step.title && (
-                              <p style={{
-                                fontFamily: '"Playfair Display", serif',
-                                fontSize: '1rem',
-                                fontWeight: '700',
-                                color: 'var(--brown)',
-                                marginBottom: '0.35rem',
-                                margin: 0,
-                              }}>
-                                {step.title}
-                              </p>
-                            )}
-                            {step.description && (
-                              <p style={{
-                                fontFamily: '"Lato", sans-serif',
-                                fontSize: '0.95rem',
-                                color: 'var(--text)',
-                                lineHeight: 1.8,
-                                margin: 0,
-                                marginTop: step.title ? '0.35rem' : 0,
-                              }}>
-                                {step.description}
-                              </p>
-                            )}
-                            {typeof step === 'string' && (
-                              <p style={{
-                                fontFamily: '"Lato", sans-serif',
-                                fontSize: '0.95rem',
-                                color: 'var(--text)',
-                                lineHeight: 1.8,
-                                margin: 0,
-                              }}>
-                                {step}
-                              </p>
-                            )}
-                          </div>
-                        </div>
-                      ))}
+                            {step.title}
+                          </p>
+                        )}
+                        {step.description && (
+                          <p style={{
+                            fontFamily: '"Lato", sans-serif',
+                            fontSize: '0.95rem',
+                            color: 'var(--text)',
+                            lineHeight: 1.8,
+                            margin: 0,
+                            marginTop: step.title ? '0.35rem' : 0,
+                          }}>
+                            {step.description}
+                          </p>
+                        )}
+                        {typeof step === 'string' && (
+                          <p style={{
+                            fontFamily: '"Lato", sans-serif',
+                            fontSize: '0.95rem',
+                            color: 'var(--text)',
+                            lineHeight: 1.8,
+                            margin: 0,
+                          }}>
+                            {step}
+                          </p>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                )}
+                  ))}
+                </div>
               </div>
             </div>
           )}
 
           {/* Preparation Photos */}
           {recipe.preparationImages?.length > 0 && (
-            <div style={{
+            <div id="prep-photos" style={{
               background: 'var(--cream-light)',
               borderRadius: '20px',
               padding: '2rem',
@@ -525,7 +514,7 @@ export default async function RecipePage({ params }) {
 
           {/* Video */}
           {recipe.videoUrl && (
-            <div style={{
+            <div id="video" style={{
               background: 'var(--cream-light)',
               borderRadius: '20px',
               padding: '2rem',

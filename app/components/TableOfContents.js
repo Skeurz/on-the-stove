@@ -1,6 +1,35 @@
 'use client'
 
+import { useEffect, useState } from 'react'
+
 export default function TableOfContents({ items }) {
+  const [activeId, setActiveId] = useState(null)
+
+  useEffect(() => {
+    if (!items.length) return
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            setActiveId(entry.target.id)
+          }
+        })
+      },
+      {
+        rootMargin: '-80px 0px -60% 0px',
+        threshold: 0,
+      }
+    )
+
+    items.forEach(item => {
+      const el = document.getElementById(item.href.replace('#', ''))
+      if (el) observer.observe(el)
+    })
+
+    return () => observer.disconnect()
+  }, [items])
+
   if (!items.length) return null
 
   return (
@@ -23,28 +52,42 @@ export default function TableOfContents({ items }) {
         On this page
       </p>
       <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.1rem' }}>
-        {items.map(item => (
-          <a key={item.href} href={item.href} style={{
-            fontFamily: '"Lato", sans-serif',
-            fontSize: '0.875rem',
-            color: 'var(--text-light)',
-            padding: '0.4rem 0.5rem',
-            borderRadius: '8px',
-            display: 'block',
-            transition: 'all 0.15s',
-          }}
-            onMouseEnter={e => {
-              e.currentTarget.style.background = 'var(--gray)'
-              e.currentTarget.style.color = 'var(--orange)'
-            }}
-            onMouseLeave={e => {
-              e.currentTarget.style.background = 'transparent'
-              e.currentTarget.style.color = 'var(--text-light)'
-            }}
-          >
-            {item.label}
-          </a>
-        ))}
+        {items.map(item => {
+          const id = item.href.replace('#', '')
+          const isActive = activeId === id
+          return (
+            <a
+              key={item.href}
+              href={item.href}
+              onClick={e => {
+                e.preventDefault()
+                const el = document.getElementById(id)
+                if (el) {
+                  const top = el.getBoundingClientRect().top + window.scrollY - 100
+                  window.scrollTo({ top, behavior: 'smooth' })
+                  setActiveId(id)
+                }
+              }}
+              style={{
+                fontFamily: '"Lato", sans-serif',
+                fontSize: '0.875rem',
+                color: isActive ? 'var(--orange)' : 'var(--text-light)',
+                padding: '0.4rem 0.5rem',
+                borderRadius: '8px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                transition: 'all 0.15s',
+                background: isActive ? 'rgba(232,98,42,0.08)' : 'transparent',
+                borderLeft: isActive ? '3px solid var(--orange)' : '3px solid transparent',
+                fontWeight: isActive ? '700' : '400',
+                textDecoration: 'none',
+              }}
+            >
+              {item.label}
+            </a>
+          )
+        })}
       </nav>
     </div>
   )
