@@ -11,6 +11,7 @@ import RecipeActions from '@/app/components/RecipeActions'
 import IngredientList from '@/app/components/IngredientList'
 import TableOfContents from '@/app/components/TableOfContents'
 import NewsletterSignup from '@/app/components/NewsletterSignup'
+import { notFound } from 'next/navigation'
 
 const categoryLabel = {
   lunch: 'Lunch',
@@ -31,7 +32,8 @@ export async function generateMetadata({ params }) {
       seoDescription,
       mainImage
     }`,
-    { slug }
+    { slug } ,
+    { cache: 'no-store' }
   )
 
   if (!recipe) return {}
@@ -85,12 +87,9 @@ export default async function RecipePage({ params }) {
     client.fetch(getAuthor),
   ])
 
-  if (!recipe) return (
-    <div style={{ padding: '6rem', textAlign: 'center' }}>
-      <p style={{ fontFamily: '"Playfair Display", serif', fontSize: '2rem', color: 'var(--text)' }}>Recipe not found</p>
-      <Link href="/" style={{ color: '#E8622A', fontFamily: '"Lato", sans-serif' }}>← Back to home</Link>
-    </div>
-  )
+ if (!recipe) {
+    notFound()
+  }
 
   const totalTime = (recipe.prepTime || 0) + (recipe.cookTime || 0)
 
@@ -945,7 +944,11 @@ export default async function RecipePage({ params }) {
         margin: '0 auto',
         padding: '0 2rem 4rem',
       }}>
-        <SuggestedRecipes currentRecipeId={recipe._id} />
+        <SuggestedRecipes 
+          currentRecipeId={recipe._id} 
+          category={recipe.category}
+          tags={recipe.tags || []}
+        />
       </div>
 
     </div>

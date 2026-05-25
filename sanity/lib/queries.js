@@ -172,7 +172,7 @@ export const getAuthor = defineQuery(`
 `)
 
 export const getSuggestedRecipes = defineQuery(`
-  *[_type == "recipe" && _id != $currentId] | order(publishedAt desc) [0...12] {
+  *[_type == "recipe" && _id != $currentId && (category == $category || count((tags)[@ in $tags]) > 0)] | order(publishedAt desc) [0...6] {
     _id,
     title,
     slug,

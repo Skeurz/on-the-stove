@@ -3,24 +3,22 @@ import { getSuggestedRecipes } from '@/sanity/lib/queries'
 import { urlFor } from '@/sanity/lib/image'
 import RecipeCard from './RecipeCard'
 
-export default async function SuggestedRecipes({ currentRecipeId }) {
-  // Fetch a pool of 12 recent recipes excluding the current one
-  const recipes = await client.fetch(getSuggestedRecipes, { 
-    currentId: currentRecipeId || "" 
+export default async function SuggestedRecipes({ currentRecipeId, category, tags }) {
+  const recipes = await client.fetch(getSuggestedRecipes, {
+    currentId: currentRecipeId || '',
+    category: category || '',
+    tags: tags || [],
   })
 
   if (!recipes || recipes.length === 0) return null
 
-  // Shuffle the pool and take exactly 3 random recipes
-  const shuffled = [...recipes]
-    .sort(() => 0.5 - Math.random())
-    .slice(0, 3)
+  const displayed = recipes.slice(0, 3)
 
   return (
-    <section style={{ 
-      marginTop: 'clamp(3rem, 10vw, 5rem)', 
-      paddingTop: 'clamp(2rem, 8vw, 4rem)', 
-      borderTop: '1px solid var(--gray)' 
+    <section style={{
+      marginTop: 'clamp(3rem, 10vw, 5rem)',
+      paddingTop: 'clamp(2rem, 8vw, 4rem)',
+      borderTop: '1px solid var(--gray)'
     }}>
       <div style={{
         background: 'var(--cream)',
@@ -30,19 +28,19 @@ export default async function SuggestedRecipes({ currentRecipeId }) {
         width: 'fit-content',
         margin: '0 auto 2.5rem',
       }}>
-        <h2 style={{ 
-          fontFamily: '"Playfair Display", serif', 
-          fontSize: 'clamp(1.4rem, 5vw, 1.8rem)', 
-          color: 'var(--brown)', 
-          textAlign: 'center', 
+        <h2 style={{
+          fontFamily: '"Playfair Display", serif',
+          fontSize: 'clamp(1.4rem, 5vw, 1.8rem)',
+          color: 'var(--brown)',
+          textAlign: 'center',
           margin: 0
         }}>
           You Might Also Like...
         </h2>
       </div>
-      
+
       <div className="recipe-grid">
-        {shuffled.map((recipe) => (
+        {displayed.map((recipe) => (
           <RecipeCard
             key={recipe._id}
             recipe={recipe}
