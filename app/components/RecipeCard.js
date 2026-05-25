@@ -145,11 +145,12 @@ export default function RecipeCard({ recipe, imageUrl }) {
           flexDirection: 'column',
           flex: 1,
         }}>
+          
           <h3 style={{
             fontFamily: '"Playfair Display", serif',
             fontSize: '1.15rem',
             fontWeight: '700',
-            color: '#2C1A0E',
+            color: 'var(--brown)',
             lineHeight: 1.35,
             marginBottom: '0.6rem',
             minHeight: '2.7rem',

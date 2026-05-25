@@ -1137,7 +1137,14 @@ html, body {
   .recipe-right-aside {
     position: static !important;
   }
+  .recipe-toc-aside {
+    display: none !important;
+  }
+  .recipe-toc-mobile {
+    display: block !important;
+  }
 }
+
 @media (max-width: 768px) {
   .hero-section.with-video {
     margin-top: 0 !important;

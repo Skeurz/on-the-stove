@@ -251,6 +251,16 @@ export default async function RecipePage({ params }) {
         </div>
       )}
 
+      {/* ── MOBILE TOC ── */}
+      <div className="recipe-toc-mobile" style={{
+        display: 'none',
+        maxWidth: '1200px',
+        margin: '1.5rem auto 0',
+        padding: '0 2rem',
+      }}>
+        <TableOfContents items={tableOfContents} />
+      </div>
+
       {/* ── MAIN CONTENT + SIDEBAR ── */}
       <div
         className="recipe-main-layout content-section"
