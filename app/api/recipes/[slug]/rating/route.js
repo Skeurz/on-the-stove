@@ -128,23 +128,22 @@ export async function POST(request, { params }) {
       createdAt: new Date().toISOString(),
     })
 
-    // Ensure ratingBreakdown exists first
-   await writeClient
-      .patch(recipe._id)
-      .setIfMissing({ 
-        ratingBreakdown: { "1": 0, "2": 0, "3": 0, "4": 0, "5": 0 }
-      })
-      .commit({ visibility: 'sync' })
-
-    // Then increment the right key and totals
+    // Single atomic operation
     const updatedRecipe = await writeClient
       .patch(recipe._id)
+      .setIfMissing({ 
+        ratingTotal: 0,
+        ratingCount: 0,
+        ratingBreakdown: { star1: 0, star2: 0, star3: 0, star4: 0, star5: 0 }
+      })
       .inc({
         ratingTotal: value,
         ratingCount: 1,
         [`ratingBreakdown.star${value}`]: 1,
       })
       .commit({ visibility: 'sync' })
+
+    console.log('Updated recipe:', updatedRecipe.ratingCount, updatedRecipe.ratingTotal)
 
     const newAverage = Math.round(((updatedRecipe.ratingTotal || 0) / (updatedRecipe.ratingCount || 1)) * 10) / 10
 
