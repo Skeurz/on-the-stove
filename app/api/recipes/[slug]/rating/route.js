@@ -91,6 +91,7 @@ export async function POST(request, { params }) {
     const { slug } = await params
     const body = await request.json()
     const { value, browserId } = body
+    
 
     // Validate rating value
     if (!value || !Number.isInteger(value) || value < 1 || value > 5) {
@@ -128,12 +129,12 @@ export async function POST(request, { params }) {
     })
 
     // Ensure ratingBreakdown exists first
-    await writeClient
+   await writeClient
       .patch(recipe._id)
       .setIfMissing({ 
         ratingBreakdown: { "1": 0, "2": 0, "3": 0, "4": 0, "5": 0 }
       })
-      .commit()
+      .commit({ visibility: 'sync' })
 
     // Then increment the right key and totals
     const updatedRecipe = await writeClient
@@ -141,9 +142,9 @@ export async function POST(request, { params }) {
       .inc({
         ratingTotal: value,
         ratingCount: 1,
-       [`ratingBreakdown.star${value}`]: 1,
+        [`ratingBreakdown.star${value}`]: 1,
       })
-      .commit({ visibility: 'async' })
+      .commit({ visibility: 'sync' })
 
     const newAverage = Math.round(((updatedRecipe.ratingTotal || 0) / (updatedRecipe.ratingCount || 1)) * 10) / 10
 
@@ -155,6 +156,9 @@ export async function POST(request, { params }) {
     })
   } catch (error) {
     console.error('Error submitting rating:', error)
-    return Response.json({ error: 'Failed to submit rating' }, { status: 500 })
+    return Response.json({ 
+      error: 'Failed to submit rating',
+      details: error.message,
+    }, { status: 500 })
   }
 }

@@ -3,6 +3,7 @@ import { client } from '@/sanity/lib/client'
 import { urlFor } from '@/sanity/lib/image'
 import Link from 'next/link'
 import { defineQuery } from 'next-sanity'
+import SearchFilters from '@/app/components/SearchFilters'
 
 export const metadata = {
   title: 'Search Recipes - On The Stove',
@@ -35,33 +36,6 @@ const searchWithFilters = defineQuery(`
   }
 `)
 
-const categories = [
-  { label: 'All Categories', value: '' },
-  { label: '🍱 Lunch', value: 'lunch' },
-  { label: '🍝 Dinner', value: 'dinner' },
-  { label: '🥞 Breakfast & Brunch', value: 'breakfastnbrunch' },
-  { label: '🥨 Snacks & Sides', value: 'snacksnsides' },
-  { label: '🍰 Desserts', value: 'desserts' },
-  { label: '🥤 Drinks & Shakes', value: 'drinks-shakes' },
-]
-
-const difficulties = [
-  { label: 'Any Difficulty', value: '' },
-  { label: '🟢 Easy', value: 'easy' },
-  { label: '🟡 Medium', value: 'medium' },
-  { label: '🔴 Hard', value: 'hard' },
-]
-
-const cuisines = [
-  { label: 'Any Cuisine', value: '' },
-  { label: 'American', value: 'american' },
-  { label: 'Italian', value: 'italian' },
-  { label: 'Mexican', value: 'mexican' },
-  { label: 'Asian', value: 'asian' },
-  { label: 'Mediterranean', value: 'mediterranean' },
-  { label: 'French', value: 'french' },
-  { label: 'Middle Eastern', value: 'middle-eastern' },
-]
 
 export default async function SearchPage({ searchParams }) {
   const params = await searchParams
@@ -158,114 +132,12 @@ export default async function SearchPage({ searchParams }) {
       </section>
 
       {/* Filters */}
-      <section style={{
-        background: 'var(--cream-light)',
-        borderBottom: '1px solid var(--gray)',
-        padding: '1.25rem 2rem',
-      }}>
-        <div style={{
-          maxWidth: '1200px',
-          margin: '0 auto',
-          display: 'flex',
-          gap: '1rem',
-          flexWrap: 'wrap',
-          alignItems: 'center',
-        }}>
-          <span style={{
-            fontFamily: '"Lato", sans-serif',
-            fontSize: '0.8rem',
-            fontWeight: '700',
-            color: 'var(--text-light)',
-            letterSpacing: '1px',
-            textTransform: 'uppercase',
-            flexShrink: 0,
-          }}>
-            Filter:
-          </span>
-
-          {/* Category filter */}
-          <form action="/search" method="get" style={{ display: 'contents' }}>
-            {query && <input type="hidden" name="q" value={query} />}
-            {difficulty && <input type="hidden" name="difficulty" value={difficulty} />}
-            {cuisine && <input type="hidden" name="cuisine" value={cuisine} />}
-            <select name="category" onChange="this.form.submit()" defaultValue={category} style={{
-              border: category ? '1px solid var(--orange)' : '1px solid var(--gray)',
-              borderRadius: '50px',
-              background: category ? 'rgba(232,98,42,0.08)' : 'var(--cream)',
-              color: category ? 'var(--orange)' : 'var(--text)',
-              fontFamily: '"Lato", sans-serif',
-              fontSize: '0.85rem',
-              fontWeight: category ? '700' : '400',
-              padding: '0.45rem 1rem',
-              cursor: 'pointer',
-              outline: 'none',
-            }}>
-              {categories.map(c => (
-                <option key={c.value} value={c.value}>{c.label}</option>
-              ))}
-            </select>
-          </form>
-
-          {/* Difficulty filter */}
-          <form action="/search" method="get" style={{ display: 'contents' }}>
-            {query && <input type="hidden" name="q" value={query} />}
-            {category && <input type="hidden" name="category" value={category} />}
-            {cuisine && <input type="hidden" name="cuisine" value={cuisine} />}
-            <select name="difficulty" onChange="this.form.submit()" defaultValue={difficulty} style={{
-              border: difficulty ? '1px solid var(--orange)' : '1px solid var(--gray)',
-              borderRadius: '50px',
-              background: difficulty ? 'rgba(232,98,42,0.08)' : 'var(--cream)',
-              color: difficulty ? 'var(--orange)' : 'var(--text)',
-              fontFamily: '"Lato", sans-serif',
-              fontSize: '0.85rem',
-              fontWeight: difficulty ? '700' : '400',
-              padding: '0.45rem 1rem',
-              cursor: 'pointer',
-              outline: 'none',
-            }}>
-              {difficulties.map(d => (
-                <option key={d.value} value={d.value}>{d.label}</option>
-              ))}
-            </select>
-          </form>
-
-          {/* Cuisine filter */}
-          <form action="/search" method="get" style={{ display: 'contents' }}>
-            {query && <input type="hidden" name="q" value={query} />}
-            {category && <input type="hidden" name="category" value={category} />}
-            {difficulty && <input type="hidden" name="difficulty" value={difficulty} />}
-            <select name="cuisine" onChange="this.form.submit()" defaultValue={cuisine} style={{
-              border: cuisine ? '1px solid var(--orange)' : '1px solid var(--gray)',
-              borderRadius: '50px',
-              background: cuisine ? 'rgba(232,98,42,0.08)' : 'var(--cream)',
-              color: cuisine ? 'var(--orange)' : 'var(--text)',
-              fontFamily: '"Lato", sans-serif',
-              fontSize: '0.85rem',
-              fontWeight: cuisine ? '700' : '400',
-              padding: '0.45rem 1rem',
-              cursor: 'pointer',
-              outline: 'none',
-            }}>
-              {cuisines.map(c => (
-                <option key={c.value} value={c.value}>{c.label}</option>
-              ))}
-            </select>
-          </form>
-
-          {/* Clear filters */}
-          {activeFiltersCount > 0 && (
-            <Link href={query ? `/search?q=${encodeURIComponent(query)}` : '/search'} style={{
-              fontFamily: '"Lato", sans-serif',
-              fontSize: '0.8rem',
-              color: 'var(--orange)',
-              fontWeight: '700',
-              marginLeft: 'auto',
-            }}>
-              Clear filters ({activeFiltersCount}) ✕
-            </Link>
-          )}
-        </div>
-      </section>
+      <SearchFilters
+        query={query}
+        category={category}
+        difficulty={difficulty}
+        cuisine={cuisine}
+      />
 
       {/* Results */}
       <section className="content-section" style={{
