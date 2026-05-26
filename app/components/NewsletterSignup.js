@@ -233,7 +233,7 @@ export default function NewsletterSignup({ source = 'website', compact = false }
                 flexShrink: 0,
               }}
             >
-              {status === 'loading' ? 'Subscribing...' : '🍳 Subscribe Free'}
+              {status === 'loading' ? 'Subscribing...' : '⭐ Subscribe For Free'}
             </button>
           </form>
         )}

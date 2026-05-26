@@ -12,6 +12,7 @@ import IngredientList from '@/app/components/IngredientList'
 import TableOfContents from '@/app/components/TableOfContents'
 import NewsletterSignup from '@/app/components/NewsletterSignup'
 import { notFound } from 'next/navigation'
+import RecipeJumpCard from '@/app/components/RecipeJumpCard'
 
 const categoryLabel = {
   lunch: 'Lunch',
@@ -278,8 +279,12 @@ export default async function RecipePage({ params }) {
         {/* ── LEFT: Main content ── */}
         <div>
 
+          {/* WPRM-style Recipe Card */}
+          <RecipeJumpCard recipe={recipe} slug={slug} />
+
           {/* Description */}
           {recipe.description && (
+            
             <div id="recipe-overview" style={{
               background: 'var(--cream-light)',
               borderRadius: '20px',
