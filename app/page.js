@@ -5,6 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import RecipeCard from './components/RecipeCard'
 import NewsletterSignup from './components/NewsletterSignup'
+import HeroVideoControl from './components/HeroVideoControl'
 
 const RECIPES_PER_PAGE = 8
 
@@ -117,6 +118,8 @@ export default async function Home({ searchParams }) {
             </Link>
           </div>
         </div>
+
+        <HeroVideoControl />
 
        {/* Scroll-down prompt */}
 <a href="#recipes-grid" className="scroll-prompt">
