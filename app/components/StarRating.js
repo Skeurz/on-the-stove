@@ -7,8 +7,10 @@ const BROWSER_ID_KEY = 'on-the-stove-rating-browser-id'
 
 function getBrowserId() {
   if (typeof window === 'undefined') return ''
+
   const existing = localStorage.getItem(BROWSER_ID_KEY)
   if (existing) return existing
+
   const bytes = new Uint8Array(16)
   window.crypto.getRandomValues(bytes)
   const id = Array.from(bytes, byte => byte.toString(16).padStart(2, '0')).join('')
@@ -18,6 +20,7 @@ function getBrowserId() {
 
 function getStoredVotes() {
   if (typeof window === 'undefined') return {}
+
   try {
     return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}')
   } catch {
@@ -58,6 +61,8 @@ export default function StarRating({ slug }) {
   const [message, setMessage] = useState('')
   const [justVoted, setJustVoted] = useState(false)
 
+  // Removed useRouter — router.refresh() was causing a visible re-render stutter
+
   useEffect(() => {
     const storedVote = getStoredVote(slug)
     const browserId = getBrowserId()
@@ -70,6 +75,7 @@ export default function StarRating({ slug }) {
         if (!storedVote && data.userVote) {
           setStoredVote(slug, data.userVote)
         }
+
         setRating({
           average: data.average || 0,
           count: data.count || 0,
@@ -96,15 +102,15 @@ export default function StarRating({ slug }) {
 
     if (submitting || rating.userVote) return
 
-    // ── Optimistic update: reflect the vote instantly ──
+    // Optimistic update — fill stars instantly, don't wait for API
     setRating(prev => ({
       average: Math.round(((prev.average * prev.count) + value) / (prev.count + 1) * 10) / 10,
       count: prev.count + 1,
       userVote: value,
     }))
+    setMessage('Thanks for rating! 😊')
     setJustVoted(true)
     setStoredVote(slug, value)
-    setMessage('Thanks for rating! 😊')
     setSubmitting(true)
 
     try {
@@ -118,8 +124,12 @@ export default function StarRating({ slug }) {
       const data = await res.json()
 
       if (res.ok) {
-        // Reconcile with real server values silently
-        setRating({ average: data.average, count: data.count, userVote: data.userVote })
+        // Reconcile with real server values
+        setRating({
+          average: data.average,
+          count: data.count,
+          userVote: data.userVote,
+        })
       } else if (res.status === 409) {
         setMessage('You have already rated this recipe.')
       } else {
@@ -161,6 +171,7 @@ export default function StarRating({ slug }) {
       <div style={{ display: 'flex', justifyContent: 'center', gap: '0.08rem' }}>
         {[1, 2, 3, 4, 5].map(star => {
           const filled = star <= displayStars
+
           return (
             <button
               key={star}
