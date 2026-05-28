@@ -7,10 +7,8 @@ const BROWSER_ID_KEY = 'on-the-stove-rating-browser-id'
 
 function getBrowserId() {
   if (typeof window === 'undefined') return ''
-
   const existing = localStorage.getItem(BROWSER_ID_KEY)
   if (existing) return existing
-
   const bytes = new Uint8Array(16)
   window.crypto.getRandomValues(bytes)
   const id = Array.from(bytes, byte => byte.toString(16).padStart(2, '0')).join('')
@@ -20,7 +18,6 @@ function getBrowserId() {
 
 function getStoredVotes() {
   if (typeof window === 'undefined') return {}
-
   try {
     return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}')
   } catch {
@@ -61,8 +58,6 @@ export default function StarRating({ slug }) {
   const [message, setMessage] = useState('')
   const [justVoted, setJustVoted] = useState(false)
 
-  // Removed useRouter — router.refresh() was causing a visible re-render stutter
-
   useEffect(() => {
     const storedVote = getStoredVote(slug)
     const browserId = getBrowserId()
@@ -75,7 +70,6 @@ export default function StarRating({ slug }) {
         if (!storedVote && data.userVote) {
           setStoredVote(slug, data.userVote)
         }
-
         setRating({
           average: data.average || 0,
           count: data.count || 0,
@@ -102,12 +96,10 @@ export default function StarRating({ slug }) {
 
     if (submitting || rating.userVote) return
 
-    // Optimistic update — fill stars instantly, don't wait for API
-    setRating(prev => ({
-      average: Math.round(((prev.average * prev.count) + value) / (prev.count + 1) * 10) / 10,
-      count: prev.count + 1,
-      userVote: value,
-    }))
+    // Optimistic update — stars fill instantly
+    const optimisticCount = rating.count + 1
+    const optimisticAverage = Math.round(((rating.average * rating.count) + value) / optimisticCount * 10) / 10
+    setRating({ average: optimisticAverage, count: optimisticCount, userVote: value })
     setMessage('Thanks for rating! 😊')
     setJustVoted(true)
     setStoredVote(slug, value)
@@ -124,7 +116,7 @@ export default function StarRating({ slug }) {
       const data = await res.json()
 
       if (res.ok) {
-        // Reconcile with real server values
+        // Reconcile with server-computed values (route.js now returns correct counts)
         setRating({
           average: data.average,
           count: data.count,
@@ -140,16 +132,11 @@ export default function StarRating({ slug }) {
     } finally {
       setSubmitting(false)
     }
-  }, [slug, submitting, rating.userVote])
+  }, [slug, submitting, rating])
 
   if (loading) {
     return (
-      <div style={{
-        display: 'flex',
-        justifyContent: 'center',
-        gap: '0.12rem',
-        opacity: 0.45,
-      }}>
+      <div style={{ display: 'flex', justifyContent: 'center', gap: '0.12rem', opacity: 0.45 }}>
         {[1, 2, 3, 4, 5].map(i => (
           <span key={i} style={{ color: '#E0D6CC', lineHeight: 1 }}>
             <StarIcon filled />
@@ -162,16 +149,10 @@ export default function StarRating({ slug }) {
   const displayStars = rating.userVote || hoveredStar || Math.round(rating.average)
 
   return (
-    <div style={{
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      gap: '0.45rem',
-    }}>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.45rem' }}>
       <div style={{ display: 'flex', justifyContent: 'center', gap: '0.08rem' }}>
         {[1, 2, 3, 4, 5].map(star => {
           const filled = star <= displayStars
-
           return (
             <button
               key={star}
@@ -200,29 +181,13 @@ export default function StarRating({ slug }) {
         })}
       </div>
 
-      <div style={{
-        minHeight: '1.2rem',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        textAlign: 'center',
-      }}>
+      <div style={{ minHeight: '1.2rem', display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
         {rating.userVote ? (
-          <span style={{
-            fontFamily: '"Lato", sans-serif',
-            fontSize: '0.72rem',
-            color: '#E8622A',
-            fontWeight: '700',
-          }}>
+          <span style={{ fontFamily: '"Lato", sans-serif', fontSize: '0.72rem', color: '#E8622A', fontWeight: '700' }}>
             Your vote: {rating.userVote}
           </span>
         ) : rating.count > 0 && !hoveredStar ? (
-          <span style={{
-            fontFamily: '"Lato", sans-serif',
-            fontSize: '0.78rem',
-            color: 'var(--text)',
-            fontWeight: '700',
-          }}>
+          <span style={{ fontFamily: '"Lato", sans-serif', fontSize: '0.78rem', color: 'var(--text)', fontWeight: '700' }}>
             {rating.average.toFixed(1)}
             <span style={{ color: 'var(--text-light)', fontSize: '0.72rem', fontWeight: '400' }}>
               {' '}({rating.count})
