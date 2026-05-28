@@ -229,20 +229,15 @@ export default function RecipeJumpCard({ recipe, slug }) {
         </div>
       )}
 
-      {/* Ingredients + Instructions */}
+      {/* Ingredients + Instructions — stacked vertically */}
       {(recipe.ingredients?.length > 0 || recipe.steps?.length > 0) && (
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: recipe.ingredients?.length > 0 && recipe.steps?.length > 0
-            ? 'minmax(200px, 0.8fr) minmax(0, 1.2fr)'
-            : '1fr',
-        }}>
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
 
           {/* Ingredients */}
           {recipe.ingredients?.length > 0 && (
             <div style={{
               padding: '1.5rem',
-              borderRight: recipe.steps?.length > 0 ? '1px solid var(--gray)' : 'none',
+              borderBottom: recipe.steps?.length > 0 ? '1px solid var(--gray)' : 'none',
             }}>
               <h3 style={{
                 fontFamily: '"Playfair Display", serif',

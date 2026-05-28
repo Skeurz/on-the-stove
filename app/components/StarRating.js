@@ -1,17 +1,14 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { useRouter } from 'next/navigation'
 
 const STORAGE_KEY = 'on-the-stove-rated-recipes'
 const BROWSER_ID_KEY = 'on-the-stove-rating-browser-id'
 
 function getBrowserId() {
   if (typeof window === 'undefined') return ''
-
   const existing = localStorage.getItem(BROWSER_ID_KEY)
   if (existing) return existing
-
   const bytes = new Uint8Array(16)
   window.crypto.getRandomValues(bytes)
   const id = Array.from(bytes, byte => byte.toString(16).padStart(2, '0')).join('')
@@ -21,7 +18,6 @@ function getBrowserId() {
 
 function getStoredVotes() {
   if (typeof window === 'undefined') return {}
-
   try {
     return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}')
   } catch {
@@ -61,7 +57,6 @@ export default function StarRating({ slug }) {
   const [submitting, setSubmitting] = useState(false)
   const [message, setMessage] = useState('')
   const [justVoted, setJustVoted] = useState(false)
-  const router = useRouter()
 
   useEffect(() => {
     const storedVote = getStoredVote(slug)
@@ -75,7 +70,6 @@ export default function StarRating({ slug }) {
         if (!storedVote && data.userVote) {
           setStoredVote(slug, data.userVote)
         }
-
         setRating({
           average: data.average || 0,
           count: data.count || 0,
@@ -102,8 +96,16 @@ export default function StarRating({ slug }) {
 
     if (submitting || rating.userVote) return
 
+    // ── Optimistic update: reflect the vote instantly ──
+    setRating(prev => ({
+      average: Math.round(((prev.average * prev.count) + value) / (prev.count + 1) * 10) / 10,
+      count: prev.count + 1,
+      userVote: value,
+    }))
+    setJustVoted(true)
+    setStoredVote(slug, value)
+    setMessage('Thanks for rating! 😊')
     setSubmitting(true)
-    setMessage('')
 
     try {
       const browserId = getBrowserId()
@@ -116,18 +118,9 @@ export default function StarRating({ slug }) {
       const data = await res.json()
 
       if (res.ok) {
-        setJustVoted(true)
-        setStoredVote(slug, data.userVote)
-        setRating({
-          average: data.average,
-          count: data.count,
-          userVote: data.userVote,
-        })
-        setMessage('Thanks for rating! 😊')
-        router.refresh()
+        // Reconcile with real server values silently
+        setRating({ average: data.average, count: data.count, userVote: data.userVote })
       } else if (res.status === 409) {
-        setStoredVote(slug, value)
-        setRating(prev => ({ ...prev, userVote: value }))
         setMessage('You have already rated this recipe.')
       } else {
         setMessage(data.error || 'Failed to submit rating.')
@@ -168,7 +161,6 @@ export default function StarRating({ slug }) {
       <div style={{ display: 'flex', justifyContent: 'center', gap: '0.08rem' }}>
         {[1, 2, 3, 4, 5].map(star => {
           const filled = star <= displayStars
-
           return (
             <button
               key={star}

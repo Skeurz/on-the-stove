@@ -1,163 +1,249 @@
-import { createHash } from 'crypto'
-import { client } from '@/sanity/lib/client'
-import { writeClient } from '@/sanity/lib/write-client'
-import { defineQuery } from 'next-sanity'
+'use client'
 
-const RATING_SALT = process.env.RATING_SALT || 'on-the-stove-rating-salt-v1'
+import { useState, useEffect, useCallback } from 'react'
 
-function hashIP(ip) {
-  return createHash('sha256').update(ip + RATING_SALT).digest('hex')
+const STORAGE_KEY = 'on-the-stove-rated-recipes'
+const BROWSER_ID_KEY = 'on-the-stove-rating-browser-id'
+
+function getBrowserId() {
+  if (typeof window === 'undefined') return ''
+  const existing = localStorage.getItem(BROWSER_ID_KEY)
+  if (existing) return existing
+  const bytes = new Uint8Array(16)
+  window.crypto.getRandomValues(bytes)
+  const id = Array.from(bytes, byte => byte.toString(16).padStart(2, '0')).join('')
+  localStorage.setItem(BROWSER_ID_KEY, id)
+  return id
 }
 
-function hashBrowserId(browserId) {
-  if (!browserId || typeof browserId !== 'string') return null
-  return createHash('sha256').update(browserId + RATING_SALT).digest('hex')
-}
-
-function getClientIP(request) {
-  const forwarded = request.headers.get('x-forwarded-for')
-  if (forwarded) return forwarded.split(',')[0].trim()
-  const realIP = request.headers.get('x-real-ip')
-  if (realIP) return realIP
-  return '127.0.0.1'
-}
-
-async function getExistingVote(recipeId, ipHash, browserHash) {
-  const result = await client.fetch(
-    defineQuery(`*[
-      _type == "rating" &&
-      recipe._ref == $recipeId &&
-      (ipHash == $ipHash || ($browserHash != null && browserHash == $browserHash))
-    ][0]{
-      _id,
-      value
-    }`),
-    { recipeId, ipHash, browserHash }
-  )
-  return result
-}
-
-async function getRecipeRatings(slug) {
-  const result = await client.fetch(
-    defineQuery(`*[_type == "recipe" && slug.current == $slug][0]{
-      "ratingCount": coalesce(ratingCount, 0),
-      "ratingTotal": coalesce(ratingTotal, 0),
-      "ratingBreakdown": coalesce(ratingBreakdown, {})
-    }`),
-    { slug }
-  )
-  return result
-}
-
-export async function GET(request, { params }) {
+function getStoredVotes() {
+  if (typeof window === 'undefined') return {}
   try {
-    const { slug } = await params
-    const ipHash = hashIP(getClientIP(request))
-    const browserHash = hashBrowserId(request.headers.get('x-rating-browser-id'))
-
-    const recipe = await getRecipeBySlug(slug)
-    if (!recipe) {
-      return Response.json({ error: 'Recipe not found' }, { status: 404 })
-    }
-
-    const ratings = await getRecipeRatings(slug)
-    const existingVote = await getExistingVote(recipe._id, ipHash, browserHash)
-
-    const average = ratings.ratingCount > 0
-      ? Math.round((ratings.ratingTotal / ratings.ratingCount) * 10) / 10
-      : 0
-
-    return Response.json({
-  average,
-  count: ratings.ratingCount,
-  userVote: existingVote ? existingVote.value : null,
-  ratingBreakdown: ratings.ratingBreakdown || {},
-})
-  } catch (error) {
-    console.error('Error fetching rating:', error)
-    return Response.json({ error: 'Failed to fetch rating' }, { status: 500 })
+    return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}')
+  } catch {
+    return {}
   }
 }
 
-async function getRecipeBySlug(slug) {
-  return client.fetch(
-    defineQuery(`*[_type == "recipe" && slug.current == $slug][0]{ _id }`),
-    { slug }
+function getStoredVote(slug) {
+  const vote = getStoredVotes()[slug]
+  return Number.isInteger(vote) && vote >= 1 && vote <= 5 ? vote : null
+}
+
+function setStoredVote(slug, value) {
+  const votes = getStoredVotes()
+  votes[slug] = value
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(votes))
+}
+
+function StarIcon({ filled }) {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+      <path
+        d="M12 2.9 14.8 8.6l6.3.9-4.6 4.4 1.1 6.3L12 17.3l-5.6 2.9 1.1-6.3-4.6-4.4 6.3-.9L12 2.9Z"
+        fill={filled ? 'currentColor' : 'none'}
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinejoin="round"
+      />
+    </svg>
   )
 }
 
-export async function POST(request, { params }) {
-  try {
-    const { slug } = await params
-    const body = await request.json()
-    const { value, browserId } = body
-    
+export default function StarRating({ slug }) {
+  const [rating, setRating] = useState({ average: 0, count: 0, userVote: null })
+  const [hoveredStar, setHoveredStar] = useState(0)
+  const [loading, setLoading] = useState(true)
+  const [submitting, setSubmitting] = useState(false)
+  const [message, setMessage] = useState('')
+  const [justVoted, setJustVoted] = useState(false)
 
-    // Validate rating value
-    if (!value || !Number.isInteger(value) || value < 1 || value > 5) {
-      return Response.json(
-        { error: 'Rating must be an integer between 1 and 5' },
-        { status: 400 }
-      )
-    }
+  useEffect(() => {
+    const storedVote = getStoredVote(slug)
+    const browserId = getBrowserId()
 
-    const ipHash = hashIP(getClientIP(request))
-    const browserHash = hashBrowserId(browserId)
-    const recipe = await getRecipeBySlug(slug)
-
-    if (!recipe) {
-      return Response.json({ error: 'Recipe not found' }, { status: 404 })
-    }
-
-    // Check if this IP has already voted
-    const existingVote = await getExistingVote(recipe._id, ipHash, browserHash)
-    if (existingVote) {
-      return Response.json(
-        { error: 'You have already rated this recipe' },
-        { status: 409 }
-      )
-    }
-
-    // Create the rating document
-    await writeClient.create({
-      _type: 'rating',
-      recipe: { _ref: recipe._id, _type: 'reference' },
-      value,
-      ipHash,
-      browserHash,
-      createdAt: new Date().toISOString(),
+    fetch(`/api/recipes/${slug}/rating`, {
+      headers: { 'x-rating-browser-id': browserId },
     })
-
-    // Single atomic operation
-    const updatedRecipe = await writeClient
-      .patch(recipe._id)
-      .setIfMissing({ 
-        ratingTotal: 0,
-        ratingCount: 0,
-        ratingBreakdown: { star1: 0, star2: 0, star3: 0, star4: 0, star5: 0 }
+      .then(res => res.json())
+      .then(data => {
+        if (!storedVote && data.userVote) {
+          setStoredVote(slug, data.userVote)
+        }
+        setRating({
+          average: data.average || 0,
+          count: data.count || 0,
+          userVote: storedVote || data.userVote || null,
+        })
+        setLoading(false)
       })
-      .inc({
-        ratingTotal: value,
-        ratingCount: 1,
-        [`ratingBreakdown.star${value}`]: 1,
+      .catch(() => {
+        if (storedVote) {
+          setRating(prev => ({ ...prev, userVote: storedVote }))
+        }
+        setLoading(false)
       })
-      .commit({ visibility: 'sync' })
+  }, [slug])
 
-    console.log('Updated recipe:', updatedRecipe.ratingCount, updatedRecipe.ratingTotal)
+  const handleClick = useCallback(async (value) => {
+    const storedVote = getStoredVote(slug)
 
-    const newAverage = Math.round(((updatedRecipe.ratingTotal || 0) / (updatedRecipe.ratingCount || 1)) * 10) / 10
+    if (storedVote) {
+      setRating(prev => ({ ...prev, userVote: storedVote }))
+      setMessage('You already rated this recipe in this browser.')
+      return
+    }
 
-    return Response.json({
-      success: true,
-      average: newAverage || 0,
-      count: updatedRecipe.ratingCount || 0,
+    if (submitting || rating.userVote) return
+
+    // ── Optimistic update: reflect the vote instantly ──
+    setRating(prev => ({
+      average: Math.round(((prev.average * prev.count) + value) / (prev.count + 1) * 10) / 10,
+      count: prev.count + 1,
       userVote: value,
-    })
-  } catch (error) {
-    console.error('Error submitting rating:', error)
-    return Response.json({ 
-      error: 'Failed to submit rating',
-      details: error.message,
-    }, { status: 500 })
+    }))
+    setJustVoted(true)
+    setStoredVote(slug, value)
+    setMessage('Thanks for rating! 😊')
+    setSubmitting(true)
+
+    try {
+      const browserId = getBrowserId()
+      const res = await fetch(`/api/recipes/${slug}/rating`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ value, browserId }),
+      })
+
+      const data = await res.json()
+
+      if (res.ok) {
+        // Reconcile with real server values silently
+        setRating({ average: data.average, count: data.count, userVote: data.userVote })
+      } else if (res.status === 409) {
+        setMessage('You have already rated this recipe.')
+      } else {
+        setMessage(data.error || 'Failed to submit rating.')
+      }
+    } catch {
+      setMessage('Network error. Please try again.')
+    } finally {
+      setSubmitting(false)
+    }
+  }, [slug, submitting, rating.userVote])
+
+  if (loading) {
+    return (
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        gap: '0.12rem',
+        opacity: 0.45,
+      }}>
+        {[1, 2, 3, 4, 5].map(i => (
+          <span key={i} style={{ color: '#E0D6CC', lineHeight: 1 }}>
+            <StarIcon filled />
+          </span>
+        ))}
+      </div>
+    )
   }
+
+  const displayStars = rating.userVote || hoveredStar || Math.round(rating.average)
+
+  return (
+    <div style={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      gap: '0.45rem',
+    }}>
+      <div style={{ display: 'flex', justifyContent: 'center', gap: '0.08rem' }}>
+        {[1, 2, 3, 4, 5].map(star => {
+          const filled = star <= displayStars
+          return (
+            <button
+              key={star}
+              className={justVoted && rating.userVote === star ? 'animate-burst' : ''}
+              onClick={() => handleClick(star)}
+              onMouseEnter={() => !rating.userVote && setHoveredStar(star)}
+              onMouseLeave={() => setHoveredStar(0)}
+              disabled={!!rating.userVote || submitting}
+              aria-label={`Rate ${star} star${star > 1 ? 's' : ''}`}
+              style={{
+                width: '22px',
+                height: '22px',
+                padding: '2px',
+                background: 'none',
+                border: 'none',
+                color: filled ? '#E8622A' : '#D8C7B8',
+                cursor: rating.userVote ? 'default' : 'pointer',
+                lineHeight: 0,
+                transform: (hoveredStar >= star && !rating.userVote) ? 'scale(1.12)' : 'scale(1)',
+                transition: 'color 0.15s ease, transform 0.12s ease',
+              }}
+            >
+              <StarIcon filled={filled} />
+            </button>
+          )
+        })}
+      </div>
+
+      <div style={{
+        minHeight: '1.2rem',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        textAlign: 'center',
+      }}>
+        {rating.userVote ? (
+          <span style={{
+            fontFamily: '"Lato", sans-serif',
+            fontSize: '0.72rem',
+            color: '#E8622A',
+            fontWeight: '700',
+          }}>
+            Your vote: {rating.userVote}
+          </span>
+        ) : rating.count > 0 && !hoveredStar ? (
+          <span style={{
+            fontFamily: '"Lato", sans-serif',
+            fontSize: '0.78rem',
+            color: 'var(--text)',
+            fontWeight: '700',
+          }}>
+            {rating.average.toFixed(1)}
+            <span style={{ color: 'var(--text-light)', fontSize: '0.72rem', fontWeight: '400' }}>
+              {' '}({rating.count})
+            </span>
+          </span>
+        ) : null}
+      </div>
+
+      <span style={{
+        fontFamily: '"Lato", sans-serif',
+        fontSize: '0.7rem',
+        color: 'var(--text-light)',
+        fontWeight: '700',
+        textTransform: 'uppercase',
+        letterSpacing: '0.6px',
+      }}>
+        {rating.count} total vote{rating.count === 1 ? '' : 's'}
+      </span>
+
+      {message && (
+        <p className="animate-success" style={{
+          margin: 0,
+          fontFamily: '"Lato", sans-serif',
+          fontSize: '0.72rem',
+          color: 'var(--text-light)',
+          fontStyle: 'italic',
+          lineHeight: 1.35,
+          textAlign: 'center',
+        }}>
+          {message}
+        </p>
+      )}
+    </div>
+  )
 }
