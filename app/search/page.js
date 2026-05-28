@@ -4,6 +4,7 @@ import { urlFor } from '@/sanity/lib/image'
 import Link from 'next/link'
 import { defineQuery } from 'next-sanity'
 import SearchFilters from '@/app/components/SearchFilters'
+import { ArrowLeft, Search } from 'lucide-react'
 
 export const metadata = {
   title: 'Search Recipes - On The Stove',
@@ -211,14 +212,14 @@ function EmptyState({ message }) {
       border: '1px solid var(--gray)',
       borderRadius: '20px',
     }}>
-      <p style={{ fontSize: '3rem', marginBottom: '1rem' }}>🔍</p>
+      <Search size={48} strokeWidth={1.6} style={{ color: 'var(--orange)', marginBottom: '1rem' }} aria-hidden="true" />
       <p style={{ marginBottom: '1.5rem', fontSize: '1rem' }}>{message}</p>
       <Link href="/" style={{
         color: 'var(--orange)',
         fontWeight: '700',
         fontFamily: '"Lato", sans-serif',
       }}>
-        ← Back to recipes
+        <span className="icon-text"><ArrowLeft size={15} strokeWidth={1.8} aria-hidden="true" /> Back to recipes</span>
       </Link>
     </div>
   )

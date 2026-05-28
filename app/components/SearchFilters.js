@@ -1,22 +1,23 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
+import { Filter, X } from 'lucide-react'
 
 const categories = [
   { label: 'All Categories', value: '' },
-  { label: '🍱 Lunch', value: 'lunch' },
-  { label: '🍝 Dinner', value: 'dinner' },
-  { label: '🥞 Breakfast & Brunch', value: 'breakfastnbrunch' },
-  { label: '🥨 Snacks & Sides', value: 'snacksnsides' },
-  { label: '🍰 Desserts', value: 'desserts' },
-  { label: '🥤 Drinks & Shakes', value: 'drinks-shakes' },
+  { label: 'Lunch', value: 'lunch' },
+  { label: 'Dinner', value: 'dinner' },
+  { label: 'Breakfast & Brunch', value: 'breakfastnbrunch' },
+  { label: 'Snacks & Sides', value: 'snacksnsides' },
+  { label: 'Desserts', value: 'desserts' },
+  { label: 'Drinks & Shakes', value: 'drinks-shakes' },
 ]
 
 const difficulties = [
   { label: 'Any Difficulty', value: '' },
-  { label: '🟢 Easy', value: 'easy' },
-  { label: '🟡 Medium', value: 'medium' },
-  { label: '🔴 Hard', value: 'hard' },
+  { label: 'Easy', value: 'easy' },
+  { label: 'Medium', value: 'medium' },
+  { label: 'Hard', value: 'hard' },
 ]
 
 const cuisines = [
@@ -72,7 +73,7 @@ export default function SearchFilters({ query, category, difficulty, cuisine }) 
         flexWrap: 'wrap',
         alignItems: 'center',
       }}>
-        <span style={{
+        <span className="icon-text" style={{
           fontFamily: '"Lato", sans-serif',
           fontSize: '0.8rem',
           fontWeight: '700',
@@ -81,37 +82,20 @@ export default function SearchFilters({ query, category, difficulty, cuisine }) 
           textTransform: 'uppercase',
           flexShrink: 0,
         }}>
-          Filter:
+          <Filter size={15} strokeWidth={1.8} aria-hidden="true" />
+          Filter
         </span>
 
-        <select
-          value={category}
-          onChange={e => updateFilter('category', e.target.value)}
-          style={selectStyle(!!category)}
-        >
-          {categories.map(c => (
-            <option key={c.value} value={c.value}>{c.label}</option>
-          ))}
+        <select value={category} onChange={e => updateFilter('category', e.target.value)} style={selectStyle(!!category)}>
+          {categories.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
         </select>
 
-        <select
-          value={difficulty}
-          onChange={e => updateFilter('difficulty', e.target.value)}
-          style={selectStyle(!!difficulty)}
-        >
-          {difficulties.map(d => (
-            <option key={d.value} value={d.value}>{d.label}</option>
-          ))}
+        <select value={difficulty} onChange={e => updateFilter('difficulty', e.target.value)} style={selectStyle(!!difficulty)}>
+          {difficulties.map(d => <option key={d.value} value={d.value}>{d.label}</option>)}
         </select>
 
-        <select
-          value={cuisine}
-          onChange={e => updateFilter('cuisine', e.target.value)}
-          style={selectStyle(!!cuisine)}
-        >
-          {cuisines.map(c => (
-            <option key={c.value} value={c.value}>{c.label}</option>
-          ))}
+        <select value={cuisine} onChange={e => updateFilter('cuisine', e.target.value)} style={selectStyle(!!cuisine)}>
+          {cuisines.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
         </select>
 
         {activeFiltersCount > 0 && (
@@ -130,9 +114,11 @@ export default function SearchFilters({ query, category, difficulty, cuisine }) 
               fontWeight: '700',
               cursor: 'pointer',
               marginLeft: 'auto',
+              gap: '0.3rem',
             }}
           >
-            Clear filters ({activeFiltersCount}) ✕
+            <X size={14} strokeWidth={2} aria-hidden="true" />
+            Clear filters ({activeFiltersCount})
           </button>
         )}
       </div>

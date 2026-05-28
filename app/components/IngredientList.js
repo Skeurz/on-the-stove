@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { CheckCircle2 } from 'lucide-react'
 
 export default function IngredientList({ ingredients, recipeSlug }) {
   const storageKey = `ingredients-${recipeSlug}`
@@ -136,7 +137,7 @@ export default function IngredientList({ ingredients, recipeSlug }) {
             color: 'var(--orange)',
             fontWeight: '700',
           }}>
-            ✅ All done!
+            <CheckCircle2 className="inline-icon" size={15} strokeWidth={1.8} aria-hidden="true" /> All done!
           </span>
         )}
       </div>

@@ -50,6 +50,8 @@ body {
   font-family: 'Lato', sans-serif;
   background-color: var(--cream);
   color: var(--text);
+  min-height: 100vh;
+  min-height: 100dvh;
 }
 
 /* Light theme background */
@@ -383,6 +385,20 @@ form {
 
 .heading-card {
   max-width: 100%;
+}
+
+.inline-icon {
+  width: 1em;
+  height: 1em;
+  flex: 0 0 auto;
+  vertical-align: -0.16em;
+}
+
+.icon-text {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
 }
 
 .page-shell {
@@ -914,7 +930,18 @@ form {
 @media (max-width: 768px) {
   html:not(.dark) body,
   .dark body {
-    background-attachment: scroll;
+    background-attachment: scroll !important;
+    background-repeat: no-repeat !important;
+    background-size: cover !important;
+    background-position: top center !important;
+  }
+
+  html:not(.dark) body {
+    background-image: linear-gradient(rgba(253, 246, 238, 0.62), rgba(253, 246, 238, 0.62)), url('/background.jpeg') !important;
+  }
+
+  .dark body {
+    background-image: linear-gradient(rgba(26, 20, 16, 0.70), rgba(26, 20, 16, 0.70)), url('/dark-background.jpeg') !important;
   }
 
   .hero-section,

@@ -6,6 +6,7 @@ import Link from 'next/link'
 import RecipeCard from './components/RecipeCard'
 import NewsletterSignup from './components/NewsletterSignup'
 import HeroVideoControl from './components/HeroVideoControl'
+import { ArrowRight, CakeSlice, Coffee, Pizza, Salad, Sandwich, Sparkles } from 'lucide-react'
 
 const RECIPES_PER_PAGE = 8
 
@@ -101,7 +102,7 @@ export default async function Home({ searchParams }) {
               backdropFilter: 'blur(4px)',
               boxShadow: '0 0 15px rgba(244,148,106,0.2)',
             }}>
-              ✨ My collections 
+              <span className="icon-text"><Sparkles size={16} strokeWidth={1.8} aria-hidden="true" /> My collections</span>
             </Link> 
             <Link href="/about" style={{
               background: 'rgba(255,255,255,0.1)',
@@ -148,13 +149,13 @@ export default async function Home({ searchParams }) {
           flexWrap: 'wrap',
         }}>
           {[
-            { label: '🍱 Lunch', href: '/category/lunch' },
-            { label: '🍝 Dinner', href: '/category/dinner' },
-            { label: '🥞 Breakfast', href: '/category/breakfastnbrunch' },
-            { label: '🥨 Snacks', href: '/category/snacksnsides' },
-            { label: '🍰 Desserts', href: '/category/desserts' },
-            { label: '🥤 Drinks', href: '/category/drinks-shakes' },
-            { label: '✨ My collections', href: '/collections' },
+            { label: 'Lunch', href: '/category/lunch', Icon: Sandwich },
+            { label: 'Dinner', href: '/category/dinner', Icon: Pizza },
+            { label: 'Breakfast', href: '/category/breakfastnbrunch', Icon: Coffee },
+            { label: 'Snacks', href: '/category/snacksnsides', Icon: Salad },
+            { label: 'Desserts', href: '/category/desserts', Icon: CakeSlice },
+            { label: 'Drinks', href: '/category/drinks-shakes', Icon: Coffee },
+            { label: 'My collections', href: '/collections', Icon: Sparkles },
           ].map(cat => {
             const isCollections = cat.href === '/collections';
             return (
@@ -170,7 +171,7 @@ export default async function Home({ searchParams }) {
                 whiteSpace: 'nowrap',
                 transition: 'all 0.15s',
               }}>
-              {cat.label}
+              <span className="icon-text"><cat.Icon size={14} strokeWidth={1.8} aria-hidden="true" /> {cat.label}</span>
             </Link>
             );
           })}
@@ -223,7 +224,7 @@ export default async function Home({ searchParams }) {
                        letterSpacing: '0.3px',
                        whiteSpace: 'nowrap',
                      }}>
-                       View all →
+                       <span className="icon-text">View all <ArrowRight size={14} strokeWidth={1.8} aria-hidden="true" /></span>
                      </Link>
                    </div>
                  </div>
@@ -343,6 +344,7 @@ export default async function Home({ searchParams }) {
 
 function Pagination({ currentPage, totalPages }) {
   const pages = Array.from({ length: totalPages }, (_, index) => index + 1)
+  const pageHref = (page) => page === 1 ? '/#recipes-grid' : `/?page=${page}#recipes-grid`
 
   return (
     <nav aria-label="Recipe pagination" style={{
@@ -353,9 +355,9 @@ function Pagination({ currentPage, totalPages }) {
       gap: '0.6rem',
       marginTop: '2.5rem',
       fontFamily: '"Lato", sans-serif',
-    }}>
+      }}>
       {currentPage > 1 && (
-        <PageLink href={currentPage === 2 ? '/' : `/?page=${currentPage - 1}`}>
+        <PageLink href={pageHref(currentPage - 1)}>
           Previous
         </PageLink>
       )}
@@ -363,7 +365,7 @@ function Pagination({ currentPage, totalPages }) {
       {pages.map((page) => (
         <PageLink
           key={page}
-          href={page === 1 ? '/' : `/?page=${page}`}
+          href={pageHref(page)}
           active={page === currentPage}
         >
           {page}
@@ -371,7 +373,7 @@ function Pagination({ currentPage, totalPages }) {
       ))}
 
       {currentPage < totalPages && (
-        <PageLink href={`/?page=${currentPage + 1}`}>
+        <PageLink href={pageHref(currentPage + 1)}>
           Next
         </PageLink>
       )}

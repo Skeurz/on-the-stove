@@ -1,10 +1,10 @@
 'use client'
 
 import { useState } from 'react'
-import { Clock, Flame, Timer, ChartBar, Globe, Utensils, Zap, FlaskConical, ChefHat} from 'lucide-react'
+import { Check, Clock, Flame, Timer, ChartBar, Globe, Utensils, Zap, FlaskConical, ChefHat, Printer } from 'lucide-react'
 
 
-const difficultyLabel = { easy: '🟢 Easy', medium: '🟡 Medium', hard: '🔴 Hard' }
+const difficultyLabel = { easy: 'Easy', medium: 'Medium', hard: 'Hard' }
 const cuisineLabel = {
   american: 'American', italian: 'Italian', mexican: 'Mexican',
   asian: 'Asian', mediterranean: 'Mediterranean', french: 'French',
@@ -81,7 +81,8 @@ export default function RecipeJumpCard({ recipe, slug }) {
               gap: '0.4rem',
             }}
           >
-            🖨 Print
+            <Printer size={15} strokeWidth={1.8} aria-hidden="true" />
+            Print
           </button>
         </div>
       </div>
@@ -161,7 +162,8 @@ export default function RecipeJumpCard({ recipe, slug }) {
             fontWeight: '700',
             color: 'var(--text)',
           }}>
-            🍽 Servings:
+            <Utensils size={15} strokeWidth={1.8} aria-hidden="true" />
+            Servings:
           </span>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <button
@@ -255,7 +257,7 @@ export default function RecipeJumpCard({ recipe, slug }) {
                     alignItems: 'flex-start',
                     lineHeight: 1.5,
                   }}>
-                    <span style={{ color: 'var(--orange)', flexShrink: 0 }}>•</span>
+                    <Check size={14} strokeWidth={2} style={{ color: 'var(--orange)', flexShrink: 0, marginTop: '0.2rem' }} aria-hidden="true" />
                     {ratio !== 1 ? scaleIngredient(item) : item}
                   </li>
                 ))}

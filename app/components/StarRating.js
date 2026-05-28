@@ -100,7 +100,7 @@ export default function StarRating({ slug }) {
     const optimisticCount = rating.count + 1
     const optimisticAverage = Math.round(((rating.average * rating.count) + value) / optimisticCount * 10) / 10
     setRating({ average: optimisticAverage, count: optimisticCount, userVote: value })
-    setMessage('Thanks for rating! 😊')
+    setMessage('Thanks for rating!')
     setJustVoted(true)
     setStoredVote(slug, value)
     setSubmitting(true)

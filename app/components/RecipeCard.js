@@ -2,14 +2,15 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
+import { CakeSlice, ChefHat, Clock, Coffee, Flame, Pizza, Salad, Sandwich, Star, Utensils } from 'lucide-react'
 
-const categoryEmoji = {
-  lunch: '🍱',
-  dinner: '🍝',
-  breakfastnbrunch: '🥞',
-  snacksnsides: '🥨',
-  desserts: '🍰',
-  'drinks-shakes': '🥤',
+const categoryIcon = {
+  lunch: Sandwich,
+  dinner: Pizza,
+  breakfastnbrunch: Coffee,
+  snacksnsides: Salad,
+  desserts: CakeSlice,
+  'drinks-shakes': Coffee,
 }
 
 const categoryLabel = {
@@ -21,23 +22,15 @@ const categoryLabel = {
   'drinks-shakes': 'Drinks & Shakes',
 }
 
+function CategoryIcon({ category, size = 14 }) {
+  const Icon = categoryIcon[category] || Utensils
+  return <Icon size={size} strokeWidth={1.8} aria-hidden="true" />
+}
+
 function RatingStars({ total, count }) {
   const hasRatings = count && count > 0
   const average = hasRatings ? Math.round((total / count) * 10) / 10 : 0
   const fullStars = hasRatings ? Math.round(average) : 0
-  const stars = []
-
-  for (let i = 0; i < 5; i++) {
-    stars.push(
-      <span key={i} style={{
-        color: i < fullStars ? 'var(--orange)' : 'var(--text-light)',
-        fontSize: '0.85rem',
-        lineHeight: 1,
-      }}>
-        ★
-      </span>
-    )
-  }
 
   return (
     <div style={{
@@ -48,7 +41,16 @@ function RatingStars({ total, count }) {
       fontSize: '0.78rem',
       color: 'var(--text)',
     }}>
-      {stars}
+      {Array.from({ length: 5 }, (_, i) => (
+        <Star
+          key={i}
+          size={14}
+          strokeWidth={1.8}
+          fill={i < fullStars ? 'currentColor' : 'none'}
+          style={{ color: i < fullStars ? 'var(--orange)' : 'var(--text-light)' }}
+          aria-hidden="true"
+        />
+      ))}
       {hasRatings ? (
         <>
           <span style={{ marginLeft: '0.15rem', fontWeight: '700', color: 'var(--brown-light)' }}>
@@ -91,7 +93,6 @@ export default function RecipeCard({ recipe, imageUrl }) {
           e.currentTarget.style.boxShadow = 'none'
         }}
       >
-        {/* Image */}
         <div style={{
           height: '210px',
           background: 'var(--gray)',
@@ -110,15 +111,17 @@ export default function RecipeCard({ recipe, imageUrl }) {
             />
           ) : (
             <div style={{
-              width: '100%', height: '100%',
-              display: 'flex', alignItems: 'center',
-              justifyContent: 'center', fontSize: '3.5rem',
+              width: '100%',
+              height: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'var(--orange)',
             }}>
-              {categoryEmoji[recipe.category] || '🍽️'}
+              <CategoryIcon category={recipe.category} size={56} />
             </div>
           )}
 
-          {/* Category badge over image */}
           <div style={{
             position: 'absolute',
             top: '12px',
@@ -133,19 +136,21 @@ export default function RecipeCard({ recipe, imageUrl }) {
             padding: '0.3rem 0.7rem',
             borderRadius: '50px',
             fontFamily: '"Lato", sans-serif',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '0.35rem',
           }}>
-            {categoryEmoji[recipe.category]} {categoryLabel[recipe.category] || recipe.category}
+            <CategoryIcon category={recipe.category} />
+            {categoryLabel[recipe.category] || recipe.category}
           </div>
         </div>
 
-        {/* Content */}
         <div style={{
           padding: '1.25rem 1.35rem 1.35rem',
           display: 'flex',
           flexDirection: 'column',
           flex: 1,
         }}>
-          
           <h3 style={{
             fontFamily: '"Playfair Display", serif',
             fontSize: '1.15rem',
@@ -178,7 +183,6 @@ export default function RecipeCard({ recipe, imageUrl }) {
             </p>
           )}
 
-          {/* Meta row */}
           <div style={{
             display: 'flex',
             flexWrap: 'wrap',
@@ -193,28 +197,29 @@ export default function RecipeCard({ recipe, imageUrl }) {
             letterSpacing: '0.3px',
           }}>
             {recipe.prepTime && (
-              <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                ⏱ {recipe.prepTime} min
+              <span className="icon-text">
+                <Clock size={14} strokeWidth={1.8} aria-hidden="true" />
+                {recipe.prepTime} min
               </span>
             )}
             {recipe.cookTime && (
-              <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                🔥 {recipe.cookTime} min
+              <span className="icon-text">
+                <Flame size={14} strokeWidth={1.8} aria-hidden="true" />
+                {recipe.cookTime} min
               </span>
             )}
             {recipe.servings && (
-              <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                🍽 {recipe.servings} servings
+              <span className="icon-text">
+                <Utensils size={14} strokeWidth={1.8} aria-hidden="true" />
+                {recipe.servings} servings
               </span>
             )}
 
-           {!recipe.prepTime && !recipe.cookTime && !recipe.servings && (
-              <span style={{ color: '#E8622A' }}>View Recipe →</span>
+            {!recipe.prepTime && !recipe.cookTime && !recipe.servings && (
+              <span style={{ color: '#E8622A' }}>View Recipe</span>
             )}
-
           </div>
 
-          {/* Star rating + difficulty */}
           <div style={{
             marginTop: '0.6rem',
             display: 'flex',
@@ -243,7 +248,7 @@ export default function RecipeCard({ recipe, imageUrl }) {
                 whiteSpace: 'nowrap',
                 flexShrink: 0,
               }}>
-                {recipe.difficulty === 'easy' ? '🟢 Easy' : recipe.difficulty === 'medium' ? '🟡 Medium' : '🔴 Hard'}
+                {recipe.difficulty === 'easy' ? 'Easy' : recipe.difficulty === 'medium' ? 'Medium' : 'Hard'}
               </span>
             )}
           </div>

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { CheckCircle2, Sparkles } from 'lucide-react'
 
 export default function NewsletterSignup({ source = 'website', compact = false }) {
   const [email, setEmail] = useState('')
@@ -48,7 +49,7 @@ export default function NewsletterSignup({ source = 'website', compact = false }
             textAlign: 'center',
             padding: '0.75rem',
           }}>
-            🎉 {message}
+            <CheckCircle2 className="inline-icon" size={16} strokeWidth={1.8} aria-hidden="true" /> {message}
           </p>
         ) : (
           <form onSubmit={handleSubmit} className="compact-newsletter-form" style={{
@@ -179,7 +180,7 @@ export default function NewsletterSignup({ source = 'website', compact = false }
               color: 'white',
               marginBottom: '0.5rem',
             }}>
-              {"🎉 You're in!"}
+              <CheckCircle2 className="inline-icon" size={20} strokeWidth={1.8} aria-hidden="true" /> {"You're in!"}
             </p>
             <p style={{
               fontFamily: '"Lato", sans-serif',
@@ -233,7 +234,12 @@ export default function NewsletterSignup({ source = 'website', compact = false }
                 flexShrink: 0,
               }}
             >
-              {status === 'loading' ? 'Subscribing...' : '⭐ Subscribe For Free'}
+              {status === 'loading' ? 'Subscribing...' : (
+                <>
+                  <Sparkles size={16} strokeWidth={1.8} aria-hidden="true" />
+                  Subscribe For Free
+                </>
+              )}
             </button>
           </form>
         )}

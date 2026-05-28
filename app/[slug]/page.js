@@ -13,7 +13,7 @@ import TableOfContents from '@/app/components/TableOfContents'
 import NewsletterSignup from '@/app/components/NewsletterSignup'
 import { notFound } from 'next/navigation'
 import RecipeJumpCard from '@/app/components/RecipeJumpCard'
-import { Mail } from 'lucide-react'
+import { ArrowLeft, BookOpen, Camera, Check, ChefHat, Flame, FlaskConical, HelpCircle, Leaf, Lightbulb, Mail, Package, Shuffle, Sprout, Star, Video } from 'lucide-react'
 
 const categoryLabel = {
   lunch: 'Lunch',
@@ -95,30 +95,30 @@ export default async function RecipePage({ params }) {
 
   const totalTime = (recipe.prepTime || 0) + (recipe.cookTime || 0)
 
-  const difficultyLabel = { easy: '🟢 Easy', medium: '🟡 Medium', hard: '🔴 Hard' }
+  const difficultyLabel = { easy: 'Easy', medium: 'Medium', hard: 'Hard' }
 
   const recipeFacts = [
-    recipe.prepTime ? { label: 'Prep', value: `${recipe.prepTime} min`, icon: '⏱' } : null,
-    recipe.cookTime ? { label: 'Cook', value: `${recipe.cookTime} min`, icon: '🔥' } : null,
-    totalTime > 0 ? { label: 'Total', value: `${totalTime} min`, icon: '🕐' } : null,
-    recipe.servings ? { label: 'Serves', value: recipe.servings, icon: '🍽' } : null,
-    recipe.calories ? { label: 'Calories', value: recipe.calories, icon: '⚡' } : null,
-    recipe.difficulty ? { label: 'Difficulty', value: difficultyLabel[recipe.difficulty], icon: '📊' } : null,
-    recipe.cuisine ? { label: 'Cuisine', value: recipe.cuisine, icon: '🌍' } : null,
+    recipe.prepTime ? { label: 'Prep', value: `${recipe.prepTime} min` } : null,
+    recipe.cookTime ? { label: 'Cook', value: `${recipe.cookTime} min` } : null,
+    totalTime > 0 ? { label: 'Total', value: `${totalTime} min` } : null,
+    recipe.servings ? { label: 'Serves', value: recipe.servings } : null,
+    recipe.calories ? { label: 'Calories', value: recipe.calories } : null,
+    recipe.difficulty ? { label: 'Difficulty', value: difficultyLabel[recipe.difficulty] } : null,
+    recipe.cuisine ? { label: 'Cuisine', value: recipe.cuisine } : null,
   ].filter(Boolean)
 
   const tableOfContents = [
-    recipe.description ? { href: '#recipe-overview', label: '📖 Overview' } : null,
-    recipe.ingredients?.length > 0 ? { href: '#recipe-ingredients', label: `🧂 Ingredients (${recipe.ingredients.length})` } : null,
-    recipe.steps?.length > 0 ? { href: '#recipe-instructions', label: `👨‍🍳 Instructions (${recipe.steps.length} steps)` } : null,
-    recipe.preparationImages?.length > 0 ? { href: '#prep-photos', label: '📸 Step by Step Photos' } : null,
-    recipe.videoUrl ? { href: '#video', label: '🎥 Watch the Recipe' } : null,
-    recipe.helpfulTips?.length > 0 ? { href: '#helpful-tips', label: '💡 Helpful Tips' } : null,
-    recipe.variations?.length > 0 ? { href: '#variations', label: '🔄 Easy Variations' } : null,
-    recipe.veganAdaptation?.length > 0 ? { href: '#vegan', label: '🌱 Vegan Adaptation' } : null,
-    recipe.storageTips?.length > 0 ? { href: '#storage', label: '📦 Storage Tips' } : null,
-    recipe.faqs?.length > 0 ? { href: '#faqs', label: '❓ FAQs' } : null,
-    recipeFacts.length > 0 ? { href: '#recipe-facts', label: '⏱ Recipe Details' } : null,
+    recipe.description ? { href: '#recipe-overview', label: 'Overview' } : null,
+    recipe.ingredients?.length > 0 ? { href: '#recipe-ingredients', label: `Ingredients (${recipe.ingredients.length})` } : null,
+    recipe.steps?.length > 0 ? { href: '#recipe-instructions', label: `Instructions (${recipe.steps.length} steps)` } : null,
+    recipe.preparationImages?.length > 0 ? { href: '#prep-photos', label: 'Step by Step Photos' } : null,
+    recipe.videoUrl ? { href: '#video', label: 'Watch the Recipe' } : null,
+    recipe.helpfulTips?.length > 0 ? { href: '#helpful-tips', label: 'Helpful Tips' } : null,
+    recipe.variations?.length > 0 ? { href: '#variations', label: 'Easy Variations' } : null,
+    recipe.veganAdaptation?.length > 0 ? { href: '#vegan', label: 'Vegan Adaptation' } : null,
+    recipe.storageTips?.length > 0 ? { href: '#storage', label: 'Storage Tips' } : null,
+    recipe.faqs?.length > 0 ? { href: '#faqs', label: 'FAQs' } : null,
+    recipeFacts.length > 0 ? { href: '#recipe-facts', label: 'Recipe Details' } : null,
   ].filter(Boolean)
 
   const ratingBreakdownUI = (
@@ -133,7 +133,7 @@ export default async function RecipePage({ params }) {
         const percentage = recipe.ratingCount ? (count / recipe.ratingCount) * 100 : 0
         return (
           <div key={stars} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', fontSize: '0.75rem' }}>
-            <span style={{ minWidth: '45px', fontWeight: '700', color: 'var(--text)' }}>{stars} ★</span>
+            <span className="icon-text" style={{ minWidth: '45px', fontWeight: '700', color: 'var(--text)', justifyContent: 'flex-start' }}>{stars} <Star size={12} fill="currentColor" strokeWidth={1.8} aria-hidden="true" /></span>
             <div style={{ flex: 1, height: '6px', background: 'var(--gray)', borderRadius: '10px', overflow: 'hidden' }}>
               <div style={{
                 width: `${percentage}%`,
@@ -150,12 +150,7 @@ export default async function RecipePage({ params }) {
   )
 
   return (
-    <div style={{ 
-      backgroundImage: 'url("/background.jpg")', 
-      backgroundSize: 'cover',
-      backgroundAttachment: 'fixed',
-      minHeight: '100vh' 
-    }}>
+    <div style={{ minHeight: '100vh' }}>
 
       {/* ── HERO SECTION ── */}
       <div className="content-section" style={{
@@ -269,7 +264,7 @@ export default async function RecipePage({ params }) {
                 alignItems: 'center',
                 gap: '0.75rem'
               }}>
-                📖 Overview
+                <BookOpen className="inline-icon" size={24} strokeWidth={1.7} aria-hidden="true" /> Overview
               </h2>
               <p style={{
                 fontFamily: '"Lato", sans-serif',
@@ -327,7 +322,7 @@ export default async function RecipePage({ params }) {
                   borderBottom: '2px solid var(--orange)',
                   fontWeight: '700',
                 }}>
-                  🧂 Ingredients
+                  <FlaskConical className="inline-icon" size={24} strokeWidth={1.7} aria-hidden="true" /> Ingredients
                 </h2>
                 <IngredientList ingredients={recipe.ingredients} recipeSlug={slug} />
               </div>
@@ -353,7 +348,7 @@ export default async function RecipePage({ params }) {
                   borderBottom: '2px solid var(--orange)',
                   fontWeight: '700',
                 }}>
-                  👨‍🍳 Instructions
+                  <ChefHat className="inline-icon" size={24} strokeWidth={1.7} aria-hidden="true" /> Instructions
                 </h2>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                   {recipe.steps.map((step, i) => (
@@ -438,7 +433,7 @@ export default async function RecipePage({ params }) {
                 marginBottom: '1.25rem',
                 paddingBottom: '0.75rem',
                 borderBottom: '2px solid var(--orange)',
-              }}>📸 Step by Step Photos</h3>
+              }}><Camera className="inline-icon" size={21} strokeWidth={1.7} aria-hidden="true" /> Step by Step Photos</h3>
               <div style={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
@@ -508,7 +503,7 @@ export default async function RecipePage({ params }) {
                 marginBottom: '1.25rem',
                 paddingBottom: '0.75rem',
                 borderBottom: '2px solid var(--orange)',
-              }}>🎥 Watch the Recipe</h3>
+              }}><Video className="inline-icon" size={21} strokeWidth={1.7} aria-hidden="true" /> Watch the Recipe</h3>
               <div style={{
                 position: 'relative',
                 paddingBottom: '56.25%',
@@ -550,7 +545,7 @@ export default async function RecipePage({ params }) {
                 marginBottom: '1.25rem',
                 paddingBottom: '0.75rem',
                 borderBottom: '2px solid var(--orange)',
-              }}>💡 Helpful Tips</h3>
+              }}><Lightbulb className="inline-icon" size={21} strokeWidth={1.7} aria-hidden="true" /> Helpful Tips</h3>
               <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column' }}>
                 {recipe.helpfulTips.map((tip, i) => (
                   <li key={tip._key || i} style={{
@@ -558,7 +553,7 @@ export default async function RecipePage({ params }) {
                     padding: '0.75rem 0',
                     borderBottom: i < recipe.helpfulTips.length - 1 ? '1px solid rgba(232,98,42,0.1)' : 'none',
                   }}>
-                    <span style={{ color: 'var(--orange)', flexShrink: 0, fontWeight: '700' }}>✓</span>
+                    <Check size={16} strokeWidth={2.2} style={{ color: 'var(--orange)', flexShrink: 0, marginTop: '0.2rem' }} aria-hidden="true" />
                     <div>
                       {tip.title && <p style={{ fontFamily: '"Playfair Display", serif', fontSize: '1rem', fontWeight: '700', color: 'var(--brown)', marginBottom: '0.25rem', margin: 0 }}>{tip.title}</p>}
                       {tip.description && <p style={{ fontFamily: '"Lato", sans-serif', fontSize: '0.9rem', color: 'var(--text-light)', lineHeight: 1.7, margin: 0, marginTop: '0.25rem' }}>{tip.description}</p>}
@@ -585,7 +580,7 @@ export default async function RecipePage({ params }) {
                 marginBottom: '1.25rem',
                 paddingBottom: '0.75rem',
                 borderBottom: '2px solid var(--orange)',
-              }}>🔄 Easy Variations</h3>
+              }}><Shuffle className="inline-icon" size={21} strokeWidth={1.7} aria-hidden="true" /> Easy Variations</h3>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 {recipe.variations.map((v, i) => (
                   <div key={v._key || i} style={{
@@ -618,7 +613,7 @@ export default async function RecipePage({ params }) {
                 marginBottom: '1.25rem',
                 paddingBottom: '0.75rem',
                 borderBottom: '2px solid rgba(34,197,94,0.6)',
-              }}>🌱 How to Make This Vegan</h3>
+              }}><Leaf className="inline-icon" size={21} strokeWidth={1.7} aria-hidden="true" /> How to Make This Vegan</h3>
               <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
                 {recipe.veganAdaptation.map((item, i) => (
                   <li key={i} style={{
@@ -626,7 +621,7 @@ export default async function RecipePage({ params }) {
                     fontFamily: '"Lato", sans-serif', fontSize: '0.95rem',
                     color: 'var(--text)', lineHeight: 1.7,
                   }}>
-                    <span style={{ color: '#16a34a', flexShrink: 0, fontWeight: '700' }}>🌿</span>
+                    <Sprout size={16} strokeWidth={2} style={{ color: '#16a34a', flexShrink: 0, marginTop: '0.2rem' }} aria-hidden="true" />
                     {item}
                   </li>
                 ))}
@@ -650,7 +645,7 @@ export default async function RecipePage({ params }) {
                 marginBottom: '1.25rem',
                 paddingBottom: '0.75rem',
                 borderBottom: '2px solid var(--orange)',
-              }}>📦 Storage Tips</h3>
+              }}><Package className="inline-icon" size={21} strokeWidth={1.7} aria-hidden="true" /> Storage Tips</h3>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '1rem' }}>
                 {recipe.storageTips.map((tip, i) => (
                   <div key={tip._key || i} style={{
@@ -685,7 +680,7 @@ export default async function RecipePage({ params }) {
                 marginBottom: '1.25rem',
                 paddingBottom: '0.75rem',
                 borderBottom: '2px solid var(--orange)',
-              }}>❓ Frequently Asked Questions</h3>
+              }}><HelpCircle className="inline-icon" size={21} strokeWidth={1.7} aria-hidden="true" /> Frequently Asked Questions</h3>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 {recipe.faqs.map((faq, i) => (
                   <div key={faq._key || i} style={{
@@ -907,7 +902,7 @@ export default async function RecipePage({ params }) {
             fontWeight: '700',
             color: 'var(--brown)',
           }}>
-            ← Back to all recipes
+            <span className="icon-text"><ArrowLeft size={15} strokeWidth={1.8} aria-hidden="true" /> Back to all recipes</span>
           </Link>
 
         </aside>

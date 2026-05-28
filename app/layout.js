@@ -11,7 +11,7 @@ const navLinks = [
   { label: 'Snacks & Sides', href: '/category/snacksnsides' },
   { label: 'Desserts', href: '/category/desserts' },
   { label: 'Drinks & Shakes', href: '/category/drinks-shakes' },
-  { label: '✨ My collections', href: '/collections' },
+  { label: 'My collections', href: '/collections' },
 ]
 
 export const metadata = {
@@ -91,7 +91,7 @@ export default function RootLayout({ children }) {
           .sparkle-button:hover::after, 
           nav a[href="/collections"]:hover::after,
           .site-footer a[href="/collections"]:hover::after {
-            content: '✨';
+            content: '';
             position: absolute;
             top: -10px;
             right: -10px;
@@ -268,7 +268,7 @@ export default function RootLayout({ children }) {
             fontSize: '0.8rem',
             color: 'rgba(253,246,238,0.35)',
           }}>
-            © {new Date().getFullYear()} On The Stove · Made with ❤️ by Adelaide
+            © {new Date().getFullYear()} On The Stove · Made by Adelaide
           </div>
         </footer>
         <BackToTop />

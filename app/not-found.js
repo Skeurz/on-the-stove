@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { ArrowRight, CakeSlice, ChefHat, Coffee, Flame, Pizza, Salad } from 'lucide-react'
 
 export default function NotFound() {
   return (
@@ -12,7 +13,7 @@ export default function NotFound() {
       padding: '2rem',
     }}>
       {/* Big emoji */}
-      <div style={{ fontSize: '5rem', marginBottom: '1.5rem' }}>🍳</div>
+      <ChefHat size={76} strokeWidth={1.5} style={{ color: 'var(--orange)', marginBottom: '1.5rem' }} aria-hidden="true" />
 
       {/* 404 */}
       <p style={{
@@ -35,7 +36,7 @@ export default function NotFound() {
         marginBottom: '1rem',
         maxWidth: '600px',
       }}>
-        Looks like this recipe got burned 🔥
+        <span className="icon-text">Looks like this recipe got burned <Flame size={30} strokeWidth={1.7} aria-hidden="true" /></span>
       </h1>
 
       <p style={{
@@ -98,10 +99,10 @@ export default function NotFound() {
           You might be looking for
         </p>
         {[
-          { label: '🍰 Desserts', href: '/category/desserts' },
-          { label: '🍝 Dinner Recipes', href: '/category/dinner' },
-          { label: '🥞 Breakfast', href: '/category/breakfastnbrunch' },
-          { label: '🥨 Snacks & Sides', href: '/category/snacksnsides' },
+          { label: 'Desserts', href: '/category/desserts', Icon: CakeSlice },
+          { label: 'Dinner Recipes', href: '/category/dinner', Icon: Pizza },
+          { label: 'Breakfast', href: '/category/breakfastnbrunch', Icon: Coffee },
+          { label: 'Snacks & Sides', href: '/category/snacksnsides', Icon: Salad },
         ].map(link => (
           <Link key={link.href} href={link.href} style={{
             display: 'block',
@@ -111,7 +112,7 @@ export default function NotFound() {
             padding: '0.5rem 0',
             borderBottom: '1px solid var(--gray)',
           }}>
-            {link.label} →
+            <span className="icon-text"><link.Icon size={15} strokeWidth={1.8} aria-hidden="true" /> {link.label} <ArrowRight size={14} strokeWidth={1.8} aria-hidden="true" /></span>
           </Link>
         ))}
       </div>

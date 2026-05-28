@@ -3,40 +3,41 @@ import { getAuthor } from '@/sanity/lib/queries'
 import { urlFor } from '@/sanity/lib/image'
 import Image from 'next/image'
 import Link from 'next/link'
+import { CakeSlice, Coffee, Pizza, Salad, Sandwich } from 'lucide-react'
 
 const categories = [
   {
-    emoji: '🍱',
+    Icon: Sandwich,
     label: 'Lunch',
     description: 'Fresh, satisfying midday meals that are easy to assemble and full of flavor.',
     href: '/category/lunch',
   },
   {
-    emoji: '🍝',
+    Icon: Pizza,
     label: 'Dinner',
     description: 'Comforting evening plates designed for busy weeknights and simple entertaining.',
     href: '/category/dinner',
   },
   {
-    emoji: '🥞',
+    Icon: Coffee,
     label: 'Breakfast & Brunch',
     description: 'Bright starts and cozy brunch classics to make mornings feel more special.',
     href: '/category/breakfastnbrunch',
   },
   {
-    emoji: '🥨',
+    Icon: Salad,
     label: 'Snacks & Sides',
     description: 'Crisp bites, easy sides, and shareable morsels to round out any meal.',
     href: '/category/snacksnsides',
   },
   {
-    emoji: '🍰',
+    Icon: CakeSlice,
     label: 'Desserts',
     description: 'Sweet finishes with bold flavor and simple ingredients you already have.',
     href: '/category/desserts',
   },
   {
-    emoji: '🥤',
+    Icon: Coffee,
     label: 'Drinks & Shakes',
     description: 'Refreshing sips and creamy treats to keep the kitchen feeling fun and easy.',
     href: '/category/drinks-shakes',
@@ -92,7 +93,7 @@ export default async function RecipesPage() {
         <div className="category-card-grid">
           {categories.map((category) => (
             <Link key={category.href} href={category.href} className="category-card">
-              <div className="category-card-emoji">{category.emoji}</div>
+              <div className="category-card-emoji"><category.Icon size={34} strokeWidth={1.7} aria-hidden="true" /></div>
               <div>
                 <h2 className="category-card-title">{category.label}</h2>
                 <p className="category-card-copy">{category.description}</p>

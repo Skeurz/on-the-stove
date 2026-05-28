@@ -4,6 +4,7 @@ import { urlFor } from '@/sanity/lib/image'
 import Image from 'next/image'
 import Link from 'next/link'
 import RecipeCard from '@/app/components/RecipeCard'
+import { Utensils } from 'lucide-react'
 
 const RECIPES_PER_PAGE = 8
 const categoryLabels = {
@@ -79,7 +80,7 @@ export default async function CategoryPage({ params, searchParams }) {
           fontFamily: 'Lato, sans-serif',
           color: 'var(--text-light)',
         }}>
-          <p style={{ fontSize: '3rem', marginBottom: '1rem' }}>🍽️</p>
+          <Utensils size={48} strokeWidth={1.6} style={{ color: 'var(--orange)', marginBottom: '1rem' }} aria-hidden="true" />
           <p>No recipes in this category yet. Check back soon!</p>
         </div>
       ) : (

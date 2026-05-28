@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
 import { usePathname } from 'next/navigation'
 import ThemeToggle from './ThemeToggle'
+import { Menu, X } from 'lucide-react'
 
 const navLinks = [
   { label: 'Lunch', href: '/category/lunch' },
@@ -458,7 +459,7 @@ export default function Navbar() {
           }}
           aria-label="Toggle menu"
         >
-          {mobileOpen ? '✕' : '☰'}
+          {mobileOpen ? <X size={24} strokeWidth={2} aria-hidden="true" /> : <Menu size={24} strokeWidth={2} aria-hidden="true" />}
         </button>
       </div>
 
