@@ -3,6 +3,7 @@
 export default function RecipeActions() {
   return (
     <div
+      className="recipe-action-row"
       style={{
         display: 'flex',
         gap: '1rem',

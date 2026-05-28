@@ -64,7 +64,7 @@ export default function SearchFilters({ query, category, difficulty, cuisine }) 
       borderBottom: '1px solid var(--gray)',
       padding: '1.25rem 2rem',
     }}>
-      <div style={{
+      <div className="search-filters-row" style={{
         maxWidth: '1200px',
         margin: '0 auto',
         display: 'flex',

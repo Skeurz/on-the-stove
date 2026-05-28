@@ -33,7 +33,7 @@ export default async function CategoryPage({ params, searchParams }) {
     <div className="content-section" style={{ maxWidth: '1200px', margin: '0 auto', paddingTop: '2rem', paddingBottom: '2rem' }}>
 
       {/* Header */}
-      <div style={{
+      <div className="heading-card" style={{
         background: 'var(--cream)',
         border: '1px solid var(--gray)',
         borderRadius: '12px',

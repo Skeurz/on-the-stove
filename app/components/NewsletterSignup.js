@@ -51,7 +51,7 @@ export default function NewsletterSignup({ source = 'website', compact = false }
             🎉 {message}
           </p>
         ) : (
-          <form onSubmit={handleSubmit} style={{
+          <form onSubmit={handleSubmit} className="compact-newsletter-form" style={{
             display: 'flex',
             gap: '0.5rem',
           }}>
@@ -161,7 +161,7 @@ export default function NewsletterSignup({ source = 'website', compact = false }
           margin: '0 auto 2rem',
           lineHeight: 1.7,
         }}>
-          Join Adelaide's kitchen and get fresh, simple recipes delivered straight to your inbox.
+          {"Join Adelaide's kitchen and get fresh, simple recipes delivered straight to your inbox."}
         </p>
 
         {status === 'success' ? (
@@ -179,7 +179,7 @@ export default function NewsletterSignup({ source = 'website', compact = false }
               color: 'white',
               marginBottom: '0.5rem',
             }}>
-              🎉 You're in!
+              {"🎉 You're in!"}
             </p>
             <p style={{
               fontFamily: '"Lato", sans-serif',

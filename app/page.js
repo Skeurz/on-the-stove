@@ -192,7 +192,7 @@ export default async function Home({ searchParams }) {
                    marginBottom: '2rem',
                    flexWrap: 'wrap',
                  }}>
-                   <div style={{
+                   <div className="heading-card" style={{
                      background: 'var(--cream)',
                      border: '1px solid var(--gray)',
                      borderRadius: '12px',
@@ -208,7 +208,7 @@ export default async function Home({ searchParams }) {
                        Recent Recipes
                      </h2>
                    </div>
-                   <div style={{
+                   <div className="heading-card" style={{
                      background: 'var(--cream)',
                      border: '1px solid var(--gray)',
                      borderRadius: '12px',

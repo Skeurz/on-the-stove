@@ -46,7 +46,7 @@ export default function NotFound() {
         maxWidth: '420px',
         marginBottom: '2.5rem',
       }}>
-        The page you're looking for doesn't exist or may have moved. Let's get you back to the kitchen.
+        {"The page you're looking for doesn't exist or may have moved. Let's get you back to the kitchen."}
       </p>
 
       <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', justifyContent: 'center' }}>

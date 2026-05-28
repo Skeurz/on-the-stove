@@ -197,10 +197,9 @@ export default async function RecipePage({ params }) {
 
       {/* ── HERO IMAGE ── */}
       {recipe.mainImage && (
-        <div style={{
+        <div className="recipe-hero-media-wrap" style={{
           maxWidth: '1200px',
           margin: '1.5rem auto 0',
-          padding: '0 2rem',
         }}>
           <div style={{
             width: '100%',
@@ -227,7 +226,6 @@ export default async function RecipePage({ params }) {
         display: 'none',
         maxWidth: '1200px',
         margin: '1.5rem auto 0',
-        padding: '0 2rem',
       }}>
         <TableOfContents items={tableOfContents} />
       </div>
@@ -916,10 +914,10 @@ export default async function RecipePage({ params }) {
       </div>
 
       {/* ── SUGGESTED RECIPES ── */}
-      <div style={{
+      <div className="recipe-suggested-wrap" style={{
         maxWidth: '1200px',
         margin: '0 auto',
-        padding: '0 2rem 4rem',
+        paddingBottom: '4rem',
       }}>
         <SuggestedRecipes 
           currentRecipeId={recipe._id} 

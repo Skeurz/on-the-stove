@@ -20,7 +20,7 @@ export default async function SuggestedRecipes({ currentRecipeId, category, tags
       paddingTop: 'clamp(2rem, 8vw, 4rem)',
       borderTop: '1px solid var(--gray)'
     }}>
-      <div style={{
+      <div className="heading-card" style={{
         background: 'var(--cream)',
         border: '1px solid var(--gray)',
         borderRadius: '12px',

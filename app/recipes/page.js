@@ -47,8 +47,8 @@ export default async function RecipesPage() {
   const author = await client.fetch(getAuthor)
 
   return (
-    <div className="content-section" style={{ maxWidth: '1200px', margin: '0 auto', padding: '3rem 0 4rem' }}>
-      <div style={{
+    <div className="content-section page-shell" style={{ maxWidth: '1200px', margin: '0 auto' }}>
+      <div className="heading-card" style={{
         background: 'var(--cream)',
         border: '1px solid var(--gray)',
         borderRadius: '12px',

@@ -26,14 +26,17 @@ const categoryLabel = {
 }
 
 export default function Navbar() {
+  const pathname = usePathname()
+  const isHome = pathname === '/' || pathname === ''
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [suggestions, setSuggestions] = useState([])
   const [suggestionsOpen, setSuggestionsOpen] = useState(false)
-  const [heroVisible, setHeroVisible] = useState(true)
+  const [heroVisible, setHeroVisible] = useState(isHome)
   const [isMobile, setIsMobile] = useState(false)
+  const showTransparentHeader = isHome && heroVisible && !isMobile
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth <= 768)
@@ -42,18 +45,13 @@ export default function Navbar() {
     return () => window.removeEventListener('resize', checkMobile)
   }, [])
   const searchInputRef = useRef(null)
-  const pathname = usePathname()
-  const isHome = pathname === '/' || pathname === ''
 
   useEffect(() => {
     if (searchOpen) searchInputRef.current?.focus()
   }, [searchOpen])
 
   useEffect(() => {
-    if (!isHome) {
-      setHeroVisible(false)
-      return
-    }
+    if (!isHome) return
 
     const handleScroll = () => {
       setHeroVisible(window.scrollY < 50)
@@ -142,11 +140,11 @@ export default function Navbar() {
   
     return (
     <header className="site-header" style={{
-      background: isHome && heroVisible && !isMobile
+      background: showTransparentHeader
         ? 'transparent' 
         : 'linear-gradient(135deg, #1A0A02 0%, #2D1205 50%, #1A0A02 100%)',
-      borderBottom: isHome && heroVisible && !isMobile ? 'none' : '1px solid rgba(232,98,42,0.15)',
-      boxShadow: isHome && heroVisible && !isMobile ? 'none' : '0 4px 24px rgba(0,0,0,0.3)',
+      borderBottom: showTransparentHeader ? 'none' : '1px solid rgba(232,98,42,0.15)',
+      boxShadow: showTransparentHeader ? 'none' : '0 4px 24px rgba(0,0,0,0.3)',
       position: 'sticky',
       top: 0,
       zIndex: 100,
@@ -643,7 +641,7 @@ export default function Navbar() {
                   suggestions.map((item) => (
                     <Link
                       key={item._id}
-                      href={`/recipe/${item.slug.current}`}
+                      href={`/${item.slug.current}`}
                       onClick={() => {
                         setMobileOpen(false)
                         closeSearch()

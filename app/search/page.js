@@ -85,7 +85,7 @@ export default async function SearchPage({ searchParams }) {
         }}>
           Search Recipes
         </h1>
-        <form action="/search" style={{
+        <form action="/search" className="search-hero-form" style={{
           display: 'flex',
           gap: '0.75rem',
           maxWidth: '560px',

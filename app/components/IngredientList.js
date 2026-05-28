@@ -3,24 +3,24 @@
 import { useState, useEffect } from 'react'
 
 export default function IngredientList({ ingredients, recipeSlug }) {
-  const [checked, setChecked] = useState({})
-  const [mounted, setMounted] = useState(false)
   const storageKey = `ingredients-${recipeSlug}`
+  const [checked, setChecked] = useState(() => {
+    if (typeof window === 'undefined') return {}
+
+    try {
+      const saved = window.localStorage.getItem(storageKey)
+      return saved ? JSON.parse(saved) : {}
+    } catch {
+      return {}
+    }
+  })
 
   useEffect(() => {
-    setMounted(true)
+    if (typeof window === 'undefined') return
     try {
-      const saved = localStorage.getItem(storageKey)
-      if (saved) setChecked(JSON.parse(saved))
+      window.localStorage.setItem(storageKey, JSON.stringify(checked))
     } catch { }
-  }, [storageKey])
-
-  useEffect(() => {
-    if (!mounted) return
-    try {
-      localStorage.setItem(storageKey, JSON.stringify(checked))
-    } catch { }
-  }, [checked, mounted, storageKey])
+  }, [checked, storageKey])
 
   const toggle = (index) => {
     setChecked(prev => ({ ...prev, [index]: !prev[index] }))
