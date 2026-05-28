@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import StarRating from './StarRating'
 
 const difficultyLabel = { easy: '🟢 Easy', medium: '🟡 Medium', hard: '🔴 Hard' }
 const cuisineLabel = {
@@ -82,75 +81,67 @@ export default function RecipeJumpCard({ recipe, slug }) {
           >
             🖨 Print
           </button>
-        <a
-            href="#recipe-ingredients"
-            onClick={e => {
-              e.preventDefault()
-              document.getElementById('recipe-ingredients')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-            }}
-            style={{
-              background: 'var(--orange)',
-              color: 'white',
-              border: 'none',
-              borderRadius: '50px',
-              padding: '0.5rem 1.1rem',
-              fontFamily: '"Lato", sans-serif',
-              fontSize: '0.82rem',
-              fontWeight: '700',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.4rem',
-              textDecoration: 'none',
-            }}
-          >
-            ↓ Jump to Recipe
-          </a>
         </div>
       </div>
 
       {/* Stats Grid */}
       <div style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(100px, 1fr))',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))',
+        gap: '0',
         borderBottom: '1px solid var(--gray)',
+        background: 'var(--cream)',
       }}>
         {[
-          recipe.prepTime && { icon: '⏱', label: 'Prep', value: `${recipe.prepTime} min` },
-          recipe.cookTime && { icon: '🔥', label: 'Cook', value: `${recipe.cookTime} min` },
-          (recipe.prepTime || recipe.cookTime) && { icon: '🕐', label: 'Total', value: `${(recipe.prepTime || 0) + (recipe.cookTime || 0)} min` },
-          recipe.calories && { icon: '⚡', label: 'Calories', value: recipe.calories },
+          recipe.prepTime && { icon: '⏱️', label: 'Prep Time', value: `${recipe.prepTime} mins` },
+          recipe.cookTime && { icon: '🔥', label: 'Cook Time', value: `${recipe.cookTime} mins` },
+          (recipe.prepTime || recipe.cookTime) && { icon: '🕐', label: 'Total Time', value: (() => {
+            const total = (recipe.prepTime || 0) + (recipe.cookTime || 0)
+            if (total >= 60) return `${Math.floor(total / 60)} hr${Math.floor(total / 60) > 1 ? 's' : ''}${total % 60 > 0 ? ` ${total % 60} min` : ''}`
+            return `${total} mins`
+          })() },
           recipe.difficulty && { icon: '📊', label: 'Difficulty', value: difficultyLabel[recipe.difficulty] },
           recipe.cuisine && { icon: '🌍', label: 'Cuisine', value: cuisineLabel[recipe.cuisine] || recipe.cuisine },
-        ].filter(Boolean).map((stat, i) => (
+          recipe.servings && { icon: '🍽️', label: 'Servings', value: `${recipe.servings} servings` },
+          recipe.calories && { icon: '⚡', label: 'Calories', value: `${recipe.calories} kcal` },
+        ].filter(Boolean).map((stat, i, arr) => (
           <div key={i} style={{
-            padding: '1rem',
+            padding: '1.25rem 1rem',
             textAlign: 'center',
             borderRight: '1px solid var(--gray)',
+            borderBottom: '1px solid var(--gray)',
+            position: 'relative',
+            transition: 'background 0.2s',
           }}>
-            <p style={{ fontSize: '1.25rem', marginBottom: '0.2rem' }}>{stat.icon}</p>
+            <div style={{
+              fontSize: '1.5rem',
+              marginBottom: '0.5rem',
+              lineHeight: 1,
+            }}>{stat.icon}</div>
             <p style={{
               fontFamily: '"Lato", sans-serif',
-              fontSize: '0.65rem',
-              letterSpacing: '1px',
+              fontSize: '0.6rem',
+              letterSpacing: '2px',
               textTransform: 'uppercase',
-              color: 'var(--text-light)',
-              marginBottom: '0.2rem',
-              fontWeight: '700',
+              color: 'var(--orange)',
+              marginBottom: '0.3rem',
+              fontWeight: '800',
             }}>{stat.label}</p>
             <p style={{
               fontFamily: '"Playfair Display", serif',
-              fontSize: '0.9rem',
+              fontSize: '1rem',
               color: 'var(--brown)',
-              fontWeight: '700',
+              fontWeight: '600',
               margin: 0,
+              lineHeight: 1.3,
             }}>{stat.value}</p>
           </div>
         ))}
       </div>
+      
 
       {/* Servings Scaler */}
-      {recipe.servings && (
+      {false && (
         <div style={{
           padding: '1rem 1.5rem',
           borderBottom: '1px solid var(--gray)',
@@ -328,42 +319,6 @@ export default function RecipeJumpCard({ recipe, slug }) {
           )}
         </div>
       )}
-
-      {/* Footer — Rating */}
-      <div style={{
-        borderTop: '1px solid var(--gray)',
-        padding: '1.25rem 1.5rem',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        flexWrap: 'wrap',
-        gap: '1rem',
-        background: 'rgba(232,98,42,0.03)',
-      }}>
-        <div>
-          <p style={{
-            fontFamily: '"Lato", sans-serif',
-            fontSize: '0.72rem',
-            letterSpacing: '1.5px',
-            textTransform: 'uppercase',
-            color: 'var(--orange)',
-            fontWeight: '700',
-            marginBottom: '0.35rem',
-          }}>Rate this recipe</p>
-          <StarRating slug={slug} />
-        </div>
-        <p style={{
-          fontFamily: '"Lato", sans-serif',
-          fontSize: '0.78rem',
-          color: 'var(--text-light)',
-          fontStyle: 'italic',
-          maxWidth: '260px',
-          lineHeight: 1.5,
-          margin: 0,
-        }}>
-          Did you make this recipe? Leave a rating and let Adelaide know how it went!
-        </p>
-      </div>
     </div>
   )
 }

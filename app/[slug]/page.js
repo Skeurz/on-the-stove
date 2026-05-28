@@ -108,7 +108,6 @@ export default async function RecipePage({ params }) {
 
   const tableOfContents = [
     recipe.description ? { href: '#recipe-overview', label: '📖 Overview' } : null,
-    recipeFacts.length > 0 ? { href: '#recipe-facts', label: '⏱ Recipe Details' } : null,
     recipe.ingredients?.length > 0 ? { href: '#recipe-ingredients', label: `🧂 Ingredients (${recipe.ingredients.length})` } : null,
     recipe.steps?.length > 0 ? { href: '#recipe-instructions', label: `👨‍🍳 Instructions (${recipe.steps.length} steps)` } : null,
     recipe.preparationImages?.length > 0 ? { href: '#prep-photos', label: '📸 Step by Step Photos' } : null,
@@ -118,6 +117,7 @@ export default async function RecipePage({ params }) {
     recipe.veganAdaptation?.length > 0 ? { href: '#vegan', label: '🌱 Vegan Adaptation' } : null,
     recipe.storageTips?.length > 0 ? { href: '#storage', label: '📦 Storage Tips' } : null,
     recipe.faqs?.length > 0 ? { href: '#faqs', label: '❓ FAQs' } : null,
+    recipeFacts.length > 0 ? { href: '#recipe-facts', label: '⏱ Recipe Details' } : null,
   ].filter(Boolean)
 
   const ratingBreakdownUI = (
@@ -189,36 +189,6 @@ export default async function RecipePage({ params }) {
           {recipe.title}
         </h1>
 
-        {/* Recipe facts strip */}
-        {recipeFacts.length > 0 && (
-          <div style={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            gap: '0.5rem',
-            marginBottom: '1.5rem',
-            overflowX: 'auto',
-            paddingBottom: '0.25rem',
-          }}>
-            {recipeFacts.map(fact => (
-              <div key={fact.label} style={{
-                background: 'var(--cream-light)',
-                border: '1px solid var(--gray)',
-                borderRadius: '50px',
-                padding: '0.4rem 1rem',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.4rem',
-                fontFamily: '"Lato", sans-serif',
-                fontSize: '0.85rem',
-                color: 'var(--text)',
-              }}>
-                <span>{fact.icon}</span>
-                <span style={{ color: 'var(--text-light)' }}>{fact.label}:</span>
-                <strong>{fact.value}</strong>
-              </div>
-            ))}
-          </div>
-        )}
         <div style={{ marginTop: '1.5rem' }}>
           <RecipeActions />
         </div>
@@ -278,9 +248,6 @@ export default async function RecipePage({ params }) {
 
         {/* ── LEFT: Main content ── */}
         <div>
-
-          {/* WPRM-style Recipe Card */}
-          <RecipeJumpCard recipe={recipe} slug={slug} />
 
           {/* Description */}
           {recipe.description && (
@@ -754,7 +721,6 @@ export default async function RecipePage({ params }) {
             </div>
           )}
 
-
           {/* Rating Section */}
           <div style={{
             background: 'var(--cream-light)',
@@ -785,6 +751,11 @@ export default async function RecipePage({ params }) {
             </h3>
             <StarRating slug={slug} />
             {ratingBreakdownUI}
+          </div>
+
+          {/* WPRM-style Recipe Card */}
+          <div id="recipe-facts">
+            <RecipeJumpCard recipe={recipe} slug={slug} />
           </div>
 
           {/* Newsletter */}
