@@ -1,6 +1,8 @@
 'use client'
 
 import { useState } from 'react'
+import { Clock, Flame, Timer, ChartBar, Globe, Utensils, Zap, FlaskConical, ChefHat} from 'lucide-react'
+
 
 const difficultyLabel = { easy: '🟢 Easy', medium: '🟡 Medium', hard: '🔴 Hard' }
 const cuisineLabel = {
@@ -93,17 +95,17 @@ export default function RecipeJumpCard({ recipe, slug }) {
         background: 'var(--cream)',
       }}>
         {[
-          recipe.prepTime && { icon: '⏱️', label: 'Prep Time', value: `${recipe.prepTime} mins` },
-          recipe.cookTime && { icon: '🔥', label: 'Cook Time', value: `${recipe.cookTime} mins` },
-          (recipe.prepTime || recipe.cookTime) && { icon: '🕐', label: 'Total Time', value: (() => {
+          recipe.prepTime && { icon: <Clock size={22} strokeWidth={1.5} />, label: 'Prep Time', value: `${recipe.prepTime} mins` },
+          recipe.cookTime && { icon: <Flame size={22} strokeWidth={1.5} />, label: 'Cook Time', value: `${recipe.cookTime} mins` },
+          (recipe.prepTime || recipe.cookTime) && { icon: <Timer size={22} strokeWidth={1.5} />, label: 'Total Time', value: (() => {
             const total = (recipe.prepTime || 0) + (recipe.cookTime || 0)
             if (total >= 60) return `${Math.floor(total / 60)} hr${Math.floor(total / 60) > 1 ? 's' : ''}${total % 60 > 0 ? ` ${total % 60} min` : ''}`
             return `${total} mins`
           })() },
-          recipe.difficulty && { icon: '📊', label: 'Difficulty', value: difficultyLabel[recipe.difficulty] },
-          recipe.cuisine && { icon: '🌍', label: 'Cuisine', value: cuisineLabel[recipe.cuisine] || recipe.cuisine },
-          recipe.servings && { icon: '🍽️', label: 'Servings', value: `${recipe.servings} servings` },
-          recipe.calories && { icon: '⚡', label: 'Calories', value: `${recipe.calories} kcal` },
+          recipe.difficulty && { icon: <ChartBar size={22} strokeWidth={1.5} />, label: 'Difficulty', value: difficultyLabel[recipe.difficulty] },
+          recipe.cuisine && { icon: <Globe size={22} strokeWidth={1.5} />, label: 'Cuisine', value: cuisineLabel[recipe.cuisine] || recipe.cuisine },
+          recipe.servings && { icon: <Utensils size={22} strokeWidth={1.5} />, label: 'Servings', value: `${recipe.servings} servings` },
+          recipe.calories && { icon: <Zap size={22} strokeWidth={1.5} />, label: 'Calories', value: `${recipe.calories} kcal` },
         ].filter(Boolean).map((stat, i, arr) => (
           <div key={i} style={{
             padding: '1.25rem 1rem',
@@ -114,10 +116,12 @@ export default function RecipeJumpCard({ recipe, slug }) {
             transition: 'background 0.2s',
           }}>
             <div style={{
-              fontSize: '1.5rem',
+              color: 'var(--orange)',
               marginBottom: '0.5rem',
-              lineHeight: 1,
-            }}>{stat.icon}</div>
+              display: 'flex',
+              justifyContent: 'center',
+            }}>{stat.icon}
+            </div>
             <p style={{
               fontFamily: '"Lato", sans-serif',
               fontSize: '0.6rem',
@@ -237,7 +241,7 @@ export default function RecipeJumpCard({ recipe, slug }) {
                 marginBottom: '1rem',
                 paddingBottom: '0.5rem',
                 borderBottom: '2px solid var(--orange)',
-              }}>🧂 Ingredients</h3>
+              }}><FlaskConical size={16} strokeWidth={1.5} style={{ display: 'inline', marginRight: '0.4rem', color: 'var(--orange)' }} />Ingredients</h3>
               <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
                 {recipe.ingredients.map((item, i) => (
                   <li key={i} style={{
@@ -269,7 +273,7 @@ export default function RecipeJumpCard({ recipe, slug }) {
                 marginBottom: '1rem',
                 paddingBottom: '0.5rem',
                 borderBottom: '2px solid var(--orange)',
-              }}>👨‍🍳 Instructions</h3>
+             }}><ChefHat size={16} strokeWidth={1.5} style={{ display: 'inline', marginRight: '0.4rem', color: 'var(--orange)' }} />Instructions</h3>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                 {recipe.steps.map((step, i) => (
                   <div key={step._key || i} style={{

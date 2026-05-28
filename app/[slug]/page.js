@@ -13,6 +13,7 @@ import TableOfContents from '@/app/components/TableOfContents'
 import NewsletterSignup from '@/app/components/NewsletterSignup'
 import { notFound } from 'next/navigation'
 import RecipeJumpCard from '@/app/components/RecipeJumpCard'
+import { Mail } from 'lucide-react'
 
 const categoryLabel = {
   lunch: 'Lunch',
@@ -773,7 +774,7 @@ export default async function RecipePage({ params }) {
               marginBottom: '0.35rem',
               fontWeight: '700',
             }}>
-              🍳 Enjoyed this recipe?
+              <Mail size={18} strokeWidth={1.5} style={{ display: 'inline', marginRight: '0.5rem', color: 'var(--orange)' }} />Enjoyed this recipe?
             </p>
             <p style={{
               fontFamily: '"Lato", sans-serif',

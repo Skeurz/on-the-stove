@@ -1,7 +1,23 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { BookOpen, Clock, FlaskConical, ChefHat, Camera, Video, Lightbulb, Shuffle, Leaf, Package, HelpCircle, Star } from 'lucide-react'
 
+
+
+const iconMap = {
+    '#recipe-overview': <BookOpen size={14} strokeWidth={1.8} />,
+    '#recipe-ingredients': <FlaskConical size={14} strokeWidth={1.8} />,
+    '#recipe-instructions': <ChefHat size={14} strokeWidth={1.8} />,
+    '#prep-photos': <Camera size={14} strokeWidth={1.8} />,
+    '#video': <Video size={14} strokeWidth={1.8} />,
+    '#helpful-tips': <Lightbulb size={14} strokeWidth={1.8} />,
+    '#variations': <Shuffle size={14} strokeWidth={1.8} />,
+    '#vegan': <Leaf size={14} strokeWidth={1.8} />,
+    '#storage': <Package size={14} strokeWidth={1.8} />,
+    '#faqs': <HelpCircle size={14} strokeWidth={1.8} />,
+    '#recipe-facts': <Clock size={14} strokeWidth={1.8} />,
+  }
 export default function TableOfContents({ items }) {
   const [activeId, setActiveId] = useState(null)
 
@@ -84,7 +100,10 @@ export default function TableOfContents({ items }) {
                 textDecoration: 'none',
               }}
             >
-              {item.label}
+              {iconMap[item.href] && (
+                <span style={{ flexShrink: 0, opacity: isActive ? 1 : 0.5 }}>{iconMap[item.href]}</span>
+              )}
+              {item.label.replace(/^[\p{Emoji_Presentation}\u200d\uFE0F\s]+/u, '')}
             </a>
           )
         })}
