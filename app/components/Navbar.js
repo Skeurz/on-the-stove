@@ -747,3 +747,78 @@ function SuggestionThumb({ item }) {
     </span>
   )
 }
+
+ // Search suggestion function 
+export function HeroSearch() {
+  const [query, setQuery] = useState('')
+  const [suggestions, setSuggestions] = useState([])
+  const [open, setOpen] = useState(false)
+
+  const handleChange = (e) => {
+    const val = e.target.value
+    setQuery(val)
+    if (val.trim().length < 2) { setSuggestions([]); setOpen(false); return }
+    clearTimeout(window._heroSearchTimeout)
+    window._heroSearchTimeout = setTimeout(async () => {
+      try {
+        const res = await fetch(`/api/search-suggestions?q=${encodeURIComponent(val.trim())}`)
+        const data = await res.json()
+        setSuggestions(data.suggestions || [])
+        setOpen(true)
+      } catch {}
+    }, 180)
+  }
+
+  return (
+    <div style={{ position: 'relative', maxWidth: '480px', margin: '0 auto 2rem' }}>
+      <form action="/search" method="GET" style={{
+        display: 'flex', background: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(8px)',
+        border: '1px solid rgba(255,255,255,0.2)', borderRadius: '50px',
+        overflow: 'hidden', padding: '0.25rem 0.25rem 0.25rem 1.25rem',
+      }}>
+        <input type="text" name="q" value={query} onChange={handleChange}
+          onFocus={() => suggestions.length > 0 && setOpen(true)}
+          onKeyDown={e => e.key === 'Escape' && setOpen(false)}
+          placeholder="Search recipes..."
+          style={{ flex: 1, background: 'transparent', border: 'none', outline: 'none',
+            fontFamily: '"Lato", sans-serif', fontSize: '0.95rem', color: 'white', padding: '0.5rem 0' }}
+        />
+        <button type="submit" style={{
+          background: 'var(--orange)', color: 'white', border: 'none', borderRadius: '50px',
+          padding: '0.65rem 1.25rem', fontFamily: '"Lato", sans-serif', fontWeight: '700',
+          fontSize: '0.88rem', cursor: 'pointer',
+        }}>Search</button>
+      </form>
+      {open && query.trim().length >= 2 && (
+        <div style={{
+          position: 'absolute', top: 'calc(100% + 0.6rem)', left: 0, right: 0,
+          background: '#2A1208', border: '1px solid rgba(255,255,255,0.1)',
+          borderRadius: '14px', padding: '0.5rem', boxShadow: '0 12px 36px rgba(0,0,0,0.4)', zIndex: 10,
+        }}>
+          {suggestions.length > 0 ? suggestions.map(item => (
+            <Link key={item._id} href={`/${item.slug.current}`} onClick={() => setOpen(false)} style={{
+              display: 'grid', gridTemplateColumns: '44px minmax(0,1fr)', gap: '0.75rem',
+              alignItems: 'center', padding: '0.55rem 0.6rem', borderRadius: '10px',
+              color: 'rgba(253,246,238,0.82)', fontFamily: '"Lato", sans-serif', fontSize: '0.88rem', lineHeight: 1.35,
+            }}>
+              <SuggestionThumb item={item} />
+              <span style={{ minWidth: 0 }}>
+                <span style={{ display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.title}</span>
+                <span style={{ display: 'block', color: 'rgba(244,148,106,0.85)', fontSize: '0.72rem', marginTop: '0.15rem', textTransform: 'uppercase', letterSpacing: '0.6px' }}>
+                  {categoryLabel[item.category] || item.category}
+                </span>
+              </span>
+            </Link>
+          )) : (
+            <p style={{ color: 'rgba(253,246,238,0.55)', fontFamily: '"Lato", sans-serif', fontSize: '0.85rem', padding: '0.65rem 0.75rem' }}>No quick matches</p>
+          )}
+          <Link href={`/search?q=${encodeURIComponent(query.trim())}`} onClick={() => setOpen(false)} style={{
+            display: 'block', borderTop: '1px solid rgba(255,255,255,0.08)', marginTop: '0.35rem',
+            padding: '0.7rem 0.75rem 0.45rem', color: '#F4946A',
+            fontFamily: '"Lato", sans-serif', fontSize: '0.82rem', fontWeight: '700',
+          }}>See all results</Link>
+        </div>
+      )}
+    </div>
+  )
+}

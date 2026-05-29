@@ -7,6 +7,7 @@ import RecipeCard from './components/RecipeCard'
 import NewsletterSignup from './components/NewsletterSignup'
 import HeroVideoControl from './components/HeroVideoControl'
 import { ArrowRight, CakeSlice, Coffee, Pizza, Salad, Sandwich, Sparkles } from 'lucide-react'
+import { HeroSearch } from './components/Navbar'
 
 const RECIPES_PER_PAGE = 8
 
@@ -26,7 +27,7 @@ export default async function Home({ searchParams }) {
       {/* Hero */}
       <section className="hero-section with-video" style={{
         position: 'relative',
-        overflow: 'hidden',
+        overflow: 'visible',
         marginTop: '-68px',
         padding: 'calc(7rem + 68px) 2rem 5rem',
         color: 'white',
@@ -74,6 +75,8 @@ export default async function Home({ searchParams }) {
             {"Good food doesn't have to be complicated. Join Adelaide on a tasteful journey through comforting, approachable cooking."}
           </p>
 
+          {/* Hero Search */}
+          <HeroSearch />
           <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
             <Link href="/recipes" style={{
               background: '#E8622A',
