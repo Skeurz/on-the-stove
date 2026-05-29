@@ -3,7 +3,7 @@ import { getAuthor } from '@/sanity/lib/queries'
 import { urlFor } from '@/sanity/lib/image'
 import Image from 'next/image'
 import Link from 'next/link'
-import { CakeSlice, Coffee, Pizza, Salad, Sandwich } from 'lucide-react'
+import { CakeSlice, Coffee, Pizza, Salad, Sandwich, Blender } from 'lucide-react'
 
 const categories = [
   {
@@ -37,7 +37,7 @@ const categories = [
     href: '/category/desserts',
   },
   {
-    Icon: Coffee,
+    Icon: Blender,
     label: 'Drinks & Shakes',
     description: 'Refreshing sips and creamy treats to keep the kitchen feeling fun and easy.',
     href: '/category/drinks-shakes',

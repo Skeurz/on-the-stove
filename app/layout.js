@@ -3,6 +3,7 @@ import Link from 'next/link'
 import Navbar from './components/Navbar'
 import BackToTop from './components/BackToTop'
 import EnhanceButtons from './components/EnhanceButtons'
+import CookieBanner from './components/CookieBanner'
 
 const navLinks = [
   { label: 'Lunch', href: '/category/lunch' },
@@ -271,6 +272,7 @@ export default function RootLayout({ children }) {
             © {new Date().getFullYear()} On The Stove · Made by Adelaide
           </div>
         </footer>
+        <CookieBanner />
         <BackToTop />
       </body>
     </html>
