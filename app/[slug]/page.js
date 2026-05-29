@@ -214,7 +214,29 @@ export default async function RecipePage({ params }) {
             color: 'var(--text-light)',
           }}>{categoryLabel[recipe.category] || recipe.category}</Link>
         </div>
-
+          
+          {recipe.publishedAt && (
+          <div style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '0.4rem',
+            background: 'var(--cream-light)',
+            border: '1px solid var(--gray)',
+            borderRadius: '50px',
+            padding: '0.3rem 0.85rem',
+            marginBottom: '1rem',
+          }}>
+            <p style={{
+              fontFamily: '"Lato", sans-serif',
+              fontSize: '0.78rem',
+              color: 'var(--text-light)',
+              margin: 0,
+            }}>
+              Published {new Date(recipe.publishedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+            </p>
+          </div>
+        )}
+        
         {/* Title */}
         <h1 style={{
           fontFamily: '"Playfair Display", serif',
@@ -231,6 +253,8 @@ export default async function RecipePage({ params }) {
           <RecipeActions />
         </div>
       </div>
+
+      
 
       {/* ── HERO IMAGE ── */}
       {recipe.mainImage && (
@@ -280,6 +304,7 @@ export default async function RecipePage({ params }) {
         {/* ── LEFT: Navigation ── */}
         <aside className="recipe-toc-aside">
           <TableOfContents items={tableOfContents} />
+          <RecipeActions />
         </aside>
 
         {/* ── LEFT: Main content ── */}

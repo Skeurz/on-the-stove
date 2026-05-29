@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Check, Clock, Flame, Timer, ChartBar, Globe, Utensils, Zap, FlaskConical, ChefHat, Printer } from 'lucide-react'
+import { Check, Clock, Flame, Timer, ChartBar, Globe, Utensils, Zap, FlaskConical, ChefHat, Printer, Star } from 'lucide-react'
 
 
 const difficultyLabel = { easy: 'Easy', medium: 'Medium', hard: 'Hard' }
@@ -90,26 +90,27 @@ export default function RecipeJumpCard({ recipe, slug }) {
       {/* Stats Grid */}
       <div style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(100px, 1fr))',
         gap: '0',
         borderBottom: '1px solid var(--gray)',
         background: 'var(--cream)',
       }}>
         {[
-          recipe.prepTime && { icon: <Clock size={22} strokeWidth={1.5} />, label: 'Prep Time', value: `${recipe.prepTime} mins` },
-          recipe.cookTime && { icon: <Flame size={22} strokeWidth={1.5} />, label: 'Cook Time', value: `${recipe.cookTime} mins` },
-          (recipe.prepTime || recipe.cookTime) && { icon: <Timer size={22} strokeWidth={1.5} />, label: 'Total Time', value: (() => {
+          recipe.prepTime && { icon: <Clock size={18} strokeWidth={1.5} />, label: 'Prep Time', value: `${recipe.prepTime} mins` },
+          recipe.cookTime && { icon: <Flame size={18} strokeWidth={1.5} />, label: 'Cook Time', value: `${recipe.cookTime} mins` },
+          (recipe.prepTime || recipe.cookTime) && { icon: <Timer size={18} strokeWidth={1.5} />, label: 'Total Time', value: (() => {
             const total = (recipe.prepTime || 0) + (recipe.cookTime || 0)
             if (total >= 60) return `${Math.floor(total / 60)} hr${Math.floor(total / 60) > 1 ? 's' : ''}${total % 60 > 0 ? ` ${total % 60} min` : ''}`
             return `${total} mins`
           })() },
-          recipe.difficulty && { icon: <ChartBar size={22} strokeWidth={1.5} />, label: 'Difficulty', value: difficultyLabel[recipe.difficulty] },
-          recipe.cuisine && { icon: <Globe size={22} strokeWidth={1.5} />, label: 'Cuisine', value: cuisineLabel[recipe.cuisine] || recipe.cuisine },
-          recipe.servings && { icon: <Utensils size={22} strokeWidth={1.5} />, label: 'Servings', value: `${recipe.servings} servings` },
-          recipe.calories && { icon: <Zap size={22} strokeWidth={1.5} />, label: 'Calories', value: `${recipe.calories} kcal` },
+          recipe.difficulty && { icon: <ChartBar size={18} strokeWidth={1.5} />, label: 'Difficulty', value: difficultyLabel[recipe.difficulty] },
+          recipe.cuisine && { icon: <Globe size={18} strokeWidth={1.5} />, label: 'Cuisine', value: cuisineLabel[recipe.cuisine] || recipe.cuisine },
+          recipe.servings && { icon: <Utensils size={18} strokeWidth={1.5} />, label: 'Servings', value: `${recipe.servings} servings` },
+          recipe.calories && { icon: <Zap size={18} strokeWidth={1.5} />, label: 'Calories', value: `${recipe.calories} kcal` },
+          recipe.ratingCount > 0 && { icon: <Star size={18} strokeWidth={1.5} />, label: 'Rating', value: `${Math.round((recipe.ratingTotal / recipe.ratingCount) * 10) / 10} / 5` },
         ].filter(Boolean).map((stat, i, arr) => (
           <div key={i} style={{
-            padding: '1.25rem 1rem',
+            padding: '0.85rem 0.75rem',
             textAlign: 'center',
             borderRight: '1px solid var(--gray)',
             borderBottom: '1px solid var(--gray)',

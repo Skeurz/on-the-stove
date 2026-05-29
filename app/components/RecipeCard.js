@@ -69,6 +69,7 @@ function RatingStars({ total, count }) {
   )
 }
 
+
 export default function RecipeCard({ recipe, imageUrl }) {
   return (
     <Link href={`/${recipe.slug.current}`}>
