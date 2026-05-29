@@ -149,8 +149,50 @@ export default async function RecipePage({ params }) {
     </div>
   )
 
+
+       const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Recipe',
+    name: recipe.title,
+    description: recipe.description || '',
+    image: recipe.mainImage ? [urlFor(recipe.mainImage).width(1200).height(675).url()] : [],
+    author: { '@type': 'Person', name: author?.name || 'Adelaide' },
+    datePublished: recipe.publishedAt || '',
+    prepTime: recipe.prepTime ? `PT${recipe.prepTime}M` : undefined,
+    cookTime: recipe.cookTime ? `PT${recipe.cookTime}M` : undefined,
+    totalTime: totalTime > 0 ? `PT${totalTime}M` : undefined,
+    recipeYield: recipe.servings ? `${recipe.servings} servings` : undefined,
+    recipeCategory: categoryLabel[recipe.category] || recipe.category,
+    recipeCuisine: recipe.cuisine || undefined,
+    recipeIngredient: recipe.ingredients || [],
+    recipeInstructions: recipe.steps?.map((step, i) => ({
+      '@type': 'HowToStep',
+      position: i + 1,
+      name: step.title || `Step ${i + 1}`,
+      text: step.description || '',
+    })) || [],
+    nutrition: recipe.calories ? {
+      '@type': 'NutritionInformation',
+      calories: `${recipe.calories} calories`,
+    } : undefined,
+    aggregateRating: recipe.ratingCount > 0 ? {
+      '@type': 'AggregateRating',
+      ratingValue: Math.round((recipe.ratingTotal / recipe.ratingCount) * 10) / 10,
+      ratingCount: recipe.ratingCount,
+      bestRating: 5,
+      worstRating: 1,
+    } : undefined,
+    keywords: recipe.tags?.join(', ') || undefined,
+  }
+
+
+
   return (
     <div style={{ minHeight: '100vh' }}>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
 
       {/* ── HERO SECTION ── */}
       <div className="content-section" style={{
