@@ -61,7 +61,10 @@ html:not(.dark) body {
   background-size: cover;
   background-position: top center;
   background-attachment: fixed;
+  min-height: 100vh;
+  min-height: 100dvh;
 }
+
 
 /* Dark theme background */
 .dark body {
@@ -70,6 +73,8 @@ html:not(.dark) body {
   background-size: cover;
   background-position: top center;
   background-attachment: fixed;
+  min-height: 100vh;
+  min-height: 100dvh;
 }
 
 h1, h2, h3, h4 {
@@ -927,21 +932,23 @@ form {
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   html:not(.dark) body,
   .dark body {
-    background-attachment: scroll !important;
-    background-repeat: no-repeat !important;
+    background-attachment: fixed !important;
     background-size: cover !important;
-    background-position: top center !important;
+    background-repeat: no-repeat !important;
+    background-position: center center !important;
   }
 
   html:not(.dark) body {
-    background-image: linear-gradient(rgba(253, 246, 238, 0.62), rgba(253, 246, 238, 0.62)), url('/background.jpeg') !important;
+    background-color: #FDF6EE !important;
+    background-image: linear-gradient(rgba(253, 246, 238, 0.55), rgba(253, 246, 238, 0.55)), url('/background.jpeg') !important;
   }
 
   .dark body {
-    background-image: linear-gradient(rgba(26, 20, 16, 0.70), rgba(26, 20, 16, 0.70)), url('/dark-background.jpeg') !important;
+    background-color: #1A1410 !important;
+    background-image: linear-gradient(rgba(26, 20, 16, 0.75), rgba(26, 20, 16, 0.75)), url('/dark-background.jpeg') !important;
   }
 
   .hero-section,

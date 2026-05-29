@@ -1,6 +1,6 @@
 'use client'
 
-import { ChefHat, Printer } from 'lucide-react'
+import { MoveDown, Printer } from 'lucide-react'
 
 export default function RecipeActions() {
   const buttonBase = {
@@ -48,7 +48,7 @@ export default function RecipeActions() {
           boxShadow: '0 4px 15px rgba(232,98,42,0.35)',
         }}
       >
-        <ChefHat size={18} strokeWidth={1.8} aria-hidden="true" />
+        <MoveDown size={18} strokeWidth={1.8} aria-hidden="true" />
         <span>Jump to Recipe</span>
       </a>
 

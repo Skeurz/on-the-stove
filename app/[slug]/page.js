@@ -13,7 +13,7 @@ import TableOfContents from '@/app/components/TableOfContents'
 import NewsletterSignup from '@/app/components/NewsletterSignup'
 import { notFound } from 'next/navigation'
 import RecipeJumpCard from '@/app/components/RecipeJumpCard'
-import { ArrowLeft, BookOpen, Camera, Check, ChefHat, Flame, FlaskConical, HelpCircle, Leaf, Lightbulb, Mail, Package, Shuffle, Sprout, Star, Video } from 'lucide-react'
+import { ArrowLeft, BookOpen, Camera, Check, ChefHat, Flame, FlaskConical, HelpCircle, Leaf, Lightbulb, Mail, Package, Shuffle, Sprout, Star, Video} from 'lucide-react'
 
 const categoryLabel = {
   lunch: 'Lunch',
@@ -815,9 +815,9 @@ export default async function RecipePage({ params }) {
           </svg>
         ),
       },
-    ].map(({ label, bg, href, icon }) => (
+    ].map(({bg, href, icon }, i) => (
       <a
-        
+        key={i}
         href={href}
         target="_blank"
         rel="noopener noreferrer"
@@ -837,7 +837,6 @@ export default async function RecipePage({ params }) {
         }}
       >
         {icon}
-        {label}
       </a>
     ))}
   </div>
