@@ -254,7 +254,32 @@ export default async function RecipePage({ params }) {
         </div>
       </div>
 
-      
+      {/* Tags */}
+      {recipe.tags?.length > 0 && (
+        <div className="recipe-hero-media-wrap" style={{
+          maxWidth: '1200px',
+          margin: '1rem auto 0',
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: '0.5rem',
+        }}>
+          {recipe.tags.map(tag => (
+            <span key={tag} style={{
+              background: 'var(--cream-light)',
+              border: '1px solid var(--gray)',
+              color: 'var(--text-light)',
+              fontFamily: '"Lato", sans-serif',
+              fontSize: '0.78rem',
+              fontWeight: '700',
+              padding: '0.3rem 0.85rem',
+              borderRadius: '50px',
+              letterSpacing: '0.3px',
+            }}>
+              #{tag}
+            </span>
+          ))}
+        </div>
+      )}
 
       {/* ── HERO IMAGE ── */}
       {recipe.mainImage && (
@@ -345,30 +370,7 @@ export default async function RecipePage({ params }) {
             </div>
           )}
 
-          {/* Tags */}
-          {recipe.tags?.length > 0 && (
-            <div style={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              gap: '0.5rem',
-              marginBottom: '2rem',
-            }}>
-              {recipe.tags.map(tag => (
-                <span key={tag} style={{
-                  background: 'var(--gray)',
-                  color: 'var(--text-light)',
-                  fontFamily: '"Lato", sans-serif',
-                  fontSize: '0.78rem',
-                  fontWeight: '700',
-                  padding: '0.3rem 0.85rem',
-                  borderRadius: '50px',
-                  letterSpacing: '0.3px',
-                }}>
-                  #{tag}
-                </span>
-              ))}
-            </div>
-          )}
+    
 
           {/* Ingredients */}
           {recipe.ingredients?.length > 0 && (

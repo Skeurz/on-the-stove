@@ -783,7 +783,7 @@ export function HeroSearch() {
           style={{ flex: 1, background: 'transparent', border: 'none', outline: 'none',
             fontFamily: '"Lato", sans-serif', fontSize: '0.95rem', color: 'white', padding: '0.5rem 0' }}
         />
-        <button type="submit" style={{
+        <button type="submit" data-no-enhance style={{
           background: 'var(--orange)', color: 'white', border: 'none', borderRadius: '50px',
           padding: '0.65rem 1.25rem', fontFamily: '"Lato", sans-serif', fontWeight: '700',
           fontSize: '0.88rem', cursor: 'pointer',
