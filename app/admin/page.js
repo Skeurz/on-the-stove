@@ -10,12 +10,14 @@ import Link from 'next/link'
 export default function AdminPanel() {
   return (
     <div style={{
-      minHeight: '100vh',
-      background: 'linear-gradient(135deg, #1A0A02 0%, #2D1205 50%, #1A0A02 100%)',
-      padding: '3rem 1.5rem',
-      fontFamily: '"Lato", sans-serif',
-    }}>
-      <div style={{ maxWidth: '700px', margin: '0 auto' }}>
+  minHeight: '100vh',
+  padding: '3rem 1.5rem',
+  paddingBottom: '6rem',
+  fontFamily: '"Lato", sans-serif',
+  display: 'flex',
+  flexDirection: 'column',
+}}>
+  <div style={{ maxWidth: '700px', margin: '0 auto', width: '100%', flex: 1 }}>
 
         {/* Header */}
         <div style={{ marginBottom: '2.5rem' }}>
@@ -37,10 +39,18 @@ export default function AdminPanel() {
         </div>
 
         {/* Cards */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          <DeleteByNameCard />
-          <DeleteAllCard />
-          <ResetRatingsCard />
+         <div style={{
+          background: '#3D2010',
+          border: '1px solid rgba(255,255,255,0.07)',
+          borderRadius: '20px',
+          padding: '1.5rem',
+          display: 'flex', flexDirection: 'column', gap: '1rem',
+         }}>
+
+             <DeleteByNameCard />
+             <DeleteAllCard />
+             <ResetRatingsCard />
+
         </div>
       </div>
     </div>
@@ -104,22 +114,29 @@ function StatusMessage({ status }) {
 
 function ActionButton({ onClick, disabled, loading, danger, children }) {
   return (
-    <button onClick={onClick} disabled={disabled || loading} className="admin-btn" style={{
-      background: danger ? 'rgba(220,53,69,0.15)' : '#E8622A',
-      color: danger ? '#ff6b7a' : 'white',
-      border: danger ? '1px solid rgba(220,53,69,0.4)' : 'none',
-      borderRadius: '50px',
-      padding: '0.6rem 1.4rem',
-      fontFamily: '"Lato", sans-serif',
-      fontWeight: '700', fontSize: '0.88rem',
-      cursor: disabled || loading ? 'not-allowed' : 'pointer',
-      opacity: disabled || loading ? 0.6 : 1,
-      display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
-      transition: 'opacity 0.15s',
-    }}>
-      {loading && <Loader size={14} style={{ animation: 'spin 1s linear infinite' }} />}
-      {children}
-    </button>
+    <div
+  role="button"
+  tabIndex={disabled || loading ? -1 : 0}
+  onClick={disabled || loading ? undefined : onClick}
+  onKeyDown={e => { if ((e.key === 'Enter' || e.key === ' ') && !disabled && !loading) onClick?.() }}
+  style={{
+    background: danger ? 'rgba(220,53,69,0.15)' : '#E8622A',
+    color: danger ? '#ff6b7a' : 'white',
+    border: danger ? '1px solid rgba(220,53,69,0.4)' : 'none',
+    borderRadius: '50px',
+    padding: '0.6rem 1.4rem',
+    fontFamily: '"Lato", sans-serif',
+    fontWeight: '700', fontSize: '0.88rem',
+    cursor: disabled || loading ? 'not-allowed' : 'pointer',
+    opacity: disabled || loading ? 0.6 : 1,
+    display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
+    transition: 'opacity 0.15s',
+    userSelect: 'none',
+  }}
+>
+  {loading && <Loader size={14} style={{ animation: 'spin 1s linear infinite' }} />}
+  {children}
+</div>
   )
 }
 
