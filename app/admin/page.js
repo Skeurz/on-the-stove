@@ -234,8 +234,8 @@ function DeleteByNameCard() {
               outlineColor: '#E8622A',
             }}
           />
-          <ActionButton onClick={handleSearch} loading={loading} disabled={!title.trim()}>
-            Search
+          <ActionButton  onClick={handleSearch} loading={loading} disabled={!title.trim()}>
+             <Trash2 /> Delete
           </ActionButton>
         </div>
 

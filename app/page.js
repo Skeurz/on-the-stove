@@ -156,7 +156,7 @@ export default async function Home({ searchParams }) {
             { label: 'Snacks', href: '/category/snacksnsides', Icon: Salad },
             { label: 'Desserts', href: '/category/desserts', Icon: CakeSlice },
             { label: 'Drinks', href: '/category/drinks-shakes', Icon: Coffee },
-            { label: 'My collections', href: '/collections', Icon: Sparkles },
+            { label: 'My collections', href: '/collections', Icon: Sparkles, },
           ].map(cat => {
             const isCollections = cat.href === '/collections';
             return (

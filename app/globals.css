@@ -859,6 +859,7 @@ form {
 
 .mobile-scroll-pills {
   scrollbar-width: none;
+  text-align: center;
 }
 
 .mobile-scroll-pills::-webkit-scrollbar {
