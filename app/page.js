@@ -8,6 +8,7 @@ import NewsletterSignup from './components/NewsletterSignup'
 import HeroVideoControl from './components/HeroVideoControl'
 import { ArrowRight, CakeSlice, Coffee, Pizza, Salad, Sandwich, Sparkles } from 'lucide-react'
 import { HeroSearch } from './components/Navbar'
+import HeroVideo from './components/HeroVideo'
 
 const RECIPES_PER_PAGE = 8
 
@@ -33,10 +34,7 @@ export default async function Home({ searchParams }) {
         color: 'white',
         textAlign: 'center',
       }}>
-        <video className="hero-bg-video" autoPlay muted loop playsInline>
-          <source src="/hero-background.mp4" type="video/mp4" />
-          Your browser does not support HTML5 video.
-        </video>
+        <HeroVideo />
         <div className="hero-overlay" />
         {/* Decorative circles */}
         <div style={{

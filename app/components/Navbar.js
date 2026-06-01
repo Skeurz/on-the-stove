@@ -780,13 +780,14 @@ export function HeroSearch() {
           onFocus={() => suggestions.length > 0 && setOpen(true)}
           onKeyDown={e => e.key === 'Escape' && setOpen(false)}
           placeholder="Search recipes..."
-          style={{ flex: 1, background: 'transparent', border: 'none', outline: 'none',
+          style={{ flex: 1, minWidth: 0, background: 'transparent', border: 'none', outline: 'none',
             fontFamily: '"Lato", sans-serif', fontSize: '0.95rem', color: 'white', padding: '0.5rem 0' }}
         />
         <button type="submit" data-no-enhance style={{
           background: 'var(--orange)', color: 'white', border: 'none', borderRadius: '50px',
           padding: '0.65rem 1.25rem', fontFamily: '"Lato", sans-serif', fontWeight: '700',
-          fontSize: '0.88rem', cursor: 'pointer',
+          fontSize: '0.88rem', cursor: 'pointer', whiteSpace: 'nowrap', flexShrink: 0,
+
         }}>Search</button>
       </form>
       {open && query.trim().length >= 2 && (
