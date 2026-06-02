@@ -22,6 +22,16 @@ function getClientIP(request) {
   return '127.0.0.1'
 }
 
+function normalizeRatingBreakdown(breakdown = {}) {
+  return {
+    star1: breakdown.star1 || 0,
+    star2: breakdown.star2 || 0,
+    star3: breakdown.star3 || 0,
+    star4: breakdown.star4 || 0,
+    star5: breakdown.star5 || 0,
+  }
+}
+
 async function getExistingVote(recipeId, ipHash, browserHash) {
   const result = await client.fetch(
     defineQuery(`*[
@@ -71,7 +81,7 @@ export async function GET(request, { params }) {
       average,
       count: ratings.ratingCount,
       userVote: existingVote ? existingVote.value : null,
-      ratingBreakdown: ratings.ratingBreakdown || {},
+      ratingBreakdown: normalizeRatingBreakdown(ratings.ratingBreakdown),
     })
   } catch (error) {
     console.error('Error fetching rating:', error)
@@ -146,6 +156,7 @@ export async function POST(request, { params }) {
       average: newAverage || 0,
       count: updatedRecipe.ratingCount || 0,
       userVote: value,
+      ratingBreakdown: normalizeRatingBreakdown(updatedRecipe.ratingBreakdown),
     })
   } catch (error) {
     console.error('Error submitting rating:', error)

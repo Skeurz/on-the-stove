@@ -50,8 +50,8 @@ function StarIcon({ filled }) {
   )
 }
 
-export default function StarRating({ slug }) {
-  const [rating, setRating] = useState({ average: 0, count: 0, userVote: null })
+export default function StarRating({ slug, onRatingChange }) {
+  const [rating, setRating] = useState({ average: 0, count: 0, userVote: null, ratingBreakdown: {} })
   const [hoveredStar, setHoveredStar] = useState(0)
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
@@ -70,11 +70,14 @@ export default function StarRating({ slug }) {
         if (!storedVote && data.userVote) {
           setStoredVote(slug, data.userVote)
         }
-        setRating({
+        const nextRating = {
           average: data.average || 0,
           count: data.count || 0,
           userVote: storedVote || data.userVote || null,
-        })
+          ratingBreakdown: data.ratingBreakdown || {},
+        }
+        setRating(nextRating)
+        onRatingChange?.(nextRating)
         setLoading(false)
       })
       .catch(() => {
@@ -83,7 +86,7 @@ export default function StarRating({ slug }) {
         }
         setLoading(false)
       })
-  }, [slug])
+  }, [slug, onRatingChange])
 
   const handleClick = useCallback(async (value) => {
     const storedVote = getStoredVote(slug)
@@ -99,7 +102,18 @@ export default function StarRating({ slug }) {
     // Optimistic update — stars fill instantly
     const optimisticCount = rating.count + 1
     const optimisticAverage = Math.round(((rating.average * rating.count) + value) / optimisticCount * 10) / 10
-    setRating({ average: optimisticAverage, count: optimisticCount, userVote: value })
+    const optimisticBreakdown = {
+      ...rating.ratingBreakdown,
+      [`star${value}`]: (rating.ratingBreakdown?.[`star${value}`] || 0) + 1,
+    }
+    const optimisticRating = {
+      average: optimisticAverage,
+      count: optimisticCount,
+      userVote: value,
+      ratingBreakdown: optimisticBreakdown,
+    }
+    setRating(optimisticRating)
+    onRatingChange?.(optimisticRating)
     setMessage('Thanks for rating!')
     setJustVoted(true)
     setStoredVote(slug, value)
@@ -121,6 +135,13 @@ export default function StarRating({ slug }) {
           average: data.average,
           count: data.count,
           userVote: data.userVote,
+          ratingBreakdown: data.ratingBreakdown || optimisticBreakdown,
+        })
+        onRatingChange?.({
+          average: data.average,
+          count: data.count,
+          userVote: data.userVote,
+          ratingBreakdown: data.ratingBreakdown || optimisticBreakdown,
         })
       } else if (res.status === 409) {
         setMessage('You have already rated this recipe.')
@@ -132,7 +153,7 @@ export default function StarRating({ slug }) {
     } finally {
       setSubmitting(false)
     }
-  }, [slug, submitting, rating])
+  }, [slug, submitting, rating, onRatingChange])
 
   if (loading) {
     return (

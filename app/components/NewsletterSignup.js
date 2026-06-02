@@ -78,6 +78,7 @@ export default function NewsletterSignup({ source = 'website', compact = false }
             <button
               type="submit"
               disabled={status === 'loading'}
+              className="button"
               style={{
                 background: 'var(--orange)',
                 color: 'white',
@@ -220,6 +221,7 @@ export default function NewsletterSignup({ source = 'website', compact = false }
             <button
               type="submit"
               disabled={status === 'loading'}
+              className="button"
               style={{
                 background: 'var(--orange)',
                 color: 'white',

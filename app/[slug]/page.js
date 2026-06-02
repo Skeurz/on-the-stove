@@ -5,7 +5,7 @@ import { urlFor } from '@/sanity/lib/image'
 import Image from 'next/image'
 import Link from 'next/link'
 import { PortableText } from 'next-sanity'
-import StarRating from '@/app/components/StarRating'
+import RecipeRatingPanel from '@/app/components/RecipeRatingPanel'
 import SuggestedRecipes from '@/app/components/SuggestedRecipes'
 import RecipeActions from '@/app/components/RecipeActions'
 import IngredientList from '@/app/components/IngredientList'
@@ -13,7 +13,7 @@ import TableOfContents from '@/app/components/TableOfContents'
 import NewsletterSignup from '@/app/components/NewsletterSignup'
 import { notFound } from 'next/navigation'
 import RecipeJumpCard from '@/app/components/RecipeJumpCard'
-import { ArrowLeft, BookOpen, Camera, Check, ChefHat, Flame, FlaskConical, HelpCircle, Leaf, Lightbulb, Mail, Package, Shuffle, Sprout, Star, Video} from 'lucide-react'
+import { ArrowLeft, BookOpen, Camera, Check, ChefHat, Flame, FlaskConical, HelpCircle, Leaf, Lightbulb, Mail, Package, Shuffle, Sprout, Video} from 'lucide-react'
 
 const categoryLabel = {
   lunch: 'Lunch',
@@ -120,34 +120,6 @@ export default async function RecipePage({ params }) {
     recipe.faqs?.length > 0 ? { href: '#faqs', label: 'FAQs' } : null,
     recipeFacts.length > 0 ? { href: '#recipe-facts', label: 'Recipe Details' } : null,
   ].filter(Boolean)
-
-  const ratingBreakdownUI = (
-    <div style={{
-      marginTop: '1.25rem',
-      display: 'grid',
-      gap: '0.5rem',
-      width: '100%'
-    }}>
-      {[5, 4, 3, 2, 1].map(stars => {
-        const count = recipe.ratingBreakdown?.[`star${stars}`] || 0
-        const percentage = recipe.ratingCount ? (count / recipe.ratingCount) * 100 : 0
-        return (
-          <div key={stars} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', fontSize: '0.75rem' }}>
-            <span className="icon-text" style={{ minWidth: '45px', fontWeight: '700', color: 'var(--text)', justifyContent: 'flex-start' }}>{stars} <Star size={12} fill="currentColor" strokeWidth={1.8} aria-hidden="true" /></span>
-            <div style={{ flex: 1, height: '6px', background: 'var(--gray)', borderRadius: '10px', overflow: 'hidden' }}>
-              <div style={{
-                width: `${percentage}%`,
-                height: '100%',
-                background: 'var(--orange)',
-                transition: 'width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)'
-              }} />
-            </div>
-            <span style={{ minWidth: '16px', textAlign: 'right', color: 'var(--text)' }}>{count}</span>
-          </div>
-        )
-      })}
-    </div>
-  )
 
 
        const jsonLd = {
@@ -812,8 +784,11 @@ export default async function RecipePage({ params }) {
             }}>
               Rate this recipe
             </h3>
-            <StarRating slug={slug} />
-            {ratingBreakdownUI}
+            <RecipeRatingPanel
+              slug={slug}
+              initialCount={recipe.ratingCount || 0}
+              initialBreakdown={recipe.ratingBreakdown}
+            />
             
             {/* Share Buttons */}
 <div

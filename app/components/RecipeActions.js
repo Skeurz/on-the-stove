@@ -31,6 +31,7 @@ export default function RecipeActions() {
     >
       <a
         href="#recipe-facts"
+        className="button"
         onClick={(e) => {
           e.preventDefault()
           document
@@ -54,6 +55,7 @@ export default function RecipeActions() {
 
       <button
         type="button"
+        className="button"
         onClick={() => {
           const card = document.getElementById('recipe-facts')
           if (!card) return

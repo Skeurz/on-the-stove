@@ -20,13 +20,12 @@ export async function POST(request) {
   }
 
   try {
-    const body = await request.json()
+    const { _id, ...body } = await request.json()
+    if (!_id) return NextResponse.json({ error: 'Missing _id' }, { status: 400 })
     const variations = body.variations || body.easyVariations || []
     const preparationImages = body.preparationImages || body.prepPhotos || []
 
-    // Build the Sanity document
-    const doc = {
-      _type: 'recipe',
+    const patch = {
       title: body.title,
       slug: { _type: 'slug', current: body.slug },
       description: body.description || body.shortDescription,
@@ -34,7 +33,7 @@ export async function POST(request) {
       cuisine: body.cuisine,
       tags: body.tags || [],
       featured: body.featured || false,
-      publishedAt: body.publishedAt || new Date().toISOString(),
+      publishedAt: body.publishedAt,
       difficulty: body.difficulty,
       prepTime: body.prepTime ? Number(body.prepTime) : undefined,
       cookTime: body.cookTime ? Number(body.cookTime) : undefined,
@@ -43,48 +42,34 @@ export async function POST(request) {
       videoUrl: body.videoUrl,
       ingredients: body.ingredients || [],
       steps: (body.steps || []).map((s, i) => ({
-         _type: 'object', _key: s._key || `step_${i}`,
-         title: s.title, description: s.description || s.text,
-         })),
+        _type: 'object', _key: s._key || `step_${i}`, title: s.title, description: s.description || s.text,
+      })),
       helpfulTips: (body.helpfulTips || []).map((t, i) => ({
-        _type: 'object', _key: t._key || `tip_${i}`,
-        title: t.title, description: t.description || t.text,
-         })),
+        _type: 'object', _key: t._key || `tip_${i}`, title: t.title, description: t.description || t.text,
+      })),
       variations: variations.map((v, i) => ({
-        _type: 'object', _key: v._key || `var_${i}`,
-         title: v.title, description: v.description || v.text,
-         })),
+        _type: 'object', _key: v._key || `var_${i}`, title: v.title, description: v.description || v.text,
+      })),
       veganAdaptation: body.veganAdaptation || (body.howToMakeVegan ? [body.howToMakeVegan] : []),
       storageTips: (body.storageTips || []).map((s, i) => ({
-        _type: 'storageTip',
-        _key: `storage_${i}`,
-        method: s.method,
-        duration: s.duration,
-        notes: s.notes,
+        _type: 'storageTip', _key: s._key || `storage_${i}`, method: s.method, duration: s.duration, notes: s.notes,
       })),
       faqs: (body.faqs || []).map((f, i) => ({
-        _type: 'faq',
-        _key: `faq_${i}`,
-        question: f.question,
-        answer: f.answer,
+        _type: 'faq', _key: f._key || `faq_${i}`, question: f.question, answer: f.answer,
+      })),
+      preparationImages: preparationImages.map((p, i) => ({
+        _type: 'object', _key: p._key || `prep_${i}`, stepNumber: p.stepNumber ? Number(p.stepNumber) : undefined, caption: p.caption,
       })),
       seoTitle: body.seoTitle,
       seoDescription: body.seoDescription,
-      // Images are handled separately via Sanity asset upload
-      // prepPhotos referenced by URL strings for now
-      preparationImages: preparationImages.map((p, i) => ({
-        _type: 'object', _key: p._key || `prep_${i}`,
-        stepNumber: p.stepNumber ? Number(p.stepNumber) : undefined,
-        caption: p.caption,
-      })), 
     }
 
-    // Remove undefined fields
-    Object.keys(doc).forEach(k => doc[k] === undefined && delete doc[k])
+    // Remove undefined
+    Object.keys(patch).forEach(k => patch[k] === undefined && delete patch[k])
 
-    const result = await client.create(doc)
+    await client.patch(_id).set(patch).commit()
 
-    return NextResponse.json({ success: true, id: result._id, slug: body.slug })
+    return NextResponse.json({ success: true, id: _id, slug: body.slug })
   } catch (err) {
     return NextResponse.json({ error: err.message }, { status: 500 })
   }
