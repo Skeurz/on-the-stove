@@ -26,16 +26,16 @@ export async function POST(request) {
     `*[_type == "recipe" && lower(title) == lower($title)]{
   _id, title, "slug": slug.current, description, category, cuisine, tags,
   featured, publishedAt, difficulty, prepTime, cookTime, servings, calories,
-  "caloriesPerServing": coalesce(caloriesPerServing, calories),
-  videoUrl, ingredients,
-  "steps": steps[]{ _key, title, description, "text": coalesce(text, description) },
-  "helpfulTips": helpfulTips[]{ _key, title, description, "text": coalesce(text, description) },
-  "variations": select(defined(easyVariations) => easyVariations[]{ _key, title, description, "text": coalesce(text, description) }, variations[]{ _key, title, description, "text": coalesce(text, description) }),
-  "veganAdaptation": coalesce(veganAdaptation, select(defined(howToMakeVegan) => [howToMakeVegan], [])),
+  videoUrl, ingredients, steps, helpfulTips, variations, veganAdaptation,
   storageTips, faqs,
-  "preparationImages": select(defined(preparationImages) => preparationImages[]{ _key, stepNumber, caption }, prepPhotos[]{ _key, stepNumber, caption }),
+  "mainImageUrl": mainImage.asset->url,
+  "secondaryImageUrl": secondaryImage.asset->url,
+  "preparationImages": preparationImages[]{
+    stepNumber, caption, _key,
+    "imageUrl": image.asset->url
+  },
   seoTitle, seoDescription
-}`,
+       }`,
     { title: title.trim() }
   )
 
