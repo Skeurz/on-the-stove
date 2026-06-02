@@ -4,7 +4,8 @@ import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
 import { usePathname } from 'next/navigation'
 import ThemeToggle from './ThemeToggle'
-import { Menu, X } from 'lucide-react'
+import { Menu, X, Settings } from 'lucide-react'
+
 
 const navLinks = [
   { label: 'Lunch', href: '/category/lunch' },
@@ -26,9 +27,11 @@ const categoryLabel = {
   // { label: 'My collections', href: '/collections' },
 }
 
+
 export default function Navbar() {
   const pathname = usePathname()
   const isHome = pathname === '/' || pathname === ''
+  const [isLocalhost, setIsLocalhost] = useState(false)
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
@@ -40,11 +43,13 @@ export default function Navbar() {
   const showTransparentHeader = isHome && heroVisible && !isMobile
 
   useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth <= 768)
-    checkMobile()
-    window.addEventListener('resize', checkMobile)
-    return () => window.removeEventListener('resize', checkMobile)
-  }, [])
+  const checkMobile = () => setIsMobile(window.innerWidth <= 768)
+  checkMobile()
+  window.addEventListener('resize', checkMobile)
+  setIsLocalhost(window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+  return () => window.removeEventListener('resize', checkMobile)
+}, [])
+
   const searchInputRef = useRef(null)
 
   useEffect(() => {
@@ -162,6 +167,30 @@ export default function Navbar() {
         alignItems: 'center',
         justifyContent: 'space-between',
       }}>
+
+        
+
+
+        {/* Admin cog — localhost only */}
+  {isLocalhost && (
+  <Link href="/admin" style={{
+    display: 'flex', alignItems: 'center', justifyContent: 'center',
+    width: '32px', height: '32px', borderRadius: '50%',
+    background: 'rgba(255,255,255,0.06)',
+    border: '1px solid rgba(255,255,255,0.1)',
+    color: 'rgb(253, 246, 238)',
+    flexShrink: 0,
+    transition: 'all 0.15s',
+  }}
+    onMouseEnter={e => { e.currentTarget.style.background = 'rgba(232,98,42,0.2)'; e.currentTarget.style.color = '#E8622A' }}
+    onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; e.currentTarget.style.color = 'rgba(253,246,238,0.5)' }}
+  >
+    <Settings size={15} strokeWidth={1.8} />
+  </Link>
+     )}
+
+
+
         {/* Logo (image) */}
         <Link href="/" onClick={() => setMobileOpen(false)} style={{
           display: 'flex',
@@ -170,6 +199,7 @@ export default function Navbar() {
         }}>
           <img src="/logo.png" alt="On The Stove" style={{ height: 38, width: 'auto', display: 'block' }} />
         </Link>
+
 
         {/* Desktop Nav */}
         <nav style={{
