@@ -64,26 +64,25 @@ export default function RecipeJumpCard({ recipe, slug }) {
           }}>{recipe.title}</h2>
         </div>
         <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap', alignItems: 'center' }}>
-          <button
-            onClick={handlePrint}
-            style={{
-              background: 'rgba(255,255,255,0.1)',
-              color: 'white',
-              border: '1px solid rgba(255,255,255,0.2)',
-              borderRadius: '50px',
-              padding: '0.5rem 1.1rem',
-              fontFamily: '"Lato", sans-serif',
-              fontSize: '0.82rem',
-              fontWeight: '700',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.4rem',
-            }}
-          >
-            <Printer size={15} strokeWidth={1.8} aria-hidden="true" />
-            Print
-          </button>
+          <div role="button"
+  onClick={handlePrint}
+  style={{
+    background: 'rgba(255,255,255,0.1)',
+    color: 'white',
+    border: '1px solid rgba(255,255,255,0.2)',
+    borderRadius: '50px',
+    padding: '0.5rem 1.1rem',
+    fontFamily: '"Lato", sans-serif',
+    fontSize: '0.82rem',
+    fontWeight: '700',
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.4rem',
+  }}>
+  <Printer size={15} strokeWidth={1.8} aria-hidden="true" />
+  Print
+      </div>
           {[
             {
               bg: '#1877F2',

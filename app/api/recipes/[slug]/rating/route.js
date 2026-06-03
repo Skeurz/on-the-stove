@@ -125,39 +125,44 @@ export async function POST(request, { params }) {
       )
     }
 
-    await writeClient.create({
-      _type: 'rating',
-      recipe: { _ref: recipe._id, _type: 'reference' },
-      value,
-      ipHash,
-      browserHash,
-      createdAt: new Date().toISOString(),
-    })
+    const updatedRecipe = await writeClient.transaction()
+  .create({
+    _type: 'rating',
+    recipe: { _ref: recipe._id, _type: 'reference' },
+    value,
+    ipHash,
+    browserHash,
+    createdAt: new Date().toISOString(),
+  })
+  
+  .patch(recipe._id, p => p
+  .setIfMissing({ ratingTotal: 0, ratingCount: 0 })
+  .setIfMissing({
+    'ratingBreakdown.star1': 0,
+    'ratingBreakdown.star2': 0,
+    'ratingBreakdown.star3': 0,
+    'ratingBreakdown.star4': 0,
+    'ratingBreakdown.star5': 0,
+  })
+  .inc({
+    ratingTotal: value,
+    ratingCount: 1,
+    [`ratingBreakdown.star${value}`]: 1,
+  })
+)
+  .commit({ returnDocuments: true })
 
-    // Removed { visibility: 'sync' } — was forcing a slow consistent read
-    const updatedRecipe = await writeClient
-      .patch(recipe._id)
-      .setIfMissing({
-        ratingTotal: 0,
-        ratingCount: 0,
-        ratingBreakdown: { star1: 0, star2: 0, star3: 0, star4: 0, star5: 0 }
-      })
-      .inc({
-        ratingTotal: value,
-        ratingCount: 1,
-        [`ratingBreakdown.star${value}`]: 1,
-      })
-      .commit()
+const patched = updatedRecipe.find(r => r._id === recipe._id)
 
-    const newAverage = Math.round(((updatedRecipe.ratingTotal || 0) / (updatedRecipe.ratingCount || 1)) * 10) / 10
+    const newAverage = Math.round(((patched.ratingTotal || 0) / (patched.ratingCount || 1)) * 10) / 10
 
-    return Response.json({
-      success: true,
-      average: newAverage || 0,
-      count: updatedRecipe.ratingCount || 0,
-      userVote: value,
-      ratingBreakdown: normalizeRatingBreakdown(updatedRecipe.ratingBreakdown),
-    })
+return Response.json({
+  success: true,
+  average: newAverage || 0,
+  count: patched.ratingCount || 0,
+  userVote: value,
+  ratingBreakdown: normalizeRatingBreakdown(patched.ratingBreakdown),
+})
   } catch (error) {
     console.error('Error submitting rating:', error)
     return Response.json({

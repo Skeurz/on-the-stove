@@ -130,20 +130,8 @@ export default function StarRating({ slug, onRatingChange }) {
       const data = await res.json()
 
       if (res.ok) {
-        // Reconcile with server-computed values (route.js now returns correct counts)
-        setRating({
-          average: data.average,
-          count: data.count,
-          userVote: data.userVote,
-          ratingBreakdown: data.ratingBreakdown || optimisticBreakdown,
-        })
-        onRatingChange?.({
-          average: data.average,
-          count: data.count,
-          userVote: data.userVote,
-          ratingBreakdown: data.ratingBreakdown || optimisticBreakdown,
-        })
-      } else if (res.status === 409) {
+     // optimistic state is already correct
+     } else if (res.status === 409) {
         setMessage('You have already rated this recipe.')
       } else {
         setMessage(data.error || 'Failed to submit rating.')
