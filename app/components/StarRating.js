@@ -114,7 +114,7 @@ export default function StarRating({ slug, onRatingChange }) {
     }
     setRating(optimisticRating)
     onRatingChange?.(optimisticRating)
-    setMessage('Thanks for rating!')
+    setMessage('Thanks for rating! 😊')
     setJustVoted(true)
     setStoredVote(slug, value)
     setSubmitting(true)

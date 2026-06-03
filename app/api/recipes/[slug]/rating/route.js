@@ -125,44 +125,49 @@ export async function POST(request, { params }) {
       )
     }
 
-    const updatedRecipe = await writeClient.transaction()
-  .create({
-    _type: 'rating',
-    recipe: { _ref: recipe._id, _type: 'reference' },
-    value,
-    ipHash,
-    browserHash,
-    createdAt: new Date().toISOString(),
-  })
-  
-  .patch(recipe._id, p => p
-  .setIfMissing({ ratingTotal: 0, ratingCount: 0 })
-  .setIfMissing({
-    'ratingBreakdown.star1': 0,
-    'ratingBreakdown.star2': 0,
-    'ratingBreakdown.star3': 0,
-    'ratingBreakdown.star4': 0,
-    'ratingBreakdown.star5': 0,
-  })
-  .inc({
-    ratingTotal: value,
-    ratingCount: 1,
-    [`ratingBreakdown.star${value}`]: 1,
-  })
-)
-  .commit({ returnDocuments: true })
+    // Calculate optimistic values for immediate response
+    const ratings = await getRecipeRatings(slug)
+    const optimisticCount = ratings.ratingCount + 1
+    const optimisticAverage = Math.round(((ratings.ratingTotal + value) / optimisticCount) * 10) / 10
+    const optimisticBreakdown = normalizeRatingBreakdown(ratings.ratingBreakdown)
+    optimisticBreakdown[`star${value}`] = (optimisticBreakdown[`star${value}`] || 0) + 1
 
-const patched = updatedRecipe.find(r => r._id === recipe._id)
+    // Fire-and-forget: persist to Sanity in background
+    writeClient.transaction()
+      .create({
+        _type: 'rating',
+        recipe: { _ref: recipe._id, _type: 'reference' },
+        value,
+        ipHash,
+        browserHash,
+        createdAt: new Date().toISOString(),
+      })
+      .patch(recipe._id, p => p
+        .setIfMissing({ ratingTotal: 0, ratingCount: 0 })
+        .setIfMissing({
+          'ratingBreakdown.star1': 0,
+          'ratingBreakdown.star2': 0,
+          'ratingBreakdown.star3': 0,
+          'ratingBreakdown.star4': 0,
+          'ratingBreakdown.star5': 0,
+        })
+        .inc({
+          ratingTotal: value,
+          ratingCount: 1,
+          [`ratingBreakdown.star${value}`]: 1,
+        })
+      )
+      .commit()
+      .catch(error => console.error('Failed to persist rating to Sanity:', error))
 
-    const newAverage = Math.round(((patched.ratingTotal || 0) / (patched.ratingCount || 1)) * 10) / 10
-
-return Response.json({
-  success: true,
-  average: newAverage || 0,
-  count: patched.ratingCount || 0,
-  userVote: value,
-  ratingBreakdown: normalizeRatingBreakdown(patched.ratingBreakdown),
-})
+    // Return immediately with optimistic values
+    return Response.json({
+      success: true,
+      average: optimisticAverage,
+      count: optimisticCount,
+      userVote: value,
+      ratingBreakdown: optimisticBreakdown,
+    })
   } catch (error) {
     console.error('Error submitting rating:', error)
     return Response.json({

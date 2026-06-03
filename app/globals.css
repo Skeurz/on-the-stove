@@ -41,6 +41,13 @@ html:not(.dark) {
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+
 html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;

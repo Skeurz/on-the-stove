@@ -645,7 +645,7 @@ function ActionButton({ onClick, disabled, loading, danger, children }) {
     <div role="button" tabIndex={disabled || loading ? -1 : 0} onClick={disabled || loading ? undefined : onClick} onKeyDown={e => { if ((e.key === 'Enter' || e.key === ' ') && !disabled && !loading) onClick?.() }}
       style={{ background: danger ? 'rgba(220,53,69,0.15)' : '#E8622A', color: danger ? '#ff6b7a' : 'white', border: danger ? '1px solid rgba(220,53,69,0.4)' : 'none', borderRadius: '50px', padding: '0.6rem 1.4rem', fontFamily: '"Lato", sans-serif', fontWeight: '700', fontSize: '0.88rem', cursor: disabled || loading ? 'not-allowed' : 'pointer', opacity: disabled || loading ? 0.6 : 1, display: 'inline-flex', alignItems: 'center', gap: '0.5rem', transition: 'opacity 0.15s', userSelect: 'none' }}
     >
-      {loading && <Loader size={14} style={{ animation: 'spin 1s linear infinite' }} />}
+      {loading && <Loader size={14} style={{ animation: 'spin 1s linear infinite', flexShrink: 0 }} />}
       {children}
     </div>
   )
