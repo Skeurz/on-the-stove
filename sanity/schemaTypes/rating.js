@@ -24,6 +24,12 @@ export const rating = {
       validation: Rule => Rule.required(),
     },
     {
+  name: 'browserHash',
+  title: 'Browser Hash',
+  type: 'string',
+  hidden: true,
+    },
+    {
       name: 'createdAt',
       title: 'Created At',
       type: 'datetime',
