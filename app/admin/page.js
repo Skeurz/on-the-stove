@@ -641,12 +641,19 @@ function StatusMessage({ status }) {
 }
 
 function ActionButton({ onClick, disabled, loading, danger, children }) {
+  console.log('ActionButton loading:', loading)
   return (
-    <div role="button" tabIndex={disabled || loading ? -1 : 0} onClick={disabled || loading ? undefined : onClick} onKeyDown={e => { if ((e.key === 'Enter' || e.key === ' ') && !disabled && !loading) onClick?.() }}
-      style={{ background: danger ? 'rgba(220,53,69,0.15)' : '#E8622A', color: danger ? '#ff6b7a' : 'white', border: danger ? '1px solid rgba(220,53,69,0.4)' : 'none', borderRadius: '50px', padding: '0.6rem 1.4rem', fontFamily: '"Lato", sans-serif', fontWeight: '700', fontSize: '0.88rem', cursor: disabled || loading ? 'not-allowed' : 'pointer', opacity: disabled || loading ? 0.6 : 1, display: 'inline-flex', alignItems: 'center', gap: '0.5rem', transition: 'opacity 0.15s', userSelect: 'none' }}
-    >
-      {loading && <Loader size={14} style={{ animation: 'spin 1s linear infinite', flexShrink: 0 }} />}
-      {children}
+    <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}>
+      <div role="button" tabIndex={disabled || loading ? -1 : 0} onClick={disabled || loading ? undefined : onClick} onKeyDown={e => { if ((e.key === 'Enter' || e.key === ' ') && !disabled && !loading) onClick?.() }}
+        style={{ background: danger ? 'rgba(220,53,69,0.15)' : '#E8622A', color: danger ? '#ff6b7a' : 'white', border: danger ? '1px solid rgba(220,53,69,0.4)' : 'none', borderRadius: '50px', padding: '0.6rem 1.4rem', fontFamily: '"Lato", sans-serif', fontWeight: '700', fontSize: '0.88rem', cursor: disabled || loading ? 'not-allowed' : 'pointer', opacity: disabled || loading ? 0.6 : 1, display: 'inline-flex', alignItems: 'center', transition: 'opacity 0.15s', userSelect: 'none' }}
+      >
+        {children}
+      </div>
+      {loading && (
+        <span style={{ display: 'inline-flex', animation: 'spin 1s linear infinite' }}>
+          <Loader size={14} color="#E8622A" />
+        </span>
+      )}
     </div>
   )
 }
@@ -776,14 +783,15 @@ function ResetRatingsCard() {
   const [confirm, setConfirm] = useState(false)
 
   const handleReset = async () => {
-    setLoading(true); setConfirm(false)
-    try {
-      const res = await fetch('/api/admin/reset-ratings', { method: 'POST' }); const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'Request failed')
-      setStatus({ type: 'success', message: `Reset ${data.recipesReset} recipe(s) and deleted ${data.ratingsDeleted} rating doc(s).` })
-    } catch (e) { setStatus({ type: 'error', message: e.message }) }
-    finally { setLoading(false) }
-  }
+  setLoading(true)
+  try {
+    const res = await fetch('/api/admin/reset-ratings', { method: 'POST' })
+    const data = await res.json()
+    if (!res.ok) throw new Error(data.error || 'Request failed')
+    setStatus({ type: 'success', message: `Reset ${data.recipesReset} recipe(s) and deleted ${data.ratingsDeleted} rating doc(s).` })
+  } catch (e) { setStatus({ type: 'error', message: e.message }) }
+  finally { setLoading(false); setConfirm(false) }
+}
 
   return (
     <Card>
