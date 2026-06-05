@@ -14,6 +14,7 @@ import NewsletterSignup from '@/app/components/NewsletterSignup'
 import { notFound } from 'next/navigation'
 import RecipeJumpCard from '@/app/components/RecipeJumpCard'
 import { ArrowLeft, BookOpen, Camera, Check, ChefHat, Flame, FlaskConical, HelpCircle, Leaf, Lightbulb, Mail, Package, Shuffle, Sprout, Video} from 'lucide-react'
+import DeleteRecipeButton from '@/app/components/DeleteRecipeButton'
 
 const categoryLabel = {
   lunch: 'Lunch',
@@ -165,6 +166,10 @@ export default async function RecipePage({ params }) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
+
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1rem' }}>
+        <DeleteRecipeButton slug={recipe.title} />
+      </div>
 
       {/* ── HERO SECTION ── */}
       <div className="content-section" style={{
