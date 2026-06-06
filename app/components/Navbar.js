@@ -393,7 +393,7 @@ export default function Navbar() {
                   suggestions.map((item) => (
                     <Link
                       key={item._id}
-                      href={`/${item.slug.current}`}
+                      href={`/${item.slug}`}
                       onClick={closeSearch}
                       style={{
                         display: 'grid',
@@ -672,7 +672,7 @@ export default function Navbar() {
                   suggestions.map((item) => (
                     <Link
                       key={item._id}
-                      href={`/${item.slug.current}`}
+                      href={`/${item.slug}`}
                       onClick={() => {
                         setMobileOpen(false)
                         closeSearch()
@@ -827,7 +827,7 @@ export function HeroSearch() {
           borderRadius: '14px', padding: '0.5rem', boxShadow: '0 12px 36px rgba(0,0,0,0.4)', zIndex: 10,
         }}>
           {suggestions.length > 0 ? suggestions.map(item => (
-            <Link key={item._id} href={`/${item.slug.current}`} onClick={() => setOpen(false)} style={{
+            <Link key={item._id} href={`/${item.slug}`} onClick={() => setOpen(false)} style={{
               display: 'grid', gridTemplateColumns: '44px minmax(0,1fr)', gap: '0.75rem',
               alignItems: 'center', padding: '0.55rem 0.6rem', borderRadius: '10px',
               color: 'rgba(253,246,238,0.82)', fontFamily: '"Lato", sans-serif', fontSize: '0.88rem', lineHeight: 1.35,
