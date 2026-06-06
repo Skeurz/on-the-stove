@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Trash2, RotateCcw, AlertTriangle, CheckCircle, XCircle, Loader, X, ChevronDown, ChevronUp, Pencil } from 'lucide-react'
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -74,6 +74,9 @@ function normalizeForm(data) {
     seoTitle: data.seoTitle || '',
     seoDescription: data.seoDescription || '',
     description: data.description || '',
+    category: data.category || '',
+    cuisine: data.cuisine || '',
+    difficulty: data.difficulty || '',
     mainImageUrl: data.mainImageUrl || '',
     secondaryImageUrl: data.secondaryImageUrl || '',
   }
@@ -82,7 +85,12 @@ function normalizeForm(data) {
 // ─── Root ─────────────────────────────────────────────────────────────────────
 
 export default function AdminPanel() {
-  const [activeTab, setActiveTab] = useState('db')
+  const [activeTab, setActiveTab] = useState(() => {
+    if (typeof window !== 'undefined' && sessionStorage.getItem('admin-edit-slug')) {
+      return 'edit'
+    }
+    return 'db'
+  })
 
   return (
     <div style={{ padding: '3rem 1.5rem', paddingBottom: '6rem', fontFamily: '"Lato", sans-serif' }}>
@@ -137,6 +145,25 @@ function EditRecipeTab() {
   const [recipe, setRecipe] = useState(null)
   const [form, setForm] = useState(null)
   const [searchStatus, setSearchStatus] = useState(null)
+
+  useEffect(() => {
+  const slug = sessionStorage.getItem('admin-edit-slug')
+  console.log('admin-edit-slug:', slug)
+  if (!slug) return
+  sessionStorage.removeItem('admin-edit-slug')
+  fetch(`/api/search-suggestions?q=${encodeURIComponent(slug)}`)
+    .then(res => res.json())
+    .then(data => {
+      console.log('suggestions:', data.suggestions)
+      const match = data.suggestions?.find(s => s.slug === slug)
+      console.log('match:', match)
+      if (match) {
+        setSearchQuery(match.title)
+        loadRecipe(match.title)
+      }
+    })
+    .catch(() => {})
+}, [])
 
   const handleSearchChange = (e) => {
     const val = e.target.value
@@ -600,16 +627,16 @@ function Note({ children }) {
   return <p style={{ color: 'rgba(253,246,238,0.35)', fontSize: '0.78rem', fontStyle: 'italic', margin: '0.25rem 0 0' }}>{children}</p>
 }
 
-function Input({ style, ...props }) {
-  return <input {...props} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '8px', padding: '0.55rem 0.85rem', color: '#FDF6EE', fontFamily: '"Lato", sans-serif', fontSize: '0.88rem', width: '100%', outlineColor: '#E8622A', boxSizing: 'border-box', ...style }} />
+function Input({ style, value, ...props }) {
+  return <input {...props} value={value ?? ''} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '8px', padding: '0.55rem 0.85rem', color: '#FDF6EE', fontFamily: '"Lato", sans-serif', fontSize: '0.88rem', width: '100%', outlineColor: '#E8622A', boxSizing: 'border-box', ...style }} />
 }
 
-function Textarea({ ...props }) {
-  return <textarea {...props} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '8px', padding: '0.55rem 0.85rem', color: '#FDF6EE', fontFamily: '"Lato", sans-serif', fontSize: '0.88rem', width: '100%', outlineColor: '#E8622A', resize: 'vertical', boxSizing: 'border-box' }} />
+function Textarea({ value, ...props }) {
+  return <textarea {...props} value={value ?? ''} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '8px', padding: '0.55rem 0.85rem', color: '#FDF6EE', fontFamily: '"Lato", sans-serif', fontSize: '0.88rem', width: '100%', outlineColor: '#E8622A', resize: 'vertical', boxSizing: 'border-box' }} />
 }
 
-function Select({ children, ...props }) {
-  return <select {...props} style={{ background: '#2A1208', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '8px', padding: '0.55rem 0.85rem', color: '#FDF6EE', fontFamily: '"Lato", sans-serif', fontSize: '0.88rem', width: '100%', outlineColor: '#E8622A', boxSizing: 'border-box' }}>{children}</select>
+function Select({ children, value, ...props }) {
+  return <select {...props} value={value ?? ''} style={{ background: '#2A1208', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '8px', padding: '0.55rem 0.85rem', color: '#FDF6EE', fontFamily: '"Lato", sans-serif', fontSize: '0.88rem', width: '100%', outlineColor: '#E8622A', boxSizing: 'border-box' }}>{children}</select>
 }
 
 function AddButton({ onClick, children }) {
@@ -641,7 +668,6 @@ function StatusMessage({ status }) {
 }
 
 function ActionButton({ onClick, disabled, loading, danger, children }) {
-  console.log('ActionButton loading:', loading)
   return (
     <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}>
       <div role="button" tabIndex={disabled || loading ? -1 : 0} onClick={disabled || loading ? undefined : onClick} onKeyDown={e => { if ((e.key === 'Enter' || e.key === ' ') && !disabled && !loading) onClick?.() }}

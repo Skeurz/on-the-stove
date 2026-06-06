@@ -19,7 +19,7 @@ export async function GET(request) {
     suggestions: suggestions.map((suggestion) => ({
       _id: suggestion._id,
       title: suggestion.title,
-      slug: suggestion.slug,
+      slug: suggestion.slug?.current,
       category: suggestion.category,
       imageUrl: suggestion.mainImage
         ? urlFor(suggestion.mainImage).width(80).height(80).url()

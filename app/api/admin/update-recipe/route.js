@@ -94,9 +94,10 @@ export async function POST(request) {
 
     // preparationImages is already resolved (Promise.all above)
     // Clean undefined fields recursively
-    Object.keys(doc).forEach(k => doc[k] === undefined && delete doc[k])
-    const result = await client.create(doc)
-    return NextResponse.json({ success: true, id: result._id, slug: body.slug })
+Object.keys(doc).forEach(k => doc[k] === undefined && delete doc[k])
+const { _type, ...patch } = doc
+const result = await client.patch(body._id).set(patch).commit()
+return NextResponse.json({ success: true, id: result._id, slug: body.slug })
   } catch (err) {
     return NextResponse.json({ error: err.message }, { status: 500 })
   }
