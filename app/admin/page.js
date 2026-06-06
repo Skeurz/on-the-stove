@@ -287,7 +287,7 @@ function NewRecipeTab() {
       const res = await fetch('/api/admin/create-recipe', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Failed')
-      setStatus({ type: 'success', message: `Recipe created! ID: ${data.id} — /${data.slug}` })
+      setStatus({ type: 'success', message: `Recipe created! ID: ${data.id} — /${data.slug}`, slug: data.slug })
       setForm(EMPTY_FORM); setJsonText('')
     } catch (e) { setStatus({ type: 'error', message: e.message }) }
     finally { setLoading(false) }
@@ -371,7 +371,7 @@ function RecipeForm({ form, setForm, mode, recipeId, onTitleChange, onDone, onSu
       const res = await fetch('/api/admin/update-recipe', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Failed')
-      setInternalStatus({ type: 'success', message: `Saved! /${data.slug}` })
+      setInternalStatus({ type: 'success', message: `Saved! /${data.slug}`, slug: data.slug })
     } catch (e) { setInternalStatus({ type: 'error', message: e.message }) }
     finally { setInternalLoading(false) }
   }
@@ -660,9 +660,15 @@ function StatusMessage({ status }) {
   if (!status) return null
   const isError = status.type === 'error'
   return (
-    <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.6rem', padding: '0.75rem 1rem', background: isError ? 'rgba(220,53,69,0.12)' : 'rgba(40,167,69,0.12)', border: `1px solid ${isError ? 'rgba(220,53,69,0.3)' : 'rgba(40,167,69,0.3)'}`, borderRadius: '10px', color: isError ? '#ff6b7a' : '#6bcb77', fontSize: '0.88rem', lineHeight: 1.5 }}>
+    <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.6rem', padding: '0.75rem 1rem', background: isError ? 'rgba(220,53,69,0.12)' : 'rgba(40,167,69,0.12)', border: `1px solid ${isError ? 'rgba(220,53,69,0.3)' : 'rgba(40,167,69,0.3)'}`, borderRadius: '10px', color: isError ? '#ff6b7a' : '#6bcb77', fontSize: '0.88rem', lineHeight: 1.5, flexWrap: 'wrap' }}>
       {isError ? <XCircle size={16} style={{ flexShrink: 0, marginTop: '2px' }} /> : <CheckCircle size={16} style={{ flexShrink: 0, marginTop: '2px' }} />}
-      <span>{status.message}</span>
+      <span style={{ flex: 1 }}>{status.message}</span>
+      {!isError && status.slug && (
+        <a href={`/${status.slug}`} target="_blank" rel="noopener noreferrer"
+          style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', background: '#6bcb77', color: '#0a2e0a', fontFamily: '"Lato", sans-serif', fontWeight: '700', fontSize: '0.82rem', padding: '0.3rem 0.85rem', borderRadius: '50px', textDecoration: 'none', flexShrink: 0 }}>
+          Preview
+        </a>
+      )}
     </div>
   )
 }

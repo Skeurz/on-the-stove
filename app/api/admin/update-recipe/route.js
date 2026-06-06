@@ -72,11 +72,11 @@ export async function POST(request) {
       })),
       veganAdaptation: body.veganAdaptation || (body.howToMakeVegan ? [body.howToMakeVegan] : []),
       storageTips: (body.storageTips || []).map((s, i) => ({
-        _type: 'storageTip', _key: `storage_${i}`,
+        _type: 'object', _key: `storage_${i}`,
         method: s.method, duration: s.duration, notes: s.notes,
       })),
       faqs: (body.faqs || []).map((f, i) => ({
-        _type: 'faq', _key: `faq_${i}`,
+        _type: 'object', _key: `faq_${i}`,
         question: f.question, answer: f.answer,
       })),
       seoTitle: body.seoTitle,

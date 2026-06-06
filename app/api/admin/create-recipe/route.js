@@ -56,7 +56,7 @@ export async function POST(request) {
          })),
       veganAdaptation: body.veganAdaptation || (body.howToMakeVegan ? [body.howToMakeVegan] : []),
       storageTips: (body.storageTips || []).map((s, i) => ({
-        _type: 'storageTip',
+        _type: 'object',
         _key: `storage_${i}`,
         method: s.method,
         duration: s.duration,
