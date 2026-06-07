@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Trash2, RotateCcw, AlertTriangle, CheckCircle, XCircle, Loader, X, ChevronDown, ChevronUp, Pencil } from 'lucide-react'
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -40,7 +40,7 @@ const EMPTY_FORM = {
   category: '', cuisine: '', tags: [], featured: false,
   publishedAt: new Date().toISOString().slice(0, 10),
   difficulty: '', prepTime: '', cookTime: '', servings: '', calories: '',
-  mainImageUrl: '', secondaryImageUrl: '',
+  mainImageUrl: null, secondaryImageUrl: null,
   ingredients: [''],
   steps: [{ title: '', description: '' }],
   helpfulTips: [{ title: '', description: '' }],
@@ -77,8 +77,8 @@ function normalizeForm(data) {
     category: data.category || '',
     cuisine: data.cuisine || '',
     difficulty: data.difficulty || '',
-    mainImageUrl: data.mainImageUrl || '',
-    secondaryImageUrl: data.secondaryImageUrl || '',
+    mainImageUrl: data.mainImageUrl || null,
+    secondaryImageUrl: data.secondaryImageUrl || null,
   }
 }
 
@@ -282,9 +282,8 @@ function NewRecipeTab() {
     const payload = getPayload()
     if (!payload) return
     if (!payload.title || !payload.slug) { setStatus({ type: 'error', message: 'Title and slug are required.' }); return }
-      console.log('faqs:', payload.faqs)        // ← add this
-      console.log('storageTips:', payload.storageTips)  // ← add this
-    setLoading(true); setStatus(null)
+      console.log('faqs:', payload.faqs)        // ← temporary
+      console.log('storageTips:', payload.storageTips)  // ← temporary
     try {
       const res = await fetch('/api/admin/create-recipe', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
       const data = await res.json()
@@ -338,6 +337,48 @@ function NewRecipeTab() {
     </div>
   )
 }
+
+function ImageUploadField({ label, value, onChange }) {
+  const [uploading, setUploading] = useState(false)
+  const [error, setError] = useState(null)
+  const inputRef = useRef(null)
+  const urlValue = typeof value === 'string' ? value : value?.url || ''
+ 
+  const handleFile = async (e) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setUploading(true); setError(null)
+    try {
+      const fd = new FormData()
+      fd.append('file', file)
+      const res = await fetch('/api/admin/upload-image', { method: 'POST', body: fd })
+      const data = await res.json()
+      console.log('upload response:', data)
+      if (!res.ok) throw new Error(data.error || 'Upload failed')
+      onChange({ url: data.url, assetId: data.assetId })
+    } catch (e) { setError(e.message) }
+    finally { setUploading(false); e.target.value = '' }
+  }
+ 
+  return (
+    <Field label={label}>
+      <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+        <Input value={urlValue} onChange={e => onChange(e.target.value)} placeholder="https://..." />
+        <input ref={inputRef} type="file" accept="image/*" onChange={handleFile} style={{ display: 'none' }} />
+        <div role="button" tabIndex={0}
+          onClick={() => !uploading && inputRef.current?.click()}
+          onKeyDown={e => (e.key === 'Enter' || e.key === ' ') && !uploading && inputRef.current?.click()}
+          style={{ flexShrink: 0, padding: '0.55rem 1rem', borderRadius: '8px', background: 'rgba(232,98,42,0.15)', border: '1px solid rgba(232,98,42,0.4)', color: '#F4946A', fontSize: '0.82rem', fontWeight: '700', cursor: uploading ? 'not-allowed' : 'pointer', opacity: uploading ? 0.6 : 1, whiteSpace: 'nowrap', fontFamily: '"Lato", sans-serif' }}
+        >{uploading ? 'Uploading...' : '↑ Upload'}</div>
+      </div>
+      {urlValue && !uploading && (
+        <img src={urlValue} alt="" style={{ marginTop: '0.5rem', height: '80px', borderRadius: '8px', objectFit: 'cover', border: '1px solid rgba(255,255,255,0.1)' }} />
+      )}
+      {error && <p style={{ color: '#ff6b7a', fontSize: '0.78rem', marginTop: '0.3rem' }}>{error}</p>}
+    </Field>
+  )
+}
+
 
 // ─── Shared Recipe Form ───────────────────────────────────────────────────────
 
@@ -467,14 +508,9 @@ function RecipeForm({ form, setForm, mode, recipeId, onTitleChange, onDone, onSu
       {/* Media */}
       <Section title="Media">
         <Row>
-          <Field label="Hero Image URL">
-            <Input value={form.mainImageUrl} onChange={e => set('mainImageUrl', e.target.value)} placeholder="https://..." />
-          </Field>
-          <Field label="Secondary Image URL">
-            <Input value={form.secondaryImageUrl} onChange={e => set('secondaryImageUrl', e.target.value)} placeholder="https://..." />
-          </Field>
-        </Row>
-        <Note>Paste public image URLs — they'll be uploaded to Sanity as assets on submit. You can also upload directly in Sanity Studio.</Note>
+  <ImageUploadField label="Hero Image" value={form.mainImageUrl} onChange={v => set('mainImageUrl', v)} />
+  <ImageUploadField label="Secondary Image" value={form.secondaryImageUrl} onChange={v => set('secondaryImageUrl', v)} />
+</Row>
         <Field label="Recipe Video URL">
           <Input value={form.videoUrl} onChange={e => set('videoUrl', e.target.value)} placeholder="https://youtube.com/watch?v=..." />
         </Field>
@@ -485,7 +521,7 @@ function RecipeForm({ form, setForm, mode, recipeId, onTitleChange, onDone, onSu
               <Input type="number" value={p.stepNumber} onChange={e => updateItem('preparationImages', i, { ...p, stepNumber: e.target.value })} placeholder="Step #" style={{ width: '80px', flexShrink: 0 }} />
               <Input value={p.caption} onChange={e => updateItem('preparationImages', i, { ...p, caption: e.target.value })} placeholder="Caption..." />
             </div>
-            <Input value={p.imageUrl || ''} onChange={e => updateItem('preparationImages', i, { ...p, imageUrl: e.target.value })} placeholder="Image URL (https://...)" />
+            <ImageUploadField label="Image" value={p.imageUrl} onChange={v => updateItem('preparationImages', i, { ...p, imageUrl: v })} />
           </ListRow>
         ))}
         <AddButton onClick={() => addItem('preparationImages', { stepNumber: '', caption: '', imageUrl: '' })}>+ Add Photo</AddButton>

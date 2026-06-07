@@ -14,14 +14,20 @@ const client = createClient({
   useCdn: false,
 })
 
-async function uploadImageFromUrl(url) {
-  if (!url) return null
-  const res = await fetch(url)
-  if (!res.ok) throw new Error(`Failed to fetch image: ${url}`)
-  const buffer = await res.arrayBuffer()
-  const contentType = res.headers.get('content-type') || 'image/jpeg'
-  const asset = await client.assets.upload('image', Buffer.from(buffer), { contentType })
-  return { _type: 'image', asset: { _type: 'reference', _ref: asset._id } }
+async function resolveImage(val) {
+  if (!val) return null
+  if (typeof val === 'object' && val.assetId) {
+    return { _type: 'image', asset: { _type: 'reference', _ref: val.assetId } }
+  }
+  if (typeof val === 'string' && val.startsWith('http')) {
+    const res = await fetch(val)
+    if (!res.ok) throw new Error(`Failed to fetch image: ${val}`)
+    const buffer = await res.arrayBuffer()
+    const contentType = res.headers.get('content-type') || 'image/jpeg'
+    const asset = await client.assets.upload('image', Buffer.from(buffer), { contentType })
+    return { _type: 'image', asset: { _type: 'reference', _ref: asset._id } }
+  }
+  return null
 }
 
 export async function POST(request) {
@@ -35,8 +41,8 @@ export async function POST(request) {
     const preparationImages = body.preparationImages || body.prepPhotos || []
 
     const [mainImage, secondaryImage] = await Promise.all([
-      body.mainImageUrl ? uploadImageFromUrl(body.mainImageUrl) : Promise.resolve(null),
-      body.secondaryImageUrl ? uploadImageFromUrl(body.secondaryImageUrl) : Promise.resolve(null),
+      resolveImage(body.mainImageUrl),
+      resolveImage(body.secondaryImageUrl),
     ])
 
     const doc = {
@@ -82,7 +88,7 @@ export async function POST(request) {
       seoTitle: body.seoTitle,
       seoDescription: body.seoDescription,
       preparationImages: await Promise.all(preparationImages.map(async (p, i) => {
-        const image = p.imageUrl ? await uploadImageFromUrl(p.imageUrl) : null
+        const image = await resolveImage(p.imageUrl)
         return {
           _type: 'object', _key: p._key || `prep_${i}`,
           stepNumber: p.stepNumber ? Number(p.stepNumber) : undefined,
@@ -92,12 +98,10 @@ export async function POST(request) {
       })),
     }
 
-    // preparationImages is already resolved (Promise.all above)
-    // Clean undefined fields recursively
-Object.keys(doc).forEach(k => doc[k] === undefined && delete doc[k])
-const { _type, ...patch } = doc
-const result = await client.patch(body._id).set(patch).commit()
-return NextResponse.json({ success: true, id: result._id, slug: body.slug })
+    Object.keys(doc).forEach(k => doc[k] === undefined && delete doc[k])
+    const { _type, ...patch } = doc
+    const result = await client.patch(body._id).set(patch).commit()
+    return NextResponse.json({ success: true, id: result._id, slug: body.slug })
   } catch (err) {
     return NextResponse.json({ error: err.message }, { status: 500 })
   }
