@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { Trash2, RotateCcw, AlertTriangle, CheckCircle, XCircle, Loader, X, ChevronDown, ChevronUp, Pencil } from 'lucide-react'
+import { Trash2, RotateCcw, AlertTriangle, CheckCircle, XCircle, Loader, X, ChevronDown, ChevronUp, Pencil, ExternalLink  } from 'lucide-react'
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -252,6 +252,7 @@ function NewRecipeTab() {
   const [jsonError, setJsonError] = useState('')
   const [loading, setLoading] = useState(false)
   const [status, setStatus] = useState(null)
+  const [preview, setPreview] = useState(null)
 
   const set = (key, val) => setForm(f => ({ ...f, [key]: val }))
   const autoSlug = (title) => title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
@@ -291,9 +292,21 @@ function NewRecipeTab() {
       if (!res.ok) throw new Error(data.error || 'Failed')
       setStatus({ type: 'success', message: `Recipe created! ID: ${data.id} — /${data.slug}`, slug: data.slug })
       setForm(EMPTY_FORM); setJsonText('')
+      setPreview(null)
     } catch (e) { setStatus({ type: 'error', message: e.message }) }
     finally { setLoading(false) }
   }
+
+  const handlePreview = () => {
+  const payload = getPayload()
+  if (!payload) return
+  if (!payload.title || !payload.slug) {
+    setStatus({ type: 'error', message: 'Title and slug are required.' })
+    return
+  }
+  setStatus(null)
+  setPreview(payload)
+}
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -328,16 +341,50 @@ function NewRecipeTab() {
       )}
 
       {inputMode === 'json' && (
-        <>
-          <StatusMessage status={status} />
-          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '0.5rem' }}>
-            <ActionButton onClick={handleSubmit} loading={loading}>{loading ? 'Publishing...' : 'Publish to Sanity'}</ActionButton>
-          </div>
-        </>
-      )}
+  <>
+    <StatusMessage status={status} />
+
+    {preview && (
+      <div style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '16px', padding: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+        <p style={{ color: '#F4946A', fontSize: '0.75rem', fontWeight: '700', letterSpacing: '1px', textTransform: 'uppercase', margin: 0 }}>Preview</p>
+        <p style={{ color: '#FDF6EE', fontSize: '1.1rem', fontFamily: '"Playfair Display", serif', margin: 0 }}>{preview.title}</p>
+        <p style={{ color: 'rgba(253,246,238,0.45)', fontSize: '0.82rem', margin: 0 }}>/{preview.slug}</p>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '0.25rem' }}>
+          {preview.category && <Pill>{preview.category}</Pill>}
+          {preview.cuisine && <Pill>{preview.cuisine}</Pill>}
+          {preview.difficulty && <Pill>{preview.difficulty}</Pill>}
+          {preview.ingredients?.length > 0 && <Pill>{preview.ingredients.length} ingredient{preview.ingredients.length !== 1 ? 's' : ''}</Pill>}
+          {preview.steps?.length > 0 && <Pill>{preview.steps.length} step{preview.steps.length !== 1 ? 's' : ''}</Pill>}
+        </div>
+      </div>
+    )}
+
+    <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '0.5rem' }}>
+      {preview && <ActionButton onClick={() => setPreview(null)} danger>Edit JSON</ActionButton>}
+      {!preview
+        ? <ActionButton onClick={handlePreview}>Preview</ActionButton>
+        : <ActionButton onClick={handleSubmit} loading={loading}>{loading ? 'Publishing...' : 'Publish to Sanity'}</ActionButton>
+      }
     </div>
+  </>
+)}
+  </div>
+  )
+
+  
+}
+
+function Pill({ children }) {
+  return (
+    <span style={{ padding: '0.2rem 0.7rem', borderRadius: '50px', background: 'rgba(232,98,42,0.15)', border: '1px solid rgba(232,98,42,0.3)', color: '#F4946A', fontSize: '0.75rem', fontWeight: '700', fontFamily: '"Lato", sans-serif' }}>
+      {children}
+    </span>
   )
 }
+
+
+
+
 
 function ImageUploadField({ label, value, onChange }) {
   const [uploading, setUploading] = useState(false)
@@ -705,7 +752,7 @@ function StatusMessage({ status }) {
       {!isError && status.slug && (
         <a href={`/${status.slug}`} target="_blank" rel="noopener noreferrer"
           style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', background: '#6bcb77', color: '#0a2e0a', fontFamily: '"Lato", sans-serif', fontWeight: '700', fontSize: '0.82rem', padding: '0.3rem 0.85rem', borderRadius: '50px', textDecoration: 'none', flexShrink: 0 }}>
-          Preview
+          Preview <ExternalLink/> 
         </a>
       )}
     </div>

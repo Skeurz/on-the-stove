@@ -5,6 +5,9 @@ import Image from 'next/image'
 import Link from 'next/link'
 import RecipeCard from '@/app/components/RecipeCard'
 import { Utensils } from 'lucide-react'
+import { notFound } from 'next/navigation'
+
+
 
 const RECIPES_PER_PAGE = 8
 const categoryLabels = {
@@ -20,6 +23,8 @@ export default async function CategoryPage({ params, searchParams }) {
   const resolvedParams = await params
   const resolvedSearchParams = await searchParams
   const category = resolvedParams.category
+  const label = categoryLabels[category]
+    if (!label) notFound()
   const currentPage = Math.max(Number(resolvedSearchParams?.page) || 1, 1)
   const start = (currentPage - 1) * RECIPES_PER_PAGE
   const end = start + RECIPES_PER_PAGE
@@ -28,7 +33,7 @@ export default async function CategoryPage({ params, searchParams }) {
     client.fetch(getAuthor),
   ])
   const totalPages = Math.max(Math.ceil(total / RECIPES_PER_PAGE), 1)
-  const label = categoryLabels[category] || category
+ // const label = categoryLabels[category] || category
 
   return (
     <div className="content-section" style={{ maxWidth: '1200px', margin: '0 auto', paddingTop: '2rem', paddingBottom: '2rem' }}>
