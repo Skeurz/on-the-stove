@@ -11,6 +11,8 @@ export const metadata = {
   description: 'Search On The Stove recipes by title, description, or category.',
 }
 
+const RESULTS_PER_PAGE = 9
+
 const searchWithFilters = defineQuery(`
   *[
     _type == "recipe" &&
@@ -18,23 +20,21 @@ const searchWithFilters = defineQuery(`
     ($category == "" || category == $category) &&
     ($difficulty == "" || difficulty == $difficulty) &&
     ($cuisine == "" || cuisine == $cuisine)
-  ] | order(publishedAt desc) {
-    _id,
-    title,
-    slug,
-    category,
-    description,
-    mainImage,
-    prepTime,
-    cookTime,
-    servings,
-    calories,
-    publishedAt,
-    ratingTotal,
-    ratingCount,
-    difficulty,
-    cuisine
+  ] | order(publishedAt desc) [$start...$end] {
+    _id, title, slug, category, description, mainImage,
+    prepTime, cookTime, servings, calories, publishedAt,
+    ratingTotal, ratingCount, difficulty, cuisine
   }
+`)
+
+const searchCount = defineQuery(`
+  count(*[
+    _type == "recipe" &&
+    ($term == "" || title match $term || description match $term || category match $term) &&
+    ($category == "" || category == $category) &&
+    ($difficulty == "" || difficulty == $difficulty) &&
+    ($cuisine == "" || cuisine == $cuisine)
+  ])
 `)
 
 
@@ -45,16 +45,20 @@ export default async function SearchPage({ searchParams }) {
   const difficulty = params?.difficulty || ''
   const cuisine = params?.cuisine || ''
 
-  const hasFilters = query || category || difficulty || cuisine
+  const currentPage = Math.max(Number(params?.page) || 1, 1)
+const start = (currentPage - 1) * RESULTS_PER_PAGE
+const end = start + RESULTS_PER_PAGE
+const hasFilters = query || category || difficulty || cuisine
 
-  const recipes = hasFilters
-    ? await client.fetch(searchWithFilters, {
-        term: query ? `*${query}*` : '',
-        category,
-        difficulty,
-        cuisine,
-      })
-    : []
+const [recipes, total] = hasFilters
+  ? await Promise.all([
+      client.fetch(searchWithFilters, { term: query ? `*${query}*` : '', category, difficulty, cuisine, start, end }),
+      client.fetch(searchCount, { term: query ? `*${query}*` : '', category, difficulty, cuisine }),
+      
+    ])
+  : [[], 0]
+
+const totalPages = Math.max(Math.ceil(total / RESULTS_PER_PAGE), 1)
 
   const activeFiltersCount = [category, difficulty, cuisine].filter(Boolean).length
 
@@ -175,7 +179,7 @@ export default async function SearchPage({ searchParams }) {
                 fontSize: '0.9rem',
                 marginTop: '0.25rem',
               }}>
-                {recipes.length} recipe{recipes.length !== 1 ? 's' : ''} found
+                {total} recipe{total !== 1 ? 's' : ''} found
               </p>
             )}
           </div>
@@ -197,6 +201,19 @@ export default async function SearchPage({ searchParams }) {
           </div>
         )}
       </section>
+      {hasFilters && totalPages > 1 && (
+  <nav style={{ display: 'flex', justifyContent: 'center', gap: '0.6rem', marginTop: '2.5rem', flexWrap: 'wrap', fontFamily: '"Lato", sans-serif' }}>
+    {currentPage > 1 && (
+      <PageLink href={`/search?q=${encodeURIComponent(query)}&category=${category}&difficulty=${difficulty}&cuisine=${cuisine}&page=${currentPage - 1}`}>Previous</PageLink>
+    )}
+    {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+      <PageLink key={page} href={`/search?q=${encodeURIComponent(query)}&category=${category}&difficulty=${difficulty}&cuisine=${cuisine}&page=${page}`} active={page === currentPage}>{page}</PageLink>
+    ))}
+    {currentPage < totalPages && (
+      <PageLink href={`/search?q=${encodeURIComponent(query)}&category=${category}&difficulty=${difficulty}&cuisine=${cuisine}&page=${currentPage + 1}`}>Next</PageLink>
+    )}
+  </nav>
+)}
     </div>
   )
 }
@@ -222,5 +239,18 @@ function EmptyState({ message }) {
         <span className="icon-text"><ArrowLeft size={15} strokeWidth={1.8} aria-hidden="true" /> Back to recipes</span>
       </Link>
     </div>
+  )
+}
+function PageLink({ href, active = false, children }) {
+  return (
+    <Link href={href} style={{
+      minWidth: '40px', height: '40px', padding: '0 0.85rem',
+      display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+      borderRadius: '50px',
+      border: active ? '1px solid var(--orange)' : '1px solid var(--gray)',
+      background: active ? 'var(--orange)' : 'var(--cream-light)',
+      color: active ? 'var(--cream)' : 'var(--brown)',
+      fontSize: '0.88rem', fontWeight: '700',
+    }}>{children}</Link>
   )
 }
