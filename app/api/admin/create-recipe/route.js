@@ -63,7 +63,7 @@ export async function POST(request) {
         notes: s.notes,
       })),
       faqs: (body.faqs || []).map((f, i) => ({
-        _type: 'faq',
+        _type: 'object',
         _key: `faq_${i}`,
         question: f.question,
         answer: f.answer,

@@ -282,6 +282,8 @@ function NewRecipeTab() {
     const payload = getPayload()
     if (!payload) return
     if (!payload.title || !payload.slug) { setStatus({ type: 'error', message: 'Title and slug are required.' }); return }
+      console.log('faqs:', payload.faqs)        // ← add this
+      console.log('storageTips:', payload.storageTips)  // ← add this
     setLoading(true); setStatus(null)
     try {
       const res = await fetch('/api/admin/create-recipe', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })

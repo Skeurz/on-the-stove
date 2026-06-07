@@ -487,11 +487,11 @@ export default async function RecipePage({ params }) {
                 gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
                 gap: '1rem',
               }}>
-                {recipe.preparationImages.map((item, i) => (
-                  <div key={item._key || i} style={{ borderRadius: '12px', overflow: 'hidden', border: '1px solid var(--gray)' }}>
-                    <div style={{ position: 'relative', aspectRatio: '4/3' }}>
-                      <Image
-                        src={urlFor(item.image).width(400).height(300).url()}
+                {recipe.preparationImages.filter(item => item.image).map((item, i) => (
+  <div key={item._key || i} style={{ borderRadius: '12px', overflow: 'hidden', border: '1px solid var(--gray)' }}>
+    <div style={{ position: 'relative', aspectRatio: '4/3' }}>
+      <Image
+        src={urlFor(item.image).width(400).height(300).url()}
                         alt={item.caption || `Step ${item.stepNumber || i + 1}`}
                         fill
                         style={{ objectFit: 'cover' }}
