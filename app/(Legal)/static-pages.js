@@ -1,3 +1,4 @@
+'use client'
 import Image from 'next/image'
 import Link from 'next/link'
 import { client } from '@/sanity/lib/client'
@@ -706,14 +707,14 @@ function SidebarCard({ title, children, cream = false }) {
 }
 
 function ContactForm() {
-  const inputStyle = {
-    border: '1px solid var(--gray)',
-    borderRadius: '10px',
-    padding: '0.85rem 1rem',
-    font: 'inherit',
-    color: 'var(--brown)',
-    background: 'var(--cream)',
-    outlineColor: 'var(--orange)',
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    const data = new FormData(e.target)
+    const name = data.get('name')
+    const subject = data.get('subject')
+    const message = data.get('message')
+    const body = `Name: ${name}\n\n${message}`
+    window.location.href = `mailto:contact@onthestove.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
   }
   const labelStyle = {
     display: 'grid',
@@ -723,9 +724,18 @@ function ContactForm() {
     fontWeight: '700',
     color: 'var(--brown)',
   }
+  const inputStyle = {
+  border: '1px solid var(--gray)',
+  borderRadius: '10px',
+  padding: '0.85rem 1rem',
+  font: 'inherit',
+  color: 'var(--brown)',
+  background: 'var(--cream)',
+  outlineColor: 'var(--orange)',
+  }
 
   return (
-    <form action="mailto:hello@onthestove.com" method="post" encType="text/plain">
+    <form  onSubmit={handleSubmit}>
       <div style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
@@ -736,10 +746,7 @@ function ContactForm() {
           Name
           <input name="name" type="text" required style={inputStyle} />
         </label>
-        <label style={labelStyle}>
-          Email
-          <input name="email" type="email" required style={inputStyle} />
-        </label>
+        
       </div>
 
       <label style={{ ...labelStyle, marginBottom: '1rem' }}>
