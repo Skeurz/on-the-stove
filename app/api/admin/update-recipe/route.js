@@ -50,7 +50,7 @@ export async function POST(request) {
       title: body.title,
       slug: { _type: 'slug', current: body.slug },
       description: body.description || body.shortDescription,
-      category: body.category,
+      categories: body.categories || [],
       cuisine: body.cuisine,
       tags: body.tags || [],
       featured: body.featured || false,

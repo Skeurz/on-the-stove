@@ -21,6 +21,31 @@ const CUISINES = [
   { label: 'Asian', value: 'asian' },
   { label: 'Mediterranean', value: 'mediterranean' },
   { label: 'Middle Eastern', value: 'middle-eastern' },
+  { label: 'Chinese', value: 'chinese' },
+  { label: 'Japanese', value: 'japanese' },
+  { label: 'Korean', value: 'korean' },
+  { label: 'Thai', value: 'thai' },
+  { label: 'Vietnamese', value: 'vietnamese' },
+  { label: 'Indian', value: 'indian' },
+  { label: 'Pakistani', value: 'pakistani' },
+  { label: 'Lebanese', value: 'lebanese' },
+  { label: 'Moroccan', value: 'moroccan' },
+  { label: 'Turkish', value: 'turkish' },
+  { label: 'Greek', value: 'greek' },
+  { label: 'Spanish', value: 'spanish' },
+  { label: 'British', value: 'british' },
+  { label: 'German', value: 'german' },
+  { label: 'Eastern European', value: 'eastern-european' },
+  { label: 'Brazilian', value: 'brazilian' },
+  { label: 'Peruvian', value: 'peruvian' },
+  { label: 'Caribbean', value: 'caribbean' },
+  { label: 'West African', value: 'west-african' },
+  { label: 'Ethiopian', value: 'ethiopian' },
+  { label: 'Filipino', value: 'filipino' },
+  { label: 'Indonesian', value: 'indonesian' },
+  { label: 'Malaysian', value: 'malaysian' },
+  { label: 'Fusion', value: 'fusion' },
+  { label: 'Irish', value: 'irish' },
   { label: 'Other', value: 'other' },
 ]
 const DIFFICULTIES = [
@@ -29,15 +54,92 @@ const DIFFICULTIES = [
   { label: 'Hard', value: 'hard' },
 ]
 const ALL_TAGS = [
-  'gluten-free', 'dairy-free', 'vegan', 'vegetarian', 'meal-prep', 'make-ahead',
-  'freezer-friendly', 'under-30-min', 'under-1-hour', 'quick', 'one-pot', 'sheet-pan',
-  'no-bake', 'kid-friendly', 'date-night', 'holiday', 'summer', 'winter', 'spring',
-  'fall', 'budget-friendly', '5-ingredients',
+  // Diet & Lifestyle
+  'gluten-free', 'dairy-free', 'vegan', 'vegetarian', 'pescatarian', 'paleo', 'keto',
+  'low-carb', 'low-fat', 'low-sodium', 'low-calorie', 'low-sugar', 'sugar-free',
+  'whole30', 'nut-free', 'egg-free', 'soy-free', 'grain-free', 'refined-sugar-free',
+  'high-protein', 'high-fiber', 'anti-inflammatory', 'mediterranean-diet', 'raw',
+  'macrobiotic', 'fodmap-friendly', 'diabetic-friendly', 'heart-healthy', 'gut-friendly',
+
+  // Meal Prep & Planning
+  'meal-prep', 'make-ahead', 'freezer-friendly', 'batch-cooking', 'meal-plan',
+  'leftover-friendly', 'fridge-staples', 'pantry-staples', 'zero-waste', 'prep-ahead',
+
+  // Time
+  'under-15-min', 'under-30-min', 'under-1-hour', 'quick', '5-minute', '10-minute',
+  'overnight', 'slow-cook', 'all-day', '2-hour',
+
+  // Effort & Skill
+  'beginner', 'easy', 'intermediate', 'advanced', 'no-cook', 'no-bake', 'minimal-dishes',
+  'one-pot', 'one-pan', 'sheet-pan', 'one-bowl', 'dump-and-go', 'set-and-forget',
+  '5-ingredients', 'few-ingredients', 'simple', 'foolproof',
+
+  // Occasion
+  'date-night', 'holiday', 'christmas', 'thanksgiving', 'easter', 'halloween',
+  'new-year', 'valentines-day', 'mothers-day', 'fathers-day', 'birthday', 'brunch-party',
+  'dinner-party', 'potluck', 'game-day', 'tailgate', 'picnic', 'bbq', 'baby-shower',
+  'wedding', 'graduation', 'sunday-dinner', 'weeknight', 'special-occasion',
+
+  // Season
+  'summer', 'winter', 'spring', 'fall', 'seasonal', 'warm-weather', 'cold-weather',
+
+  // Audience
+  'kid-friendly', 'toddler-friendly', 'family-friendly', 'crowd-pleaser',
+  'college-student', 'solo-meal', 'couples', 'picky-eater', 'office-lunch',
+
+  // Method
+  'baked', 'grilled', 'fried', 'air-fryer', 'instant-pot', 'slow-cooker', 'stovetop',
+  'microwave', 'steamed', 'roasted', 'broiled', 'poached', 'smoked', 'pressure-cooker',
+  'sous-vide', 'deep-fried', 'pan-fried', 'stir-fried', 'braised', 'sauteed', 
+  'blended', 'no-heat', 'cast-iron', 'wok', 'dutch-oven',
+
+  // Texture & Style
+  'crispy', 'creamy', 'crunchy', 'tender', 'fluffy', 'chewy', 'sticky', 'juicy',
+  'rich', 'light', 'hearty', 'comforting', 'indulgent', 'refreshing', 'spicy',
+  'smoky', 'tangy', 'sweet', 'savory', 'umami', 'bold', 'mild',
+
+  // Budget
+  'budget-friendly', 'cheap-eats', 'expensive-ingredients', 'luxury', 'affordable',
+  'value-meal', 'dollar-store', 'costco-friendly',
+
+  // Health Goals
+  'weight-loss', 'muscle-gain', 'energy-boost', 'detox', 'immunity-boost',
+  'post-workout', 'pre-workout', 'gut-health', 'skin-health', 'hormone-balance',
+  'bone-health', 'brain-food', 'fertility-friendly',
+
+  // Protein Source
+  'chicken', 'beef', 'pork', 'lamb', 'turkey', 'seafood', 'fish', 'shrimp',
+  'salmon', 'tuna', 'tofu', 'tempeh', 'legumes', 'beans', 'lentils', 'eggs',
+  'cheese', 'plant-based-protein', 'venison', 'duck',
+
+  // Carb/Base
+  'pasta', 'rice', 'quinoa', 'bread', 'noodles', 'potatoes', 'couscous',
+  'polenta', 'oats', 'tortilla', 'flatbread', 'cauliflower-base',
+
+  // Cuisine (extra)
+  'fusion', 'comfort-food', 'street-food', 'fine-dining', 'bistro', 'cafe-style',
+  'diner', 'food-truck', 'farm-to-table', 'traditional', 'modern', 'classic',
+
+  // Format
+  'soup', 'salad', 'sandwich', 'wrap', 'bowl', 'stew', 'casserole', 'curry',
+  'stir-fry', 'taco', 'burger', 'pizza', 'pie', 'tart', 'galette', 'frittata',
+  'smoothie', 'juice', 'cocktail', 'mocktail', 'dip', 'spread', 'sauce',
+  'marinade', 'dressing', 'gravy', 'jam', 'preserve', 'granola', 'energy-ball',
+
+  // Trending
+  'viral', 'tiktok-recipe', 'instagram-worthy', 'trending', 'popular', 'classic-remake',
+  'elevated-basics', 'restaurant-copycat', 'takeout-at-home',
+
+  // Misc
+  'no-mixer', 'no-oven', 'no-blender', 'portable', 'lunchbox', 'school-lunch',
+  'office-friendly', 'dorm-room', 'camping', 'backpacking', 'hiking-snack',
+  'gift-idea', 'edible-gift', 'entertaining', 'finger-food', 'appetizer',
+  'side-dish', 'main-course', 'dessert', 'breakfast', 'brunch', 'snack',
 ]
 
 const EMPTY_FORM = {
   title: '', description: '', slug: '', videoUrl: '',
-  category: '', cuisine: '', tags: [], featured: false,
+  categories: [], cuisine: '', tags: [], featured: false,
   publishedAt: new Date().toISOString().slice(0, 10),
   difficulty: '', prepTime: '', cookTime: '', servings: '', calories: '',
   mainImageUrl: null, secondaryImageUrl: null,
@@ -74,7 +176,7 @@ function normalizeForm(data) {
     seoTitle: data.seoTitle || '',
     seoDescription: data.seoDescription || '',
     description: data.description || '',
-    category: data.category || '',
+    categories: data.categories?.length ? data.categories : [],
     cuisine: data.cuisine || '',
     difficulty: data.difficulty || '',
     mainImageUrl: data.mainImageUrl || null,
@@ -350,7 +452,7 @@ function NewRecipeTab() {
         <p style={{ color: '#FDF6EE', fontSize: '1.1rem', fontFamily: '"Playfair Display", serif', margin: 0 }}>{preview.title}</p>
         <p style={{ color: 'rgba(253,246,238,0.45)', fontSize: '0.82rem', margin: 0 }}>/{preview.slug}</p>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '0.25rem' }}>
-          {preview.category && <Pill>{preview.category}</Pill>}
+          {preview.categories?.map(c => <Pill key={c}>{c}</Pill>)}
           {preview.cuisine && <Pill>{preview.cuisine}</Pill>}
           {preview.difficulty && <Pill>{preview.difficulty}</Pill>}
           {preview.ingredients?.length > 0 && <Pill>{preview.ingredients.length} ingredient{preview.ingredients.length !== 1 ? 's' : ''}</Pill>}
@@ -359,13 +461,12 @@ function NewRecipeTab() {
       </div>
     )}
 
-    <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '0.5rem' }}>
-      {preview && <ActionButton onClick={() => setPreview(null)} danger>Edit JSON</ActionButton>}
-      {!preview
-        ? <ActionButton onClick={handlePreview}>Preview</ActionButton>
-        : <ActionButton onClick={handleSubmit} loading={loading}>{loading ? 'Publishing...' : 'Publish to Sanity'}</ActionButton>
-      }
-    </div>
+    <div  style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '0.5rem' }}>
+  {mode === 'edit' && <ActionButton onClick={onDone} danger>Discard</ActionButton>}
+  <ActionButton onClick={handleSubmitBtn} loading={loading}>
+    {loading ? (mode === 'edit' ? 'Saving...' : 'Publishing...') : (mode === 'edit' ? 'Save to Sanity' : 'Publish to Sanity')}
+  </ActionButton>
+   </div>
   </>
 )}
   </div>
@@ -420,7 +521,7 @@ function ImageUploadField({ label, value, onChange }) {
         >{uploading ? 'Uploading...' : '↑ Upload'}</div>
       </div>
       {urlValue && !uploading && (
-        <img src={urlValue} alt="" style={{ marginTop: '0.5rem', height: '80px', borderRadius: '8px', objectFit: 'cover', border: '1px solid rgba(255,255,255,0.1)' }} />
+        <img src={urlValue} alt="" style={{ marginTop: '0.5rem', height: '200px', borderRadius: '8px', objectFit: 'cover', border: '1px solid rgba(255,255,255,0.1)' }} />
       )}
       {error && <p style={{ color: '#ff6b7a', fontSize: '0.78rem', marginTop: '0.3rem' }}>{error}</p>}
     </Field>
@@ -433,6 +534,23 @@ function ImageUploadField({ label, value, onChange }) {
 function RecipeForm({ form, setForm, mode, recipeId, onTitleChange, onDone, onSubmit, loading: externalLoading, status: externalStatus }) {
   const [internalLoading, setInternalLoading] = useState(false)
   const [internalStatus, setInternalStatus] = useState(null)
+  const [showFloating, setShowFloating] = useState(false)
+  const [toast, setToast] = useState(null)
+  const bottomBtnRef = useRef(null)
+
+useEffect(() => {
+  const handleScroll = () => {
+    if (bottomBtnRef.current) {
+      const rect = bottomBtnRef.current.getBoundingClientRect()
+      const isVisible = rect.top < window.innerHeight && rect.bottom > 0
+      setShowFloating(window.scrollY > 300 && !isVisible)
+    } else {
+      setShowFloating(window.scrollY > 300)
+    }
+  }
+  window.addEventListener('scroll', handleScroll)
+  return () => window.removeEventListener('scroll', handleScroll)
+}, [])
 
   const loading = mode === 'edit' ? internalLoading : externalLoading
   const status = mode === 'edit' ? internalStatus : externalStatus
@@ -463,6 +581,8 @@ function RecipeForm({ form, setForm, mode, recipeId, onTitleChange, onDone, onSu
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Failed')
       setInternalStatus({ type: 'success', message: `Saved! /${data.slug}`, slug: data.slug })
+      setToast({ slug: data.slug })
+      setTimeout(() => setToast(null), 4000)
     } catch (e) { setInternalStatus({ type: 'error', message: e.message }) }
     finally { setInternalLoading(false) }
   }
@@ -492,11 +612,28 @@ function RecipeForm({ form, setForm, mode, recipeId, onTitleChange, onDone, onSu
           <Textarea value={form.description} onChange={e => set('description', e.target.value)} placeholder="The creamiest weeknight pasta you'll ever make..." rows={2} />
         </Field>
         <Row>
-          <Field label="Category">
-            <Select value={form.category} onChange={e => set('category', e.target.value)}>
-              <option value="">Select...</option>
-              {CATEGORIES.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
-            </Select>
+          <Field label="Categories">
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+            {CATEGORIES.map(c => (
+          <div key={c.value} role="checkbox" aria-checked={form.categories?.includes(c.value)} tabIndex={0}
+        onClick={() => {
+           const current = form.categories || []
+          set('categories', current.includes(c.value) ? current.filter(x => x !== c.value) : [...current, c.value])
+        }}
+        onKeyDown={e => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            const current = form.categories || []
+            set('categories', current.includes(c.value) ? current.filter(x => x !== c.value) : [...current, c.value])
+          }
+        }}
+        style={{ padding: '0.3rem 0.85rem', borderRadius: '50px', cursor: 'pointer', fontFamily: '"Lato", sans-serif', fontSize: '0.78rem', fontWeight: '700', userSelect: 'none', transition: 'all 0.12s',
+          background: form.categories?.includes(c.value) ? 'rgba(232,98,42,0.2)' : 'rgba(255,255,255,0.04)',
+          color: form.categories?.includes(c.value) ? '#F4946A' : 'rgba(253,246,238,0.5)',
+          border: form.categories?.includes(c.value) ? '1px solid rgba(232,98,42,0.5)' : '1px solid rgba(255,255,255,0.08)'
+        }}
+      >{c.label}</div>
+                ))}
+            </div>
           </Field>
           <Field label="Cuisine">
             <Select value={form.cuisine} onChange={e => set('cuisine', e.target.value)}>
@@ -663,12 +800,47 @@ function RecipeForm({ form, setForm, mode, recipeId, onTitleChange, onDone, onSu
 
       <StatusMessage status={status} />
 
-      <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '0.5rem' }}>
+      <div ref={bottomBtnRef}  style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '0.5rem' }}>
         {mode === 'edit' && <ActionButton onClick={onDone} danger>Discard</ActionButton>}
         <ActionButton onClick={handleSubmitBtn} loading={loading}>
           {loading ? (mode === 'edit' ? 'Saving...' : 'Publishing...') : (mode === 'edit' ? 'Save to Sanity' : 'Publish to Sanity')}
         </ActionButton>
       </div>
+      {mode === 'edit' && showFloating && (
+        <div style={{
+          position: 'fixed', bottom: '2rem', right: '25rem', zIndex: 100,
+          display: 'flex', alignItems: 'center', gap: '0.5rem',
+          background: '#E8622A', color: 'white', borderRadius: '50px',
+          padding: '0.75rem 1.5rem', fontFamily: '"Lato", sans-serif',
+          fontWeight: '700', fontSize: '0.88rem',
+          cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1,
+          boxShadow: '0 8px 24px rgba(232,98,42,0.4)', transition: 'opacity 0.15s', userSelect: 'none',
+        }}
+          role="button" tabIndex={0}
+          onClick={loading ? undefined : handleSubmitBtn}
+          onKeyDown={e => (e.key === 'Enter' || e.key === ' ') && !loading && handleSubmitBtn()}
+        >
+          {loading ? 'Saving...' : 'Save to Sanity'}
+          {loading && <span style={{ display: 'inline-flex', animation: 'spin 1s linear infinite' }}><Loader size={14} color="white" /></span>}
+        </div>
+      )}
+      {toast && (
+  <div style={{
+    position: 'fixed', top: '1.5rem', left: '50%', transform: 'translateX(-50%)',
+    zIndex: 200, display: 'flex', alignItems: 'center', gap: '0.6rem',
+    background: 'rgba(40,167,69,0.95)', color: '#fff',
+    borderRadius: '50px', padding: '0.65rem 1.25rem',
+    fontFamily: '"Lato", sans-serif', fontWeight: '700', fontSize: '0.88rem',
+    boxShadow: '0 8px 24px rgba(0,0,0,0.3)', whiteSpace: 'nowrap',
+  }}>
+    <CheckCircle size={15} />
+    Saved!
+    <a href={`/${toast.slug}`} target="_blank" rel="noopener noreferrer"
+      style={{ color: 'white', textDecoration: 'underline', fontSize: '0.82rem' }}>
+      Preview ↗
+    </a>
+  </div>
+)}
     </div>
   )
 }
@@ -860,14 +1032,16 @@ function DeleteAllCard() {
   const [inputVal, setInputVal] = useState('')
 
   const handleDeleteAll = async () => {
-    setLoading(true); setStep('idle'); setInputVal('')
-    try {
-      const res = await fetch('/api/admin/delete-all-recipes', { method: 'POST' }); const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'Request failed')
-      setStatus({ type: 'success', message: `Deleted ${data.deleted} recipe(s) and ${data.ratingsDeleted} rating doc(s).` })
-    } catch (e) { setStatus({ type: 'error', message: e.message }) }
-    finally { setLoading(false) }
-  }
+  setLoading(true); setInputVal('')
+  try {
+    const res = await fetch('/api/admin/delete-all-recipes', { method: 'POST' })
+    const data = await res.json()
+    if (!res.ok) throw new Error(data.error || 'Request failed')
+    setStatus({ type: 'success', message: `Deleted ${data.deleted} recipe(s) and ${data.ratingsDeleted} rating doc(s).` })
+    setStep('idle')
+  } catch (e) { setStatus({ type: 'error', message: e.message }) }
+  finally { setLoading(false) }
+}
 
   return (
     <Card>
@@ -918,10 +1092,11 @@ function ResetRatingsCard() {
       {!confirm ? <ActionButton onClick={() => { setConfirm(true); setStatus(null) }}>Reset ratings</ActionButton> : (
         <div style={{ padding: '1rem', background: 'rgba(232,98,42,0.08)', border: '1px solid rgba(232,98,42,0.25)', borderRadius: '12px' }}>
           <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', marginBottom: '0.75rem' }}><AlertTriangle size={15} color="#F4946A" /><span style={{ color: '#F4946A', fontSize: '0.85rem', fontWeight: '700' }}>All ratings will be wiped. Confirm?</span></div>
-          <div style={{ display: 'flex', gap: '0.75rem' }}><ActionButton onClick={handleReset} loading={loading}>Yes, reset</ActionButton><ActionButton onClick={() => setConfirm(false)} disabled={loading}>Cancel</ActionButton></div>
+          <div style={{ display: 'flex', gap: '0.75rem' }}><ActionButton onClick={handleReset} loading={loading}>Yes, reset</ActionButton><ActionButton onClick={() => setConfirm(false)} disabled={loading}>Cancel</ActionButton></div>   
         </div>
       )}
       <StatusMessage status={status} />
+      
     </Card>
   )
 }

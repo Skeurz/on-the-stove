@@ -136,7 +136,7 @@ export default async function RecipePage({ params }) {
     cookTime: recipe.cookTime ? `PT${recipe.cookTime}M` : undefined,
     totalTime: totalTime > 0 ? `PT${totalTime}M` : undefined,
     recipeYield: recipe.servings ? `${recipe.servings} servings` : undefined,
-    recipeCategory: categoryLabel[recipe.category] || recipe.category,
+    recipeCategory: recipe.categories?.map(c => categoryLabel[c] || c).join(', ') || undefined,
     recipeCuisine: recipe.cuisine || undefined,
     recipeIngredient: recipe.ingredients || [],
     recipeInstructions: recipe.steps?.map((step, i) => ({
@@ -187,11 +187,12 @@ export default async function RecipePage({ params }) {
             color: 'var(--text-light)',
           }}>Home</Link>
           <span style={{ color: 'var(--text-light)', margin: '0 0.4rem' }}>›</span>
-          <Link href={`/category/${recipe.category}`} style={{
+          <Link href={`/category/${recipe.categories?.[0]}`} style={{
             fontFamily: '"Lato", sans-serif',
             fontSize: '0.8rem',
             color: 'var(--text-light)',
-          }}>{categoryLabel[recipe.category] || recipe.category}</Link>
+          }}>{categoryLabel[recipe.categories?.[0]] || recipe.categories?.[0]}
+          </Link>
         </div>
           
           {recipe.publishedAt && (
@@ -736,7 +737,7 @@ export default async function RecipePage({ params }) {
                     paddingBottom: i < recipe.faqs.length - 1 ? '1rem' : 0,
                   }}>
                     <p style={{ fontFamily: '"Playfair Display", serif', fontSize: '1rem', fontWeight: '700', color: 'var(--brown)', marginBottom: '0.5rem' }}>Q: {faq.question}</p>
-                    <p style={{ fontFamily: '"Lato", sans-serif', fontSize: '0.9rem', color: 'var(--text-light)', lineHeight: 1.7, margin: 0 }}>{faq.answer}</p>
+                    <p style={{ fontFamily: '"Lato", sans-serif', fontSize: '0.9rem', color: 'var(--text-light)', lineHeight: 1.7, margin: 0 }}>A: {faq.answer}</p>
                   </div>
                 ))}
               </div>
@@ -1063,9 +1064,9 @@ export default async function RecipePage({ params }) {
         paddingBottom: '4rem',
       }}>
         <SuggestedRecipes 
-          currentRecipeId={recipe._id} 
-          category={recipe.category}
-          tags={recipe.tags || []}
+    currentRecipeId={recipe._id} 
+    categories={recipe.categories || []}
+    tags={recipe.tags || []}
         />
       </div>
 

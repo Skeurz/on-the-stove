@@ -3,10 +3,10 @@ import { getSuggestedRecipes } from '@/sanity/lib/queries'
 import { urlFor } from '@/sanity/lib/image'
 import RecipeCard from './RecipeCard'
 
-export default async function SuggestedRecipes({ currentRecipeId, category, tags }) {
+export default async function SuggestedRecipes({ currentRecipeId, categories, tags }) {
   const recipes = await client.fetch(getSuggestedRecipes, {
     currentId: currentRecipeId || '',
-    category: category || '',
+    categories: categories || [],
     tags: tags || [],
   })
 

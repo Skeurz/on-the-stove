@@ -102,23 +102,24 @@ export const recipe = {
       description: 'YouTube or TikTok URL for the recipe video',
     },
     {
-      name: 'category',
-      title: 'Category',
-      type: 'string',
+      name: 'categories',
+      title: 'Categories',
+      type: 'array',
       group: 'content',
+      of: [{ type: 'string' }],
       options: {
-        list: [
-          { title: 'Lunch', value: 'lunch' },
-          { title: 'Dinner', value: 'dinner' },
-          { title: 'Breakfast & Brunch', value: 'breakfastnbrunch' },
-          { title: 'Snacks & Sides', value: 'snacksnsides' },
-          { title: 'Desserts', value: 'desserts' },
-          { title: 'Drinks & Shakes', value: 'drinks-shakes' },
-          { title: 'My Collection', value: 'my-collection' },
-        ]
-      },
-      validation: Rule => Rule.required()
-    },
+      list: [
+      { title: 'Lunch', value: 'lunch' },
+      { title: 'Dinner', value: 'dinner' },
+      { title: 'Breakfast & Brunch', value: 'breakfastnbrunch' },
+      { title: 'Snacks & Sides', value: 'snacksnsides' },
+      { title: 'Desserts', value: 'desserts' },
+      { title: 'Drinks & Shakes', value: 'drinks-shakes' },
+      { title: 'My Collection', value: 'my-collection' },
+    ]
+  },
+  validation: Rule => Rule.required().min(1)
+},
     {
       name: 'cuisine',
       title: 'Cuisine',

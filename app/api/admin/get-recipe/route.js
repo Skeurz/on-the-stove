@@ -24,7 +24,7 @@ export async function POST(request) {
 
   const results = await client.fetch(
     `*[_type == "recipe" && lower(title) == lower($title)]{
-  _id, title, "slug": slug.current, description, category, cuisine, tags,
+  _id, title, "slug": slug.current, description, categories, cuisine, tags,
   featured, publishedAt, difficulty, prepTime, cookTime, servings, calories,
   videoUrl, ingredients, steps, helpfulTips, variations, veganAdaptation,
   storageTips, faqs,
