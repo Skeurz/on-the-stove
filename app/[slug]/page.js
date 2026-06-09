@@ -466,7 +466,7 @@ export default async function RecipePage({ params }) {
           )}
 
           {/* Preparation Photos */}
-          {recipe.preparationImages?.length > 0 && (
+          {recipe.preparationImages?.filter(item => item.image).length > 0 && (
             <div id="prep-photos" style={{
               background: 'var(--cream-light)',
               borderRadius: '20px',
