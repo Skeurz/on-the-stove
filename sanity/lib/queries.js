@@ -1,4 +1,5 @@
 import { defineQuery } from 'next-sanity'
+import groq from 'groq'
 
 export const getAllRecipes = defineQuery(`
   *[_type == "recipe"] | order(publishedAt desc) {
@@ -89,3 +90,9 @@ export const getSuggestedRecipes = defineQuery(`
     prepTime, cookTime, ratingTotal, ratingCount, difficulty
   }
 `)
+
+export const getFeaturedRecipes = groq`{
+  "recipes": *[_type == "recipe" && featured == true] | order(_createdAt desc) {
+    _id, title, slug, mainImage, categories, cuisine, difficulty, prepTime, cookTime, rating
+  },
+}`

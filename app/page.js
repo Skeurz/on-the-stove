@@ -1,5 +1,5 @@
 import { client } from '@/sanity/lib/client'
-import { getPaginatedRecipes, getAuthor } from '@/sanity/lib/queries'
+import { getPaginatedRecipes, getAuthor, getFeaturedRecipes } from '@/sanity/lib/queries'
 import { urlFor } from '@/sanity/lib/image'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -14,14 +14,10 @@ const RECIPES_PER_PAGE = 8
 
 export default async function Home({ searchParams }) {
   const params = await searchParams
-  const currentPage = Math.max(Number(params?.page) || 1, 1)
-  const start = (currentPage - 1) * RECIPES_PER_PAGE
-  const end = start + RECIPES_PER_PAGE
-  const [{ recipes, total }, author] = await Promise.all([
-    client.fetch(getPaginatedRecipes, { start, end }),
-    client.fetch(getAuthor),
-  ])
-  const totalPages = Math.max(Math.ceil(total / RECIPES_PER_PAGE), 1)
+  const [{ recipes }, author] = await Promise.all([
+  client.fetch(getFeaturedRecipes),
+  client.fetch(getAuthor),
+])
 
   return (
     <div>
@@ -207,7 +203,7 @@ export default async function Home({ searchParams }) {
                        color: 'var(--brown)',
                        margin: 0,
                      }}>
-                       Recent Recipes
+                       Featured Recipes
                      </h2>
                    </div>
                    <div className="heading-card" style={{
@@ -239,10 +235,6 @@ export default async function Home({ searchParams }) {
                 />
               ))}
             </div>
-
-{totalPages > 1 && (
-               <Pagination currentPage={currentPage} totalPages={totalPages} />
-             )}
            </div>
 
            {author && (
@@ -343,7 +335,7 @@ export default async function Home({ searchParams }) {
 }
 
 
-function Pagination({ currentPage, totalPages }) {
+/* function Pagination({ currentPage, totalPages }) {
   const pages = Array.from({ length: totalPages }, (_, index) => index + 1)
   const pageHref = (page) => page === 1 ? '/#recipes-grid' : `/?page=${page}#recipes-grid`
 
@@ -401,4 +393,4 @@ function PageLink({ href, active = false, children }) {
       {children}
     </Link>
   )
-}
+} */
