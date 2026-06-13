@@ -10,7 +10,7 @@ import { ArrowRight, CakeSlice, Coffee, Pizza, Salad, Sandwich, Sparkles } from 
 import { HeroSearch } from './components/Navbar'
 import HeroVideo from './components/HeroVideo'
 
-const RECIPES_PER_PAGE = 8
+const RECIPES_PER_PAGE = 8 
 
 export default async function Home({ searchParams }) {
   const params = await searchParams
@@ -18,6 +18,10 @@ export default async function Home({ searchParams }) {
   client.fetch(getFeaturedRecipes),
   client.fetch(getAuthor),
 ])
+
+  const displayed = recipes
+  .sort(() => Math.random() - 0.5)
+  .slice(0, RECIPES_PER_PAGE)
 
   return (
     <div>
