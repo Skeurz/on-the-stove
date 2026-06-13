@@ -60,81 +60,102 @@ const ALL_TAGS = [
   'whole30', 'nut-free', 'egg-free', 'soy-free', 'grain-free', 'refined-sugar-free',
   'high-protein', 'high-fiber', 'anti-inflammatory', 'mediterranean-diet', 'raw',
   'macrobiotic', 'fodmap-friendly', 'diabetic-friendly', 'heart-healthy', 'gut-friendly',
-
   // Meal Prep & Planning
   'meal-prep', 'make-ahead', 'freezer-friendly', 'batch-cooking', 'meal-plan',
   'leftover-friendly', 'fridge-staples', 'pantry-staples', 'zero-waste', 'prep-ahead',
-
   // Time
   'under-15-min', 'under-30-min', 'under-1-hour', 'quick', '5-minute', '10-minute',
   'overnight', 'slow-cook', 'all-day', '2-hour',
-
   // Effort & Skill
   'beginner', 'easy', 'intermediate', 'advanced', 'no-cook', 'no-bake', 'minimal-dishes',
   'one-pot', 'one-pan', 'sheet-pan', 'one-bowl', 'dump-and-go', 'set-and-forget',
   '5-ingredients', 'few-ingredients', 'simple', 'foolproof',
-
   // Occasion
   'date-night', 'holiday', 'christmas', 'thanksgiving', 'easter', 'halloween',
   'new-year', 'valentines-day', 'mothers-day', 'fathers-day', 'birthday', 'brunch-party',
   'dinner-party', 'potluck', 'game-day', 'tailgate', 'picnic', 'bbq', 'baby-shower',
   'wedding', 'graduation', 'sunday-dinner', 'weeknight', 'special-occasion',
-
   // Season
   'summer', 'winter', 'spring', 'fall', 'seasonal', 'warm-weather', 'cold-weather',
-
   // Audience
   'kid-friendly', 'toddler-friendly', 'family-friendly', 'crowd-pleaser',
   'college-student', 'solo-meal', 'couples', 'picky-eater', 'office-lunch',
-
   // Method
   'baked', 'grilled', 'fried', 'air-fryer', 'instant-pot', 'slow-cooker', 'stovetop',
   'microwave', 'steamed', 'roasted', 'broiled', 'poached', 'smoked', 'pressure-cooker',
-  'sous-vide', 'deep-fried', 'pan-fried', 'stir-fried', 'braised', 'sauteed', 
+  'sous-vide', 'deep-fried', 'pan-fried', 'stir-fried', 'braised', 'sauteed',
   'blended', 'no-heat', 'cast-iron', 'wok', 'dutch-oven',
-
   // Texture & Style
   'crispy', 'creamy', 'crunchy', 'tender', 'fluffy', 'chewy', 'sticky', 'juicy',
   'rich', 'light', 'hearty', 'comforting', 'indulgent', 'refreshing', 'spicy',
   'smoky', 'tangy', 'sweet', 'savory', 'umami', 'bold', 'mild',
-
   // Budget
   'budget-friendly', 'cheap-eats', 'expensive-ingredients', 'luxury', 'affordable',
   'value-meal', 'dollar-store', 'costco-friendly',
-
   // Health Goals
   'weight-loss', 'muscle-gain', 'energy-boost', 'detox', 'immunity-boost',
   'post-workout', 'pre-workout', 'gut-health', 'skin-health', 'hormone-balance',
   'bone-health', 'brain-food', 'fertility-friendly',
-
   // Protein Source
   'chicken', 'beef', 'pork', 'lamb', 'turkey', 'seafood', 'fish', 'shrimp',
   'salmon', 'tuna', 'tofu', 'tempeh', 'legumes', 'beans', 'lentils', 'eggs',
   'cheese', 'plant-based-protein', 'venison', 'duck',
-
   // Carb/Base
   'pasta', 'rice', 'quinoa', 'bread', 'noodles', 'potatoes', 'couscous',
   'polenta', 'oats', 'tortilla', 'flatbread', 'cauliflower-base',
-
   // Cuisine (extra)
   'fusion', 'comfort-food', 'street-food', 'fine-dining', 'bistro', 'cafe-style',
   'diner', 'food-truck', 'farm-to-table', 'traditional', 'modern', 'classic',
-
   // Format
   'soup', 'salad', 'sandwich', 'wrap', 'bowl', 'stew', 'casserole', 'curry',
   'stir-fry', 'taco', 'burger', 'pizza', 'pie', 'tart', 'galette', 'frittata',
   'smoothie', 'juice', 'cocktail', 'mocktail', 'dip', 'spread', 'sauce',
   'marinade', 'dressing', 'gravy', 'jam', 'preserve', 'granola', 'energy-ball',
-
   // Trending
   'viral', 'tiktok-recipe', 'instagram-worthy', 'trending', 'popular', 'classic-remake',
   'elevated-basics', 'restaurant-copycat', 'takeout-at-home',
-
   // Misc
   'no-mixer', 'no-oven', 'no-blender', 'portable', 'lunchbox', 'school-lunch',
   'office-friendly', 'dorm-room', 'camping', 'backpacking', 'hiking-snack',
   'gift-idea', 'edible-gift', 'entertaining', 'finger-food', 'appetizer',
   'side-dish', 'main-course', 'dessert', 'breakfast', 'brunch', 'snack',
+  // Vegetables
+  'tomato', 'onion', 'garlic', 'ginger', 'carrot', 'celery', 'bell-pepper',
+  'spinach', 'kale', 'broccoli', 'cauliflower', 'zucchini', 'eggplant',
+  'cucumber', 'lettuce', 'cabbage', 'brussels-sprouts', 'asparagus', 'corn',
+  'peas', 'green-beans', 'mushrooms', 'sweet-potato', 'butternut-squash',
+  'pumpkin', 'beet', 'radish', 'turnip', 'parsnip', 'leek', 'shallot',
+  'artichoke', 'fennel', 'bok-choy', 'swiss-chard', 'arugula', 'watercress',
+  'endive', 'radicchio', 'kohlrabi', 'okra', 'chili-pepper', 'jalapeno',
+  'serrano', 'habanero', 'poblano', 'anaheim-pepper', 'banana-pepper',
+  'snap-peas', 'edamame', 'bamboo-shoots', 'water-chestnuts', 'daikon',
+  'jicama', 'cassava', 'taro', 'plantain', 'yam', 'lotus-root',
+  // Fruits
+  'apple', 'banana', 'orange', 'lemon', 'lime', 'grapefruit', 'strawberry',
+  'blueberry', 'raspberry', 'blackberry', 'cherry', 'grape', 'watermelon',
+  'cantaloupe', 'honeydew', 'pineapple', 'mango', 'papaya', 'guava', 'kiwi',
+  'peach', 'nectarine', 'plum', 'apricot', 'pear', 'fig', 'date', 'pomegranate',
+  'passion-fruit', 'dragon-fruit', 'lychee', 'rambutan', 'jackfruit', 'durian',
+  'starfruit', 'persimmon', 'quince', 'mulberry', 'gooseberry', 'cranberry',
+  'boysenberry', 'elderberry', 'coconut', 'avocado', 'olive', 'tomato-fruit',
+  'tamarind', 'kumquat', 'clementine', 'mandarin', 'blood-orange', 'yuzu',
+  // Meats
+  'chicken-breast', 'chicken-thigh', 'chicken-wings', 'chicken-drumsticks',
+  'whole-chicken', 'ground-chicken', 'beef-steak', 'ground-beef', 'beef-ribs',
+  'beef-brisket', 'beef-roast', 'beef-short-ribs', 'oxtail', 'beef-tenderloin',
+  'ribeye', 'sirloin', 'flank-steak', 'skirt-steak', 'chuck', 'pork-chops',
+  'pork-belly', 'pork-ribs', 'ground-pork', 'pork-tenderloin', 'pork-shoulder',
+  'bacon', 'ham', 'prosciutto', 'pancetta', 'sausage', 'chorizo', 'salami',
+  'pepperoni', 'hot-dog', 'lamb-chops', 'lamb-leg', 'ground-lamb', 'rack-of-lamb',
+  'lamb-shoulder', 'turkey-breast', 'ground-turkey', 'whole-turkey', 'duck-breast',
+  'duck-legs', 'veal', 'rabbit', 'venison-steak', 'bison', 'quail', 'goat',
+  'liver', 'kidney', 'heart', 'tripe', 'bone-marrow',
+  // Seafood & Fish
+  'salmon-fillet', 'tuna-steak', 'cod', 'halibut', 'tilapia', 'sea-bass',
+  'snapper', 'mahi-mahi', 'swordfish', 'trout', 'sardines', 'anchovies',
+  'mackerel', 'herring', 'catfish', 'flounder', 'sole', 'grouper', 'monkfish',
+  'shrimp-prawns', 'lobster', 'crab', 'scallops', 'mussels', 'clams', 'oysters',
+  'squid', 'octopus', 'cuttlefish',
 ]
 
 const EMPTY_FORM = {
@@ -462,10 +483,10 @@ function NewRecipeTab() {
     )}
 
     <div  style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '0.5rem' }}>
-  {mode === 'edit' && <ActionButton onClick={onDone} danger>Discard</ActionButton>}
-  <ActionButton onClick={handleSubmitBtn} loading={loading}>
-    {loading ? (mode === 'edit' ? 'Saving...' : 'Publishing...') : (mode === 'edit' ? 'Save to Sanity' : 'Publish to Sanity')}
-  </ActionButton>
+  
+<ActionButton onClick={handleSubmit} loading={loading}>
+  {loading ? 'Publishing...' : 'Publish to Sanity'}
+</ActionButton>
    </div>
   </>
 )}
