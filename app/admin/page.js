@@ -280,7 +280,11 @@ function RecipesListCard({ setActiveTab }) {
   let diff = 0
   if (sortField === 'date') diff = new Date(b.publishedAt || 0) - new Date(a.publishedAt || 0)
   if (sortField === 'name') diff = a.title.localeCompare(b.title)
-  if (sortField === 'rating') diff = (b.avgRating || 0) - (a.avgRating || 0)
+  if (sortField === 'rating') {
+  const aAvg = a.ratingCount > 0 ? a.ratingTotal / a.ratingCount : 0
+  const bAvg = b.ratingCount > 0 ? b.ratingTotal / b.ratingCount : 0
+  diff = bAvg - aAvg
+}
 
   return sortDir === 'desc' ? diff : -diff
   })
@@ -324,36 +328,34 @@ function RecipesListCard({ setActiveTab }) {
   return (
     <div>
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.75rem' }}>
-  <p style={{ color: '#FDF6EE', fontFamily: '"Playfair Display", serif', fontSize: '1.1rem', margin: 0 }}>
-    All Recipes <span style={{ color: 'rgba(253,246,238,0.4)', fontSize: '0.82rem', fontFamily: '"Lato", sans-serif' }}>({filtered.length}/{recipes.length})</span>
-  </p>
-  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
-    {['date', 'name', 'rating'].map(field => (
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+  {['date', 'name', 'rating'].map(field => {
+    const isActive = sortField === field
+    const isDesc = sortDir === 'desc'
+    return (
       <div key={field} role="button" tabIndex={0}
-        onClick={() => setSortField(field)}
-        style={{ padding: '0.3rem 0.85rem', borderRadius: '50px', cursor: 'pointer', fontFamily: '"Lato", sans-serif', fontSize: '0.78rem', fontWeight: '700', userSelect: 'none',
-          background: sortField === field ? 'rgba(232,98,42,0.2)' : 'rgba(255,255,255,0.04)',
-          color: sortField === field ? '#F4946A' : 'rgba(253,246,238,0.5)',
-          border: sortField === field ? '1px solid rgba(232,98,42,0.5)' : '1px solid rgba(255,255,255,0.08)',
+        onClick={() => {
+          if (sortField === field) setSortDir(d => d === 'desc' ? 'asc' : 'desc')
+          else { setSortField(field); setSortDir('desc') }
+        }}
+        style={{ padding: '0.3rem 0.85rem', borderRadius: '50px', cursor: 'pointer', fontFamily: '"Lato", sans-serif', fontSize: '0.78rem', fontWeight: '700', userSelect: 'none', display: 'flex', alignItems: 'center', gap: '0.3rem',
+          background: isActive ? 'rgba(232,98,42,0.2)' : 'rgba(255,255,255,0.04)',
+          color: isActive ? '#F4946A' : 'rgba(253,246,238,0.5)',
+          border: isActive ? '1px solid rgba(232,98,42,0.5)' : '1px solid rgba(255,255,255,0.08)',
         }}>
         {field.charAt(0).toUpperCase() + field.slice(1)}
+        {isActive && <span style={{ fontSize: '0.7rem' }}>{isDesc ? <ArrowBigDown size={13} fill='#FFFFFF'/> : <ArrowBigUp size={13} fill='#FFFFFF'/>}</span>}
       </div>
-    ))}
-    <div role="button" tabIndex={0}
-      onClick={() => setSortDir(d => d === 'desc' ? 'asc' : 'desc')}
-      style={{ padding: '0.3rem 0.85rem', borderRadius: '50px', cursor: 'pointer', fontFamily: '"Lato", sans-serif', fontSize: '0.78rem', fontWeight: '700', userSelect: 'none', background: 'rgba(255,255,255,0.04)', color: 'rgba(253,246,238,0.5)', border: '1px solid rgba(255,255,255,0.08)' }}>
-      {sortDir === 'desc' ? <ArrowBigDown size={13} fill='#FFFFFF' /> : <ArrowBigUp size={13} fill='#FFFFFF' />}
-    </div>
-    <div role="button" tabIndex={0}
-      onClick={() => setFeaturedFirst(f => !f)}
-      style={{ padding: '0.3rem 0.85rem', borderRadius: '50px', cursor: 'pointer', fontFamily: '"Lato", sans-serif', fontSize: '0.78rem', fontWeight: '700', userSelect: 'none',
-        background: featuredFirst ? 'rgba(232,98,42,0.2)' : 'rgba(255, 255, 255, 0.04)',
-        color: featuredFirst ? '#F4946A' : 'rgba(253,246,238,0.5)',
-        border: featuredFirst ? '1px solid rgba(232,98,42,0.5)' : '1px solid rgba(255,255,255,0.08)',
-      }}>
-      ★ Featured first
-    </div>
+    )
+  })}
+  <div role="button" tabIndex={0}
+    onClick={() => setFeaturedFirst(f => !f)}
+    style={{ padding: '0.3rem 0.85rem', borderRadius: '50px', cursor: 'pointer', fontFamily: '"Lato", sans-serif', fontSize: '0.78rem', fontWeight: '700', userSelect: 'none',
+      background: featuredFirst ? 'rgba(232,98,42,0.2)' : 'rgba(255,255,255,0.04)',
+      color: featuredFirst ? '#F4946A' : 'rgba(253,246,238,0.5)',
+      border: featuredFirst ? '1px solid rgba(232,98,42,0.5)' : '1px solid rgba(255,255,255,0.08)',
+    }}>
+    ★ Featured first
   </div>
 </div>
 
@@ -516,6 +518,16 @@ function EditRecipeTab() {
   const [searchStatus, setSearchStatus] = useState(null)
 
   useEffect(() => {
+  // Handle navigation from recipe page (EditRecipeButton)
+  const slug = sessionStorage.getItem('admin-edit-slug')
+  if (slug) {
+    sessionStorage.removeItem('admin-edit-slug')
+    setSearchQuery(slug)
+    loadRecipe(slug)
+    return
+  }
+
+  // Handle click from DB tab (custom event)
   const handler = (e) => {
     const title = e.detail?.title
     if (!title) return
@@ -524,7 +536,7 @@ function EditRecipeTab() {
   }
   window.addEventListener('admin-edit-recipe', handler)
   return () => window.removeEventListener('admin-edit-recipe', handler)
-}, [])
+  }, [])
 
   const handleSearchChange = (e) => {
     const val = e.target.value
