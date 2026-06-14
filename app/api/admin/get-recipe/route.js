@@ -19,26 +19,40 @@ export async function POST(request) {
     return NextResponse.json({ error: 'Not found' }, { status: 404 })
   }
 
-  const { title } = await request.json()
-  if (!title?.trim()) return NextResponse.json({ error: 'Title required' }, { status: 400 })
+  const body = await request.json()
+  const { title, slug } = body
 
-  const results = await client.fetch(
-    `*[_type == "recipe" && lower(title) == lower($title)]{
-  _id, title, "slug": slug.current, description, categories, cuisine, tags,
-  featured, publishedAt, difficulty, prepTime, cookTime, servings, calories,
-  videoUrl, ingredients, steps, helpfulTips, variations, veganAdaptation,
-  storageTips, faqs,
-  "mainImageUrl": mainImage.asset->url,
-  "secondaryImageUrl": secondaryImage.asset->url,
-  "preparationImages": preparationImages[]{
-    stepNumber, caption, _key,
-    "imageUrl": image.asset->url
-  },
-  seoTitle, seoDescription
-       }`,
-    { title: title.trim() }
-  )
+  const query = `{
+    _id, title, "slug": slug.current, description, categories, cuisine, tags,
+    featured, publishedAt, difficulty, prepTime, cookTime, servings, calories,
+    videoUrl, ingredients, steps, helpfulTips, variations, veganAdaptation,
+    storageTips, faqs,
+    "mainImageUrl": mainImage.asset->url,
+    "secondaryImageUrl": secondaryImage.asset->url,
+    "preparationImages": preparationImages[]{
+      stepNumber, caption, _key,
+      "imageUrl": image.asset->url
+    },
+    seoTitle, seoDescription
+  }`
 
-  if (results.length === 0) return NextResponse.json({ found: null })
-  return NextResponse.json({ found: results[0] })
+  let found = null
+
+  if (title?.trim()) {
+    const results = await client.fetch(
+      `*[_type == "recipe" && lower(title) == lower($title)]${query}`,
+      { title: title.trim() }
+    )
+    found = results[0] || null
+  }
+
+  if (!found && slug?.trim()) {
+    const results = await client.fetch(
+      `*[_type == "recipe" && slug.current == $slug]${query}`,
+      { slug: slug.trim() }
+    )
+    found = results[0] || null
+  }
+
+  return NextResponse.json({ found: found || null })
 }

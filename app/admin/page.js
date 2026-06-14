@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { Trash2, RotateCcw, AlertTriangle, CheckCircle, XCircle, Loader, X, ChevronDown, ChevronUp, Pencil, ExternalLink  } from 'lucide-react'
+import { Trash2, RotateCcw, AlertTriangle, CheckCircle, XCircle, Loader, X, ChevronDown, ChevronUp, Pencil, ExternalLink, ArrowBigDown, ArrowBigUp  } from 'lucide-react'
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -205,6 +205,254 @@ function normalizeForm(data) {
   }
 }
 
+function ResetRatingsPill() {
+  const [loading, setLoading] = useState(false)
+  const [confirm, setConfirm] = useState(false)
+  const [status, setStatus] = useState(null)
+
+  const handleReset = async () => {
+    setLoading(true)
+    try {
+      const res = await fetch('/api/admin/reset-ratings', { method: 'POST' })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Request failed')
+      setConfirm(false)
+      setStatus('done')
+      setTimeout(() => setStatus(null), 3000)
+    } catch (e) { setConfirm(false) }
+    finally { setLoading(false) }
+  }
+
+  if (confirm) return (
+    <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
+      <div role="button" tabIndex={0} onClick={handleReset}
+        style={{ padding: '0.55rem 1rem', borderRadius: '50px', fontFamily: '"Lato", sans-serif', fontWeight: '700', fontSize: '0.82rem', cursor: loading ? 'not-allowed' : 'pointer', background: 'rgba(220,53,69,0.2)', color: '#ff6b7a', border: '1px solid rgba(220,53,69,0.4)', opacity: loading ? 0.6 : 1 }}>
+        {loading ? 'Resetting...' : 'Confirm reset'}
+      </div>
+      <div role="button" tabIndex={0} onClick={() => setConfirm(false)}
+        style={{ padding: '0.55rem 1rem', borderRadius: '50px', fontFamily: '"Lato", sans-serif', fontWeight: '700', fontSize: '0.82rem', cursor: 'pointer', background: 'rgba(255,255,255,0.06)', color: 'rgba(253,246,238,0.6)', border: '1px solid rgba(255,255,255,0.1)' }}>
+        Cancel
+      </div>
+    </div>
+  )
+
+  return (
+    <div role="button" tabIndex={0} onClick={() => setConfirm(true)}
+      style={{ padding: '0.55rem 1.25rem', borderRadius: '50px', fontFamily: '"Lato", sans-serif', fontWeight: '700', fontSize: '0.88rem', cursor: 'pointer', userSelect: 'none', background: status === 'done' ? 'rgba(40,167,69,0.15)' : 'rgba(255,255,255,0.06)', color: status === 'done' ? '#6bcb77' : 'rgba(253,246,238,0.6)', border: status === 'done' ? '1px solid rgba(40,167,69,0.3)' : '1px solid rgba(255,255,255,0.1)', transition: 'all 0.15s' }}>
+      {status === 'done' ? '✓ Ratings reset' : '↺ Reset Ratings'}
+    </div>
+  )
+}
+
+function RecipesListCard({ setActiveTab }) {
+  const [recipes, setRecipes] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [sortField, setSortField] = useState('date')
+  const [sortDir, setSortDir] = useState('desc')
+  const [featuredFirst, setFeaturedFirst] = useState(false)
+  const [search, setSearch] = useState('')
+  const [deletingId, setDeletingId] = useState(null)
+  const [togglingId, setTogglingId] = useState(null)
+
+  const fetchRecipes = async () => {
+    setLoading(true)
+    try {
+      const res = await fetch('/api/admin/list-recipes')
+      const data = await res.json()
+      setRecipes(data.recipes || [])
+    } catch (e) {}
+    finally { setLoading(false) }
+  }
+
+  useEffect(() => { fetchRecipes() }, [])
+
+  const filtered = recipes.filter(r =>
+    r.title.toLowerCase().includes(search.toLowerCase())
+  )
+
+  const sorted = [...filtered].sort((a, b) => {
+  // Featured always on top if toggled
+  if (featuredFirst) {
+    const featDiff = (b.featured ? 1 : 0) - (a.featured ? 1 : 0)
+    if (featDiff !== 0) return featDiff
+  }
+
+  let diff = 0
+  if (sortField === 'date') diff = new Date(b.publishedAt || 0) - new Date(a.publishedAt || 0)
+  if (sortField === 'name') diff = a.title.localeCompare(b.title)
+  if (sortField === 'rating') diff = (b.avgRating || 0) - (a.avgRating || 0)
+
+  return sortDir === 'desc' ? diff : -diff
+  })
+
+  const handleDelete = async (recipe) => {
+    if (!confirm(`Delete "${recipe.title}"?`)) return
+    setDeletingId(recipe._id)
+    try {
+      const res = await fetch('/api/admin/delete-recipe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: recipe.title, dryRun: false }),
+      })
+      if (res.ok) setRecipes(r => r.filter(x => x._id !== recipe._id))
+    } catch (e) {}
+    finally { setDeletingId(null) }
+  }
+
+  const handleToggleFeatured = async (recipe) => {
+    setTogglingId(recipe._id)
+    try {
+      const res = await fetch('/api/admin/update-recipe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ _id: recipe._id, featured: !recipe.featured }),
+      })
+      if (res.ok) setRecipes(r => r.map(x => x._id === recipe._id ? { ...x, featured: !x.featured } : x))
+    } catch (e) {}
+    finally { setTogglingId(null) }
+  }
+
+  const handleEdit = (recipe) => {
+  setActiveTab('edit')
+  // small delay to let EditRecipeTab mount first
+  setTimeout(() => {
+    window._adminEditTitle = recipe.title
+    window.dispatchEvent(new CustomEvent('admin-edit-recipe', { detail: { title: recipe.title } }))
+  }, 50)
+}
+
+  return (
+    <div>
+      {/* Header */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.75rem' }}>
+  <p style={{ color: '#FDF6EE', fontFamily: '"Playfair Display", serif', fontSize: '1.1rem', margin: 0 }}>
+    All Recipes <span style={{ color: 'rgba(253,246,238,0.4)', fontSize: '0.82rem', fontFamily: '"Lato", sans-serif' }}>({filtered.length}/{recipes.length})</span>
+  </p>
+  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+    {['date', 'name', 'rating'].map(field => (
+      <div key={field} role="button" tabIndex={0}
+        onClick={() => setSortField(field)}
+        style={{ padding: '0.3rem 0.85rem', borderRadius: '50px', cursor: 'pointer', fontFamily: '"Lato", sans-serif', fontSize: '0.78rem', fontWeight: '700', userSelect: 'none',
+          background: sortField === field ? 'rgba(232,98,42,0.2)' : 'rgba(255,255,255,0.04)',
+          color: sortField === field ? '#F4946A' : 'rgba(253,246,238,0.5)',
+          border: sortField === field ? '1px solid rgba(232,98,42,0.5)' : '1px solid rgba(255,255,255,0.08)',
+        }}>
+        {field.charAt(0).toUpperCase() + field.slice(1)}
+      </div>
+    ))}
+    <div role="button" tabIndex={0}
+      onClick={() => setSortDir(d => d === 'desc' ? 'asc' : 'desc')}
+      style={{ padding: '0.3rem 0.85rem', borderRadius: '50px', cursor: 'pointer', fontFamily: '"Lato", sans-serif', fontSize: '0.78rem', fontWeight: '700', userSelect: 'none', background: 'rgba(255,255,255,0.04)', color: 'rgba(253,246,238,0.5)', border: '1px solid rgba(255,255,255,0.08)' }}>
+      {sortDir === 'desc' ? <ArrowBigDown size={13} fill='#FFFFFF' /> : <ArrowBigUp size={13} fill='#FFFFFF' />}
+    </div>
+    <div role="button" tabIndex={0}
+      onClick={() => setFeaturedFirst(f => !f)}
+      style={{ padding: '0.3rem 0.85rem', borderRadius: '50px', cursor: 'pointer', fontFamily: '"Lato", sans-serif', fontSize: '0.78rem', fontWeight: '700', userSelect: 'none',
+        background: featuredFirst ? 'rgba(232,98,42,0.2)' : 'rgba(255, 255, 255, 0.04)',
+        color: featuredFirst ? '#F4946A' : 'rgba(253,246,238,0.5)',
+        border: featuredFirst ? '1px solid rgba(232,98,42,0.5)' : '1px solid rgba(255,255,255,0.08)',
+      }}>
+      ★ Featured first
+    </div>
+  </div>
+</div>
+
+      {/* Search */}
+      <input
+        type="text"
+        value={search}
+        onChange={e => setSearch(e.target.value)}
+        placeholder="Search recipes..."
+        style={{ width: '100%', marginBottom: '1rem', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '50px', padding: '0.55rem 1.1rem', color: '#FDF6EE', fontFamily: '"Lato", sans-serif', fontSize: '0.88rem', outlineColor: '#E8622A', boxSizing: 'border-box' }}
+      />
+
+      {loading ? (
+        <div style={{ textAlign: 'center', padding: '2rem', color: 'rgba(253,246,238,0.4)', fontFamily: '"Lato", sans-serif', fontSize: '0.88rem' }}>Loading recipes...</div>
+      ) : sorted.length === 0 ? (
+        <div style={{ textAlign: 'center', padding: '2rem', color: 'rgba(253,246,238,0.4)', fontFamily: '"Lato", sans-serif', fontSize: '0.88rem' }}>No recipes found.</div>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+          {sorted.map(recipe => {
+            const avg = recipe.ratingCount > 0 ? (recipe.ratingTotal / recipe.ratingCount).toFixed(1) : null
+            return (
+              <div key={recipe._id} style={{
+                display: 'grid',
+                gridTemplateColumns: '44px 1fr auto auto auto',
+                alignItems: 'center',
+                gap: '0.75rem',
+                background: 'rgba(255,255,255,0.04)',
+                border: '1px solid rgba(255,255,255,0.08)',
+                borderRadius: '12px',
+                padding: '0.75rem 1rem',
+              }}>
+                {/* Image */}
+                <div style={{ width: '44px', height: '44px', borderRadius: '50%', overflow: 'hidden', background: '#3D2010', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#F4946A', fontSize: '0.65rem', fontWeight: '700' }}>
+                  {recipe.imageUrl
+                    ? <img src={recipe.imageUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    : 'OTS'}
+                </div>
+
+                {/* Name + date + rating */}
+                <div style={{ minWidth: 0 }}>
+                  <p style={{ fontFamily: '"Lato", sans-serif', fontWeight: '700', fontSize: '0.88rem', color: '#FDF6EE', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {recipe.title}
+                  </p>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginTop: '0.2rem', flexWrap: 'wrap' }}>
+                    {recipe.publishedAt && (
+                      <span style={{ fontFamily: '"Lato", sans-serif', fontSize: '0.72rem', color: 'rgba(253,246,238,0.35)' }}>
+                        {new Date(recipe.publishedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+                      </span>
+                    )}
+                    {avg ? (
+                      <span style={{ fontFamily: '"Lato", sans-serif', fontSize: '0.72rem', color: '#F4946A', fontWeight: '700' }}>
+                        ★ {avg} ({recipe.ratingCount})
+                      </span>
+                    ) : (
+                      <span style={{ fontFamily: '"Lato", sans-serif', fontSize: '0.72rem', color: 'rgba(253,246,238,0.25)' }}>
+                        No ratings
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Featured toggle */}
+                <div
+                  role="checkbox" aria-checked={recipe.featured} tabIndex={0}
+                  onClick={() => !togglingId && handleToggleFeatured(recipe)}
+                  onKeyDown={e => (e.key === 'Enter' || e.key === ' ') && !togglingId && handleToggleFeatured(recipe)}
+                  style={{ width: '36px', height: '20px', borderRadius: '50px', background: recipe.featured ? '#E8622A' : 'rgba(255,255,255,0.12)', position: 'relative', cursor: togglingId === recipe._id ? 'wait' : 'pointer', transition: 'background 0.2s', flexShrink: 0, opacity: togglingId === recipe._id ? 0.5 : 1 }}
+                >
+                  <div style={{ position: 'absolute', top: '2px', left: recipe.featured ? '18px' : '2px', width: '16px', height: '16px', borderRadius: '50%', background: 'white', transition: 'left 0.2s' }} />
+                </div>
+
+                {/* Edit */}
+                    <div
+                role="button" tabIndex={0}
+                onClick={() => handleEdit(recipe)}
+               onKeyDown={e => (e.key === 'Enter' || e.key === ' ') && handleEdit(recipe)}
+               style={{ color: 'rgba(253,246,238,0.4)', cursor: 'pointer', padding: '0.25rem', flexShrink: 0 }}
+                   >
+               <Pencil size={15} />
+                    </div>
+
+                {/* Delete */}
+                <div
+                  role="button" tabIndex={0}
+                  onClick={() => deletingId !== recipe._id && handleDelete(recipe)}
+                  onKeyDown={e => (e.key === 'Enter' || e.key === ' ') && deletingId !== recipe._id && handleDelete(recipe)}
+                  style={{ color: deletingId === recipe._id ? 'rgba(220,53,69,0.3)' : 'rgba(220,53,69,0.7)', cursor: deletingId === recipe._id ? 'wait' : 'pointer', padding: '0.25rem', flexShrink: 0 }}
+                >
+                  <X size={16} />
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      )}
+    </div>
+  )
+}
+
 // ─── Root ─────────────────────────────────────────────────────────────────────
 
 export default function AdminPanel() {
@@ -224,21 +472,22 @@ export default function AdminPanel() {
           <p style={{ color: 'rgba(253,246,238,0.45)', fontSize: '0.88rem', marginTop: '0.5rem' }}>On The Stove — database management</p>
         </div>
 
-        <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
-          {[
-            { id: 'db', label: 'DB Management' },
-            { id: 'new', label: '+ New Recipe' },
-            { id: 'edit', label: '✏ Edit Recipe' },
-          ].map(tab => (
-            <div key={tab.id} role="button" tabIndex={0}
-              onClick={() => setActiveTab(tab.id)}
-              onKeyDown={e => (e.key === 'Enter' || e.key === ' ') && setActiveTab(tab.id)}
-              style={{ padding: '0.55rem 1.25rem', borderRadius: '50px', fontFamily: '"Lato", sans-serif', fontWeight: '700', fontSize: '0.88rem', cursor: 'pointer', userSelect: 'none', background: activeTab === tab.id ? '#E8622A' : 'rgba(255,255,255,0.06)', color: activeTab === tab.id ? 'white' : 'rgba(253,246,238,0.6)', border: activeTab === tab.id ? 'none' : '1px solid rgba(255,255,255,0.1)', transition: 'all 0.15s' }}
-            >{tab.label}</div>
-          ))}
-        </div>
+        <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
+             {[
+              { id: 'db', label: 'DB Management' },
+              { id: 'new', label: '+ New Recipe' },
+              { id: 'edit', label: '✏ Edit Recipe' },
+        ].map(tab => (
+        <div key={tab.id} role="button" tabIndex={0}
+         onClick={() => setActiveTab(tab.id)}
+         onKeyDown={e => (e.key === 'Enter' || e.key === ' ') && setActiveTab(tab.id)}
+         style={{ padding: '0.55rem 1.25rem', borderRadius: '50px', fontFamily: '"Lato", sans-serif', fontWeight: '700', fontSize: '0.88rem', cursor: 'pointer', userSelect: 'none', background: activeTab === tab.id ? '#E8622A' : 'rgba(255,255,255,0.06)', color: activeTab === tab.id ? 'white' : 'rgba(253,246,238,0.6)', border: activeTab === tab.id ? 'none' : '1px solid rgba(255,255,255,0.1)', transition: 'all 0.15s' }}
+         >{tab.label}</div>
+             ))}
+             <ResetRatingsPill />
+          </div>
 
-        {activeTab === 'db' && <DbTab />}
+        {activeTab === 'db' && <DbTab setActiveTab={setActiveTab} />}
         {activeTab === 'new' && <NewRecipeTab />}
         {activeTab === 'edit' && <EditRecipeTab />}
       </div>
@@ -248,16 +497,13 @@ export default function AdminPanel() {
 
 // ─── DB Tab ───────────────────────────────────────────────────────────────────
 
-function DbTab() {
+function DbTab({ setActiveTab }) {
   return (
     <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '20px', padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-      <DeleteByNameCard />
-      <DeleteAllCard />
-      <ResetRatingsCard />
+      <RecipesListCard setActiveTab={setActiveTab} />
     </div>
   )
 }
-
 // ─── Edit Recipe Tab ──────────────────────────────────────────────────────────
 
 function EditRecipeTab() {
@@ -270,22 +516,14 @@ function EditRecipeTab() {
   const [searchStatus, setSearchStatus] = useState(null)
 
   useEffect(() => {
-  const slug = sessionStorage.getItem('admin-edit-slug')
-  console.log('admin-edit-slug:', slug)
-  if (!slug) return
-  sessionStorage.removeItem('admin-edit-slug')
-  fetch(`/api/search-suggestions?q=${encodeURIComponent(slug)}`)
-    .then(res => res.json())
-    .then(data => {
-      console.log('suggestions:', data.suggestions)
-      const match = data.suggestions?.find(s => s.slug === slug)
-      console.log('match:', match)
-      if (match) {
-        setSearchQuery(match.title)
-        loadRecipe(match.title)
-      }
-    })
-    .catch(() => {})
+  const handler = (e) => {
+    const title = e.detail?.title
+    if (!title) return
+    setSearchQuery(title)
+    loadRecipe(title)
+  }
+  window.addEventListener('admin-edit-recipe', handler)
+  return () => window.removeEventListener('admin-edit-recipe', handler)
 }, [])
 
   const handleSearchChange = (e) => {
@@ -302,17 +540,22 @@ function EditRecipeTab() {
     }, 180)
   }
 
-  const loadRecipe = async (titleToLoad) => {
-    setSuggestionsOpen(false); setLoadingRecipe(true); setRecipe(null); setForm(null); setSearchStatus(null)
-    try {
-      const res = await fetch('/api/admin/get-recipe', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ title: titleToLoad }) })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'Failed')
-      if (!data.found) setSearchStatus({ type: 'error', message: `No recipe found with title "${titleToLoad}"` })
-      else { setRecipe(data.found); setForm(normalizeForm(data.found)) }
-    } catch (e) { setSearchStatus({ type: 'error', message: e.message }) }
-    finally { setLoadingRecipe(false) }
-  }
+
+  const loadRecipe = async (query) => {
+  setSuggestionsOpen(false); setLoadingRecipe(true); setRecipe(null); setForm(null); setSearchStatus(null)
+  try {
+    const res = await fetch('/api/admin/get-recipe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title: query, slug: query })
+    })
+    const data = await res.json()
+    if (!res.ok) throw new Error(data.error || 'Failed')
+    if (!data.found) setSearchStatus({ type: 'error', message: `No recipe found for "${query}"` })
+    else { setRecipe(data.found); setForm(normalizeForm(data.found)) }
+  } catch (e) { setSearchStatus({ type: 'error', message: e.message }) }
+  finally { setLoadingRecipe(false) }
+}
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
