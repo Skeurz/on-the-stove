@@ -113,7 +113,7 @@ export default async function RecipePage({ params }) {
     recipe.description ? { href: '#recipe-overview', label: 'Overview' } : null,
     recipe.ingredients?.length > 0 ? { href: '#recipe-ingredients', label: `Ingredients (${recipe.ingredients.length})` } : null,
     recipe.steps?.length > 0 ? { href: '#recipe-instructions', label: `Instructions (${recipe.steps.length} steps)` } : null,
-    recipe.preparationImages?.length > 0 ? { href: '#prep-photos', label: 'Step by Step Photos' } : null,
+    recipe.preparationImages?.filter(item => item.image).length > 0 ? { href: '#prep-photos', label: 'Step by Step Photos' } : null,
     recipe.videoUrl ? { href: '#video', label: 'Watch the Recipe' } : null,
     recipe.helpfulTips?.length > 0 ? { href: '#helpful-tips', label: 'Helpful Tips' } : null,
     recipe.variations?.length > 0 ? { href: '#variations', label: 'Easy Variations' } : null,

@@ -197,13 +197,13 @@ export default function RecipeCard({ recipe, imageUrl }) {
             fontWeight: '700',
             letterSpacing: '0.3px',
           }}>
-            {recipe.prepTime && (
+            {recipe.prepTime > 0 && (
               <span className="icon-text">
                 <Clock size={14} strokeWidth={1.8} aria-hidden="true" />
                 {recipe.prepTime} min
               </span>
             )}
-            {recipe.cookTime && (
+            {recipe.cookTime > 0 && (
               <span className="icon-text">
                 <Flame size={14} strokeWidth={1.8} aria-hidden="true" />
                 {recipe.cookTime} min

@@ -93,7 +93,7 @@ export const getSuggestedRecipes = defineQuery(`
 
 export const getFeaturedRecipes = groq`{
   "recipes": *[_type == "recipe" && featured == true] {
-    _id, title, slug, mainImage, categories, cuisine, difficulty, prepTime, cookTime,
-    ratingTotal, ratingCount, description
+    _id, title, slug, mainImage, categories, cuisine, difficulty,
+    prepTime, cookTime, servings, ratingTotal, ratingCount, description
   }
 }`
