@@ -244,6 +244,8 @@ function ResetRatingsPill() {
   )
 }
 
+
+
 function RecipesListCard({ setActiveTab }) {
   const [recipes, setRecipes] = useState([])
   const [loading, setLoading] = useState(true)
@@ -289,19 +291,25 @@ function RecipesListCard({ setActiveTab }) {
   return sortDir === 'desc' ? diff : -diff
   })
 
-  const handleDelete = async (recipe) => {
-    if (!confirm(`Delete "${recipe.title}"?`)) return
-    setDeletingId(recipe._id)
-    try {
-      const res = await fetch('/api/admin/delete-recipe', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title: recipe.title, dryRun: false }),
-      })
-      if (res.ok) setRecipes(r => r.filter(x => x._id !== recipe._id))
-    } catch (e) {}
-    finally { setDeletingId(null) }
-  }
+  const [deleteStatus, setDeleteStatus] = useState(null)
+
+const handleDelete = async (recipe) => {
+  if (!confirm(`Delete "${recipe.title}"?`)) return
+  setDeletingId(recipe._id)
+  try {
+    const res = await fetch('/api/admin/delete-recipe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title: recipe.title, dryRun: false }),
+    })
+    if (res.ok) {
+      setRecipes(r => r.filter(x => x._id !== recipe._id))
+      setDeleteStatus(`"${recipe.title}" deleted.`)
+      setTimeout(() => setDeleteStatus(null), 6000)
+    }
+  } catch (e) {}
+  finally { setDeletingId(null) }
+}
 
   const handleToggleFeatured = async (recipe) => {
     setTogglingId(recipe._id)
@@ -325,8 +333,21 @@ function RecipesListCard({ setActiveTab }) {
   }, 50)
 }
 
+
+
   return (
     <div>
+
+    {deleteStatus && (
+  <div style={{
+    padding: '0.6rem 1rem', marginBottom: '0.5rem',
+    background: 'rgba(220,53,69,0.12)', border: '1px solid rgba(220,53,69,0.3)',
+    borderRadius: '10px', color: '#ff6b7a',
+    fontFamily: '"Lato", sans-serif', fontSize: '0.85rem',
+  }}>
+    {deleteStatus}
+  </div> 
+   )}
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
   {['date', 'name', 'rating'].map(field => {
