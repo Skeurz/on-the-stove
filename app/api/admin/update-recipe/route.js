@@ -45,6 +45,21 @@ export async function POST(request) {
       resolveImage(body.secondaryImageUrl),
     ])
 
+    const FULL_FIELDS = ['title', 'slug', 'description', 'ingredients', 'steps']
+  const isPartial = !FULL_FIELDS.some(f => f in body)
+
+  if (isPartial) {
+  const allowed = ['featured', 'publishedAt', 'categories', 'cuisine', 'difficulty',
+                   'prepTime', 'cookTime', 'servings', 'calories', 'videoUrl',
+                   'seoTitle', 'seoDescription']
+  const patch = {}
+  for (const key of allowed) {
+    if (key in body) patch[key] = body[key]
+  }
+  const result = await client.patch(body._id).set(patch).commit()
+  return NextResponse.json({ success: true, id: result._id })
+  }
+
     const doc = {
       _type: 'recipe',
       title: body.title,
