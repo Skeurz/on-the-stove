@@ -19,7 +19,7 @@ export const collection = {
     {
       name: 'description',
       title: 'Description',
-      type: 'text',
+      type: 'string',
       rows: 3,
       description: 'Shown on the collections listing page',
     },
@@ -42,11 +42,18 @@ export const collection = {
       type: 'datetime',
     },
   ],
-  preview: {
-    select: {
+    preview: {
+     select: {
       title: 'title',
       media: 'coverImage',
       subtitle: 'description',
+    },
+    prepare({ title, media, subtitle }) {
+      return {
+        title,
+        media,
+        subtitle: subtitle ? (subtitle.length > 60 ? subtitle.slice(0, 57) + '...' : subtitle) : 'No description',
+      }
     }
   }
 }

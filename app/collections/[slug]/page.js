@@ -67,48 +67,51 @@ export default async function CollectionPage({ params }) {
           <span style={{ fontFamily: '"Lato", sans-serif', fontSize: '0.8rem', color: 'var(--brown)' }}>{col.title}</span>
         </div>
 
-        {/* Cover image */}
-        {col.coverImage && (
-          <div style={{
-            width: '100%',
-            borderRadius: '24px',
-            overflow: 'hidden',
-            position: 'relative',
-            aspectRatio: '16/9',
-            boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)',
-            border: '1px solid var(--gray)',
-            marginBottom: '2rem',
-          }}>
-            <Image src={col.coverImage} alt={col.title} fill style={{ objectFit: 'cover' }} priority />
-          </div>
-        )}
+        {/* Hero card */}
+<div style={{
+  background: 'var(--cream-light)',
+  border: '1px solid var(--gray)',
+  borderRadius: '24px',
+  overflow: 'hidden',
+  marginBottom: '2rem',
+  boxShadow: '0 8px 30px rgba(0,0,0,0.08)',
+}}>
+  {col.coverImage && (
+    <div style={{
+      width: '100%',
+      position: 'relative',
+      aspectRatio: '16/9',
+    }}>
+      <Image src={col.coverImage} alt={col.title} fill style={{ objectFit: 'cover' }} priority />
+    </div>
+  )}
+  <div style={{ padding: '2rem' }}>
+    <h1 style={{
+      fontFamily: '"Playfair Display", serif',
+      fontSize: 'clamp(1.8rem, 4vw, 2.8rem)',
+      color: 'var(--brown)',
+      lineHeight: 1.2,
+      marginBottom: '0.75rem',
+      fontWeight: '700',
+    }}>
+      {col.title}
+    </h1>
+    {col.description && (
+  <div
+    dangerouslySetInnerHTML={{ __html: col.description }}
+    style={{
+      fontFamily: '"Lato", sans-serif',
+      fontSize: '1rem',
+      color: 'var(--text-light)',
+      lineHeight: 1.8,
+      marginBottom: '1.25rem',
+    }}
+  />
+   )}
+  </div>
+</div>
 
-        {/* Title + description */}
-        <h1 style={{
-          fontFamily: '"Playfair Display", serif',
-          fontSize: 'clamp(2rem, 5vw, 3.2rem)',
-          color: 'var(--brown)',
-          lineHeight: 1.2,
-          marginBottom: '1rem',
-          fontWeight: '700',
-        }}>
-          {col.title}
-        </h1>
-
-        {col.description && (
-          <p style={{
-            fontFamily: '"Lato", sans-serif',
-            fontSize: '1.1rem',
-            color: 'var(--text-light)',
-            lineHeight: 1.8,
-            maxWidth: '680px',
-            marginBottom: '2.5rem',
-          }}>
-            {col.description}
-          </p>
-        )}
-
-        {/* Recipe count badge */}
+       {/* Recipe count badge */}
         <div style={{
           display: 'inline-flex',
           alignItems: 'center',
@@ -127,7 +130,7 @@ export default async function CollectionPage({ params }) {
             {col.recipes?.length || 0} recipe{col.recipes?.length !== 1 ? 's' : ''} in this collection
           </span>
         </div>
-
+ 
         {/* Recipe grid */}
         <div style={{
           display: 'grid',
