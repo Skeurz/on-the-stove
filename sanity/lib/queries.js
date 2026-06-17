@@ -112,8 +112,9 @@ export const getCollection = groq`
     _id, title, description,
     "coverImage": coverImage.asset->url,
     "recipes": recipes[]-> {
-      _id, title, slug, mainImage, categories, cuisine, difficulty,
-      prepTime, cookTime, servings, ratingTotal, ratingCount, description
+      _id, title, slug, categories, cuisine, difficulty,
+      prepTime, cookTime, servings, ratingTotal, ratingCount, description,
+      "mainImage": mainImage { ..., "asset": asset-> }
     }
   }
 `

@@ -354,6 +354,7 @@ function CollectionsTab() {
           />
           <div style={{ borderRadius: '1px', overflow: 'hidden', border: '1px solid var(--gray)' }}>
   <ReactQuill
+    
     theme="snow"
     value={form.description}
     onChange={val => setForm(f => ({ ...f, description: val }))}
@@ -374,6 +375,7 @@ function CollectionsTab() {
       color: 'var(--brown)',
     }}
   />
+          <style>{`.ql-editor { min-height: 150px; }`}</style>
 </div>
 
           {/* Recipe picker */}

@@ -68,6 +68,15 @@ export default async function CollectionPage({ params }) {
         </div>
 
         {/* Hero card */}
+        <style>{`
+  .collection-description p { margin: 0 0 0.75rem; word-break: break-word; overflow-wrap: break-word; }
+  .collection-description a { color: var(--orange); text-decoration: underline; }
+  .collection-description strong { font-weight: 700; }
+  .collection-description em { font-style: italic; }
+  .collection-description ul { padding-left: 1.25rem; margin: 0 0 0.75rem; }
+  .collection-description ol { padding-left: 1.25rem; margin: 0 0 0.75rem; }
+  .collection-description li { margin-bottom: 0.25rem; }
+`      }</style>
 <div style={{
   background: 'var(--cream-light)',
   border: '1px solid var(--gray)',
@@ -98,6 +107,7 @@ export default async function CollectionPage({ params }) {
     </h1>
     {col.description && (
   <div
+    className="collection-description"
     dangerouslySetInnerHTML={{ __html: col.description }}
     style={{
       fontFamily: '"Lato", sans-serif',
