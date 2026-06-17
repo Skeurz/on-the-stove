@@ -97,3 +97,23 @@ export const getFeaturedRecipes = groq`{
     prepTime, cookTime, servings, ratingTotal, ratingCount, description
   }
 }`
+
+
+export const getCollections = groq`
+  *[_type == "collection"] | order(publishedAt desc) {
+    _id, title, slug, description,
+    "coverImage": coverImage.asset->url,
+    "recipeCount": count(recipes),
+  }
+`
+
+export const getCollection = groq`
+  *[_type == "collection" && slug.current == $slug][0] {
+    _id, title, description,
+    "coverImage": coverImage.asset->url,
+    "recipes": recipes[]-> {
+      _id, title, slug, mainImage, categories, cuisine, difficulty,
+      prepTime, cookTime, servings, ratingTotal, ratingCount, description
+    }
+  }
+`
