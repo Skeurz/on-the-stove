@@ -149,8 +149,12 @@ export default async function CollectionPage({ params }) {
           marginBottom: '3rem',
         }}>
           {col.recipes?.map(recipe => (
-            <RecipeCard key={recipe._id} recipe={recipe} />
-          ))}
+  <RecipeCard
+    key={recipe._id}
+    recipe={recipe}
+    imageUrl={recipe.mainImage ? urlFor(recipe.mainImage).width(600).height(420).url() : null}
+  />
+))}
         </div>
 
         {/* Back link */}

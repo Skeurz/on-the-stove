@@ -2,8 +2,9 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { Trash2, RotateCcw, AlertTriangle, CheckCircle, XCircle, Loader, X, ChevronDown, ChevronUp, Pencil, ExternalLink, ArrowBigDown, ArrowBigUp  } from 'lucide-react'
-import ReactQuill from 'react-quill-new'
-import 'react-quill-new/dist/quill.snow.css'
+
+import RichTextEditor from '@/app/components/RichTextEditor'
+
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -214,11 +215,12 @@ function CollectionsTab() {
   const [loading, setLoading] = useState(true)
   const [recipes, setRecipes] = useState([])
   const [recipeSearch, setRecipeSearch] = useState('')
-  const [form, setForm] = useState({ title: '', slug: '', description: '', recipeIds: [] })
+  const [form, setForm] = useState({ title: '', slug: '', description: '', recipeIds: [], coverImageUrl: null })
   const [editingId, setEditingId] = useState(null)
   const [saving, setSaving] = useState(false)
   const [status, setStatus] = useState(null)
   const [deletingId, setDeletingId] = useState(null)
+  const quillRef = useRef(null) 
 
   useEffect(() => {
     fetchCollections()
@@ -263,31 +265,43 @@ function CollectionsTab() {
       slug: col.slug,
       description: col.description || '',
       recipeIds: col.recipeIds || [],
+      coverImageUrl: col.coverImageUrl || null,
     })
   }
 
   const handleCancel = () => {
     setEditingId(null)
-    setForm({ title: '', slug: '', description: '', recipeIds: [] })
+    setForm({ title: '', slug: '', description: '', recipeIds: [], coverImageUrl: null })
   }
 
   const handleSave = async () => {
-    if (!form.title.trim() || !form.slug.trim()) return
-    setSaving(true)
-    try {
-      const res = await fetch('/api/admin/save-collection', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form, _id: editingId }),
-      })
-      if (res.ok) {
-        setStatus(editingId ? 'Collection updated.' : 'Collection created.')
-        setTimeout(() => setStatus(null), 3000)
-        handleCancel()
-        fetchCollections()
-      }
-    } finally { setSaving(false) }
-  }
+  if (!form.title.trim() || !form.slug.trim()) return
+  setSaving(true)
+  console.log('coverImageUrl being sent:', form.coverImageUrl)
+  try {
+    const res = await fetch('/api/admin/save-collection', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        _id: editingId,
+        title: form.title,
+        slug: form.slug,
+        description: form.description,
+        recipeIds: form.recipeIds,
+        coverImageUrl: form.coverImageUrl, 
+      }),
+    })
+    if (res.ok) {
+      setStatus(editingId ? 'Collection updated.' : 'Collection created.')
+      setTimeout(() => setStatus(null), 3000)
+      handleCancel()
+      fetchCollections()
+    } else {
+      const data = await res.json()
+      setStatus(`Error: ${data.error}`)
+    }
+  } finally { setSaving(false) }
+}
 
   const handleDelete = async (col) => {
     if (!confirm(`Delete "${col.title}"?`)) return
@@ -353,30 +367,58 @@ function CollectionsTab() {
             onChange={e => setForm(f => ({ ...f, slug: e.target.value }))}
           />
           <div style={{ borderRadius: '1px', overflow: 'hidden', border: '1px solid var(--gray)' }}>
-  <ReactQuill
-    
-    theme="snow"
-    value={form.description}
-    onChange={val => setForm(f => ({ ...f, description: val }))}
-    placeholder="Description (optional)"
-    modules={{
-      toolbar: [
-        ['bold', 'italic', 'underline'],
-        [{ color: [] }],
-        ['link'],
-        [{ list: 'ordered' }, { list: 'bullet' }],
-        ['clean'],
-      ],
-    }}
-    style={{
-      fontFamily: '"Lato", sans-serif',
-      fontSize: '0.9rem',
-      background: 'var(--cream)',
-      color: 'var(--brown)',
-    }}
-  />
+  <RichTextEditor
+  value={form.description}
+  onChange={val => setForm(f => ({ ...f, description: val }))}
+  placeholder="Description (optional)"
+/>
           <style>{`.ql-editor { min-height: 150px; }`}</style>
 </div>
+<div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+  <p style={{ fontFamily: '"Lato", sans-serif', fontSize: '0.78rem', color: 'var(--text-light)', fontWeight: '700', letterSpacing: '0.5px', textTransform: 'uppercase', margin: 0 }}>
+    Cover Image
+  </p>
+  <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+    <input
+      style={{ ...inputStyle, flex: 1 }}
+      placeholder="https://..."
+      value={typeof form.coverImageUrl === 'string' ? form.coverImageUrl : form.coverImageUrl?.url || ''}
+      onChange={e => setForm(f => ({ ...f, coverImageUrl: e.target.value }))}
+    />
+    <input
+      type="file"
+      accept="image/*"
+      style={{ display: 'none' }}
+      id="cover-image-upload"
+      onChange={async (e) => {
+        const file = e.target.files?.[0]
+        if (!file) return
+        const fd = new FormData()
+        fd.append('file', file)
+        const res = await fetch('/api/admin/upload-image', { method: 'POST', body: fd })
+        const data = await res.json()
+        if (res.ok) setForm(f => ({ ...f, coverImageUrl: { url: data.url, assetId: data.assetId } }))
+        e.target.value = ''
+      }}
+    />
+    <label htmlFor="cover-image-upload" style={{
+      flexShrink: 0, padding: '0.55rem 1rem', borderRadius: '8px',
+      background: 'var(--orange)', color: 'white',
+      fontSize: '0.82rem', fontWeight: '700', cursor: 'pointer',
+      fontFamily: '"Lato", sans-serif', whiteSpace: 'nowrap',
+    }}>
+      ↑ Upload
+    </label>
+  </div>
+  {(typeof form.coverImageUrl === 'string' ? form.coverImageUrl : form.coverImageUrl?.url) && (
+    <img
+      src={typeof form.coverImageUrl === 'string' ? form.coverImageUrl : form.coverImageUrl?.url}
+      alt=""
+      style={{ marginTop: '0.5rem', height: '160px', borderRadius: '10px', objectFit: 'cover', border: '1px solid var(--gray)', width: '100%' }}
+    />
+  )}
+</div>
+
 
           {/* Recipe picker */}
           <div>

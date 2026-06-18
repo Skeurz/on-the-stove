@@ -1,7 +1,9 @@
+
 import { client } from '@/sanity/lib/client'
 import { getCollections } from '@/sanity/lib/queries'
 import Image from 'next/image'
 import Link from 'next/link'
+import CollectionCard from './CollectionCard'
 
 export const metadata = {
   title: 'Collections | On The Stove',
@@ -40,60 +42,17 @@ export default async function CollectionsPage() {
           gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
           gap: '1.5rem',
         }}>
-          {collections.map(col => (
-            <Link key={col._id} href={`/collections/${col.slug?.current ?? col.slug}`} style={{ textDecoration: 'none' }}>
-              <div style={{
-                background: 'var(--cream-light)',
-                borderRadius: '20px',
-                overflow: 'hidden',
-                border: '1px solid var(--gray)',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
-                transition: 'transform 0.2s',
-              }}>
-                {col.coverImage && (
-                  <div style={{ position: 'relative', aspectRatio: '16/9', width: '100%' }}>
-                    <Image
-                      src={col.coverImage}
-                      alt={col.title}
-                      fill
-                      style={{ objectFit: 'cover' }}
-                    />
-                  </div>
-                )}
-                <div style={{ padding: '1.25rem' }}>
-                  <h2 style={{
-                    fontFamily: '"Playfair Display", serif',
-                    fontSize: '1.2rem',
-                    color: 'var(--brown)',
-                    fontWeight: '700',
-                    marginBottom: '0.4rem',
-                  }}>
-                    {col.title}
-                  </h2>
-                  {col.description && (
-                    <p style={{
-                      fontFamily: '"Lato", sans-serif',
-                      fontSize: '0.875rem',
-                      color: 'var(--text-light)',
-                      lineHeight: 1.6,
-                      marginBottom: '0.75rem',
-                    }}>
-                      {col.description}
-                    </p>
-                  )}
-                  <span style={{
-                    fontFamily: '"Lato", sans-serif',
-                    fontSize: '0.78rem',
-                    fontWeight: '700',
-                    color: 'var(--orange)',
-                    letterSpacing: '0.3px',
-                  }}>
-                    {col.recipeCount} recipe{col.recipeCount !== 1 ? 's' : ''}
-                  </span>
-                </div>
-              </div>
-            </Link>
-          ))}
+           {collections.map(col => (
+  <CollectionCard
+    key={col._id}
+    col={{
+      ...col,
+      description: col.description
+        ? col.description.replace(/<[^>]*>/g, '')
+        : null
+    }}
+  />
+))}
         </div>
 
       </div>

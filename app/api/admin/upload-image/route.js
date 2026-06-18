@@ -6,6 +6,9 @@ function isLocalhost(request) {
   return host.startsWith('localhost') || host.startsWith('127.0.0.1')
 }
 
+
+
+
 const client = createClient({
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
   dataset: process.env.NEXT_PUBLIC_SANITY_DATASET,

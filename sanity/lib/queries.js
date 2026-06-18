@@ -114,7 +114,7 @@ export const getCollection = groq`
     "recipes": recipes[]-> {
       _id, title, slug, categories, cuisine, difficulty,
       prepTime, cookTime, servings, ratingTotal, ratingCount, description,
-      "mainImage": mainImage { ..., "asset": asset-> }
+      mainImage
     }
   }
 `

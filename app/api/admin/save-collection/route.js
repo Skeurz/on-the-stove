@@ -8,11 +8,32 @@ const client = createClient({
   useCdn: false,
 })
 
+async function resolveImage(val) {
+  if (!val) return null
+  if (typeof val === 'object' && val.assetId) {
+    return { _type: 'image', asset: { _type: 'reference', _ref: val.assetId } }
+  }
+  if (typeof val === 'string' && val.startsWith('http')) {
+    const res = await fetch(val)
+    if (!res.ok) throw new Error(`Failed to fetch image: ${val}`)
+    const buffer = await res.arrayBuffer()
+    const contentType = res.headers.get('content-type') || 'image/jpeg'
+    const asset = await client.assets.upload('image', Buffer.from(buffer), { contentType })
+    return { _type: 'image', asset: { _type: 'reference', _ref: asset._id } }
+  }
+  return null
+}
+
 export async function POST(req) {
   const host = req.headers.get('host') || ''
   if (!host.includes('localhost')) return Response.json({ error: 'Forbidden' }, { status: 403 })
 
-  const { _id, title, slug, description, recipeIds } = await req.json()
+  const body = await req.json().catch(() => null)
+  if (!body) return Response.json({ error: 'Invalid JSON body' }, { status: 400 })
+
+  const { _id, title, slug, description, recipeIds, coverImageUrl } = body
+
+  const coverImage = await resolveImage(coverImageUrl)
 
   const doc = {
     title,
@@ -24,6 +45,7 @@ export async function POST(req) {
       _ref: id,
       _key: id,
     })),
+    ...(coverImage && { coverImage }),
   }
 
   if (_id) {

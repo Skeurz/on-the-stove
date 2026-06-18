@@ -13,13 +13,14 @@ export async function GET(req) {
   if (!host.includes('localhost')) return Response.json({ error: 'Forbidden' }, { status: 403 })
 
   const collections = await client.fetch(`
-    *[_type == "collection"] | order(publishedAt desc) {
-      _id, title,
-      "slug": slug.current,
-      description,
-      "recipeCount": count(recipes),
-      "recipeIds": recipes[]._ref,
-    }
-  `)
+  *[_type == "collection"] | order(publishedAt desc) {
+    _id, title,
+    "slug": slug.current,
+    description,
+    "recipeCount": count(recipes),
+    "recipeIds": recipes[]._ref,
+    "coverImageUrl": coverImage.asset->url,
+  }
+`)
   return Response.json({ collections })
 }
