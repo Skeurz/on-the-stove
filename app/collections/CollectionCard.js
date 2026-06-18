@@ -1,7 +1,8 @@
-// app/collections/CollectionCard.js
+
 'use client'
 import Link from 'next/link'
 import Image from 'next/image'
+import {ChevronsRight} from 'lucide-react'
 
 export default function CollectionCard({ col }) {
   return (
@@ -16,6 +17,8 @@ export default function CollectionCard({ col }) {
           transition: 'transform 0.25s ease, box-shadow 0.25s ease',
           cursor: 'pointer',
           height: '100%',
+          display: 'flex',        
+          flexDirection: 'column', 
         }}
         onMouseEnter={e => {
           e.currentTarget.style.transform = 'translateY(-6px)'
@@ -31,7 +34,7 @@ export default function CollectionCard({ col }) {
             <Image src={col.coverImage} alt={col.title} fill style={{ objectFit: 'cover' }} />
           </div>
         )}
-        <div style={{ padding: '1.25rem' }}>
+        <div style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', flex: 1 }}>
           <h2 style={{
             fontFamily: '"Playfair Display", serif',
             fontSize: '1.2rem',
@@ -57,13 +60,18 @@ export default function CollectionCard({ col }) {
   </p>
 )}
           <span style={{
-            fontFamily: '"Lato", sans-serif',
-            fontSize: '0.78rem',
-            fontWeight: '700',
-            color: 'var(--orange)',
-          }}>
-            {col.recipeCount} recipe{col.recipeCount !== 1 ? 's' : ''}
-          </span>
+    marginTop: 'auto',
+    paddingTop: '0.75rem',
+    fontFamily: '"Lato", sans-serif',
+    fontSize: '0.78rem',
+    fontWeight: '700',
+    color: 'var(--orange)',
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '0.25rem',
+  }}>
+    Discover <ChevronsRight size={16}/>
+           </span>
         </div>
       </div>
     </Link>
